@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 13: DLT, Smart Contracts &amp; CBDC — PaymentsAcademy</title>
+<link rel="stylesheet" href="styles.css"/></head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">13</div><div class="module-tag">Module 13</div><h1>DLT, Smart Contracts &amp; Central Bank Digital Currency</h1><p>Cryptocurrencies, distributed ledger technology, blockchain in payments, smart contracts, and the global landscape of Central Bank Digital Currencies — retail, wholesale, and cross-border CBDC initiatives.</p><div class="module-tags"><span>DLT</span><span>Blockchain</span><span>Smart Contracts</span><span>CBDC</span><span>Cryptocurrency</span><span>Tokenisation</span><span>mBridge</span><span>e-CNY</span><span>Digital Euro</span></div></div></div>
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.1</span> Cryptocurrencies — Overview</h2>
+    <p><strong>Cryptocurrencies</strong> are digital assets that use cryptographic techniques to secure transactions and control the creation of new units. Unlike traditional currencies issued by central banks, most cryptocurrencies operate on decentralised networks with no central authority. <strong>Bitcoin</strong>, launched in January 2009 by the pseudonymous Satoshi Nakamoto, was the first cryptocurrency and introduced the concept of a peer-to-peer electronic cash system using a distributed ledger (blockchain).</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">₿</div><h4>Bitcoin (BTC)</h4><p>First cryptocurrency. Fixed supply of 21 million coins. Proof-of-Work consensus. ~10-minute block time. Primarily a store of value ("digital gold"). Settlement finality is probabilistic.</p></div>
+      <div class="info-card"><div class="ic-icon">⟠</div><h4>Ethereum (ETH)</h4><p>Programmable blockchain supporting smart contracts and decentralised applications (dApps). Migrated to Proof-of-Stake in 2022. Enables DeFi, NFTs, and tokenised assets.</p></div>
+      <div class="info-card"><div class="ic-icon">💲</div><h4>Stablecoins</h4><p>Cryptocurrencies pegged to a stable asset (USD, EUR, gold). Examples: USDT (Tether), USDC (Circle), DAI (algorithmic). Aim to combine crypto's programmability with fiat's stability.</p></div>
+      <div class="info-card"><div class="ic-icon">🔗</div><h4>Altcoins</h4><p>Thousands of alternative cryptocurrencies: XRP (Ripple — cross-border payments), Stellar (XLM), Solana (SOL — high throughput), Litecoin (LTC), and many others with specific use cases.</p></div>
+    </div>
+    <h3>Consensus Mechanisms</h3>
+    <div class="table-wrap"><table><thead><tr><th>Mechanism</th><th>How It Works</th><th>Energy Use</th><th>Examples</th></tr></thead><tbody>
+      <tr><td><strong>Proof of Work (PoW)</strong></td><td>Miners compete to solve cryptographic puzzles. First to solve adds the block and earns the reward. Enormously computation-intensive.</td><td>Very High</td><td>Bitcoin, Litecoin</td></tr>
+      <tr><td><strong>Proof of Stake (PoS)</strong></td><td>Validators are chosen proportionally to the amount of cryptocurrency they "stake" (lock up) as collateral. Far more energy-efficient than PoW.</td><td>Low</td><td>Ethereum (post-Merge), Cardano, Solana</td></tr>
+      <tr><td><strong>Delegated PoS (DPoS)</strong></td><td>Token holders vote for delegates who validate transactions. Faster throughput but more centralised.</td><td>Very Low</td><td>EOS, TRON</td></tr>
+      <tr><td><strong>Practical Byzantine Fault Tolerance (PBFT)</strong></td><td>Nodes reach consensus through multiple rounds of voting. Fast finality, works well for permissioned networks.</td><td>Very Low</td><td>Hyperledger Fabric, Tendermint</td></tr>
+    </tbody></table></div>
+    <h3>Regulatory Landscape</h3>
+    <p>Crypto regulation varies significantly by jurisdiction. The <strong>EU's MiCA (Markets in Crypto-Assets Regulation)</strong>, fully applicable from December 2024, provides comprehensive regulation for crypto-asset issuers and service providers across the EU. The <strong>US</strong> takes a multi-regulator approach (SEC, CFTC, FinCEN) with ongoing debate over which assets are securities. <strong>China</strong> has banned private cryptocurrency trading while developing the e-CNY CBDC. Most jurisdictions require crypto exchanges to comply with AML/KYC rules under FATF guidance.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.2</span> Distributed Ledger Technology (DLT)</h2>
+    <p>A <strong>Distributed Ledger Technology (DLT)</strong> is a database that is shared, replicated, and synchronised across multiple nodes (computers) in a network without a central administrator. Unlike a traditional centralised database (run by a single bank or operator), a DLT's records are maintained by a network of participants, each holding a copy of the complete ledger.</p>
+    <div class="two-col">
+      <div>
+        <h3>Permissioned vs Permissionless DLT</h3>
+        <div class="highlight-box"><strong>Permissionless (Public):</strong> Anyone can join as a node, validate transactions, and read the ledger. High decentralisation, lower privacy, slower throughput. Examples: Bitcoin, Ethereum. Suitable for trustless environments.</div>
+        <div class="highlight-box purple"><strong>Permissioned (Private/Consortium):</strong> Only pre-approved participants can join and validate. Higher privacy, faster throughput, better governance. Examples: Hyperledger Fabric, R3 Corda, Quorum. Preferred for institutional finance.</div>
+      </div>
+      <div>
+        <h3>Core DLT Properties</h3>
+        <ul>
+          <li><strong>Decentralisation:</strong> No single point of control or failure</li>
+          <li><strong>Immutability:</strong> Once recorded, data cannot be altered without consensus of the network</li>
+          <li><strong>Transparency:</strong> All participants can verify the ledger state (varies in permissioned systems)</li>
+          <li><strong>Cryptographic Security:</strong> Transactions are signed and chained using cryptographic hashes</li>
+          <li><strong>Consensus:</strong> All nodes agree on the valid state of the ledger via consensus protocols</li>
+        </ul>
+      </div>
+    </div>
+    <h3>Enterprise DLT Platforms for Payments</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🔷</div><h4>Hyperledger Fabric</h4><p>Linux Foundation project. Modular, permissioned blockchain. Uses channels for data privacy between subsets of participants. Widely used in trade finance (we.trade, Contour) and supply chain.</p></div>
+      <div class="info-card"><div class="ic-icon">🔴</div><h4>R3 Corda</h4><p>Designed specifically for financial institutions. Peer-to-peer architecture — data shared only between transaction parties (not broadcast to all nodes). Used by major banks for bond issuance, FX, and repo.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>Quorum (ConsenSys)</h4><p>Enterprise Ethereum fork. Supports private transactions. Used by JPMorgan for JPM Coin (interbank USD transfers) and the Onyx platform.</p></div>
+      <div class="info-card"><div class="ic-icon">🌊</div><h4>Ripple / XRP Ledger</h4><p>Consensus protocol (not PoW/PoS). Purpose-built for cross-border payments. Fast settlement (3–5 seconds), low cost. Used by banks via RippleNet for on-demand liquidity.</p></div>
+    </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.3</span> Blockchain in Payments</h2>
+    <h3>Tokenisation</h3>
+    <p><strong>Tokenisation</strong> is the process of representing a real-world asset (currency, bond, equity, commodity, real estate) as a digital token on a blockchain. A tokenised dollar, for example, is a digital representation of a USD claim that can be transferred instantly on a blockchain. Tokenisation enables: fractional ownership, programmable money (with smart contracts), instant atomic settlement, and 24/7 trading.</p>
+    <h3>Atomic Swaps</h3>
+    <p>An <strong>atomic swap</strong> is a smart-contract-based mechanism that enables two parties to exchange different cryptocurrency tokens across different blockchains without a trusted intermediary. The swap is "atomic" — it either fully completes (both legs execute) or fully reverts (neither leg executes). This is the blockchain equivalent of <strong>PvP (Payment vs Payment)</strong> and <strong>DvP (Delivery vs Payment)</strong> — eliminating settlement risk without a CLS Bank or central counterparty.</p>
+    <h3>Cross-Border Payment Use Cases</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>On-Demand Liquidity (ODL)</h4><p>Ripple's ODL model: sender converts fiat to XRP, XRP is transferred across the ledger in seconds, receiver converts XRP to destination currency. Eliminates the need for pre-funded nostro accounts.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Stablecoin Remittance</h4><p>USD stablecoins (USDC, USDT) are increasingly used for remittances. Sender converts fiat to stablecoin, transfers near-instantly on Ethereum/Stellar/Solana, receiver off-ramps to local currency. Lower cost than SWIFT for small amounts.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Trade Finance on DLT</h4><p>Letters of credit and trade documents tokenised on Hyperledger Fabric. Parties (importer, exporter, banks, insurer, shipping) share a common view. Reduces processing from 5–10 days to hours.</p></div></div>
+    </div>
+    <div class="highlight-box gold"><strong>Blockchain Settlement Finality:</strong> Public blockchains offer probabilistic finality — a transaction is "final" after enough confirmations (Bitcoin: ~6 blocks = ~1 hour). Permissioned DLTs like Corda and Fabric offer deterministic finality — a transaction is immediately final once consensus is reached. Deterministic finality is essential for financial settlement.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.4</span> Smart Contracts</h2>
+    <p>A <strong>smart contract</strong> is a self-executing programme stored on a blockchain that automatically enforces and executes the terms of an agreement when pre-defined conditions are met — without the need for intermediaries. The concept was first described by Nick Szabo in 1994 and practically realised with Ethereum's launch in 2015. Smart contracts are written in programming languages like <strong>Solidity</strong> (Ethereum) or <strong>Kotlin/Java</strong> (Corda) and run on the blockchain's virtual machine.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📜</div><h4>Trade Finance</h4><p>Smart contract releases payment automatically when shipping documents are verified on-chain and delivery conditions confirmed. Replaces letter of credit manual processing.</p></div>
+      <div class="info-card"><div class="ic-icon">📊</div><h4>Derivatives Settlement</h4><p>OTC derivative contracts coded as smart contracts on Ethereum. Margin calls calculated and executed automatically based on real-time price feeds. ISDA has published smart contract templates.</p></div>
+      <div class="info-card"><div class="ic-icon">🔒</div><h4>Escrow &amp; Conditional Payments</h4><p>Funds locked in a smart contract escrow, released when both parties confirm conditions are met (e.g., milestone payments in construction contracts, real estate settlement).</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>DeFi (Decentralised Finance)</h4><p>Smart contracts power lending protocols (Aave, Compound), decentralised exchanges (Uniswap), and yield farming — financial services without traditional intermediaries.</p></div>
+    </div>
+    <h3>Smart Contract Limitations</h3>
+    <ul>
+      <li><strong>The Oracle Problem:</strong> Smart contracts can only access data already on the blockchain. For real-world data (prices, events, delivery confirmation), they need "oracles" — external data feeds (e.g., Chainlink). Oracles introduce a centralisation and trust dependency.</li>
+      <li><strong>Code is Law — and Bugs:</strong> Smart contracts are immutable once deployed. Bugs in the code become permanent vulnerabilities. The 2016 "DAO hack" drained $60M from an Ethereum smart contract due to a reentrancy bug.</li>
+      <li><strong>Legal Enforceability:</strong> Smart contract code execution and legal contract obligations may not align. Most jurisdictions are still developing frameworks for smart contract legal recognition.</li>
+      <li><strong>Scalability:</strong> Complex smart contracts consume significant "gas" (computational cost) on public blockchains, making them expensive for high-frequency use cases.</li>
+    </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.5</span> Central Bank Digital Currency (CBDC) — Fundamentals</h2>
+    <p>A <strong>Central Bank Digital Currency (CBDC)</strong> is a digital form of central bank money — a liability of the central bank, denominated in the national currency, and available in digital form. CBDCs differ from existing electronic money (bank deposits) in that they are direct claims on the central bank rather than on a commercial bank. They also differ from cryptocurrencies in that they are centralised, regulated, and stable in value.</p>
+    <h3>Retail vs Wholesale CBDC</h3>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>Retail CBDC</strong><br/>
+        Accessible to the general public — individuals and businesses. A digital equivalent of cash. Central bank issues directly (or via intermediaries). Key design questions: anonymity/privacy, offline capability, interest-bearing or not, programmability (spending restrictions, expiry).
+      </div>
+      <div class="highlight-box purple">
+        <strong>Wholesale CBDC</strong><br/>
+        Restricted to financial institutions for interbank settlement. Digital form of central bank reserves. Enables tokenised settlement of financial assets (DvP), cross-border payment improvements, and potentially replaces RTGS systems for specific use cases.
+      </div>
+    </div>
+    <h3>Key CBDC Design Choices</h3>
+    <div class="table-wrap"><table><thead><tr><th>Design Dimension</th><th>Option A</th><th>Option B</th></tr></thead><tbody>
+      <tr><td><strong>Architecture</strong></td><td>Direct (central bank holds all accounts)</td><td>Intermediated (commercial banks distribute)</td></tr>
+      <tr><td><strong>Technology</strong></td><td>DLT/Blockchain-based</td><td>Centralised database (conventional)</td></tr>
+      <tr><td><strong>Form</strong></td><td>Account-based (identity-linked)</td><td>Token-based (value stored in token)</td></tr>
+      <tr><td><strong>Privacy</strong></td><td>Full anonymity (cash-like)</td><td>Traceable (AML compliance)</td></tr>
+      <tr><td><strong>Remuneration</strong></td><td>Interest-bearing</td><td>Non-interest-bearing (like cash)</td></tr>
+      <tr><td><strong>Programmability</strong></td><td>Smart contract capabilities</td><td>Plain value transfer only</td></tr>
+      <tr><td><strong>Offline capability</strong></td><td>Works without internet</td><td>Online only</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.6</span> CBDC Global Landscape</h2>
+    <div class="table-wrap"><table><thead><tr><th>Project</th><th>Country / Region</th><th>Type</th><th>Status</th><th>Key Features</th></tr></thead><tbody>
+      <tr><td><strong>e-CNY (Digital Yuan)</strong></td><td>China</td><td>Retail</td><td>Live — pilot expanding</td><td>Two-tier distribution (PBOC → banks → public). Controlled anonymity. Programmable. Used in major cities. No interest.</td></tr>
+      <tr><td><strong>Digital Euro</strong></td><td>Eurozone (ECB)</td><td>Retail</td><td>Preparation phase (2023–2025)</td><td>Intermediated model. Privacy-focused. €3,000 holding limit proposed. Offline capability. Governed by ECB/EC Regulation.</td></tr>
+      <tr><td><strong>FedNow / Digital Dollar</strong></td><td>USA</td><td>Research</td><td>Research only (no retail CBDC announced)</td><td>Fed researching but no formal CBDC programme. FedNow serves some instant payment objectives without a CBDC.</td></tr>
+      <tr><td><strong>Sand Dollar</strong></td><td>Bahamas</td><td>Retail</td><td>Live (since Oct 2020)</td><td>World's first live retail CBDC. Issued by Central Bank of Bahamas. Financial inclusion focus for remote islands.</td></tr>
+      <tr><td><strong>DCash</strong></td><td>Eastern Caribbean</td><td>Retail</td><td>Live (since Mar 2021)</td><td>Multi-country CBDC for the Eastern Caribbean Currency Union (ECCU). Issued by the ECCB.</td></tr>
+      <tr><td><strong>e-Krona</strong></td><td>Sweden</td><td>Retail</td><td>Pilot / Extended research</td><td>Riksbank pilot using R3 Corda. Testing offline payments, programmability. Public consultation ongoing.</td></tr>
+      <tr><td><strong>JAM-DEX</strong></td><td>Jamaica</td><td>Retail</td><td>Live (since Jul 2022)</td><td>Issued by Bank of Jamaica. Digital wallet "Lynk" for distribution. No DLT — conventional database.</td></tr>
+      <tr><td><strong>Digital Rupee (e₹)</strong></td><td>India</td><td>Both</td><td>Pilot (Wholesale 2022, Retail 2022)</td><td>RBI piloting wholesale e₹ for government securities settlement and retail e₹ via bank apps.</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box green"><strong>Global Momentum:</strong> As of 2024, over 130 countries (representing 98% of global GDP) are exploring CBDCs. 3 countries have fully launched retail CBDCs (Bahamas, Jamaica, Nigeria). Many G20 countries are in advanced pilot stages. The IMF and BIS actively publish research and provide technical assistance for CBDC development.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.7</span> Wholesale CBDC and Cross-Border Settlement</h2>
+    <p>While retail CBDCs address domestic payment needs, <strong>wholesale CBDCs (wCBDC)</strong> are specifically designed to transform cross-border payment infrastructure. The correspondent banking model — the current backbone of cross-border payments — is slow, expensive, opaque, and fragmented. Multiple central banks and international organisations are testing whether wCBDC-based platforms could solve these problems.</p>
+    <h3>Key Wholesale CBDC Cross-Border Projects</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🌉</div><h4>mBridge</h4><p>Multi-CBDC platform connecting PBOC (China), HKMA, Bank of Thailand, Central Bank of UAE, and BIS Innovation Hub. Tested cross-border trade finance payments. Using a purpose-built DLT platform ("mBridge Ledger"). Over $22M in pilot transactions completed.</p></div>
+      <div class="info-card"><div class="ic-icon">🤝</div><h4>Project Dunbar</h4><p>BIS Innovation Hub + Reserve Bank of Australia, Bank of Malaysia, MAS (Singapore), SARB (South Africa). Prototype multi-CBDC platform for international settlements. Published technical report in 2022.</p></div>
+      <div class="info-card"><div class="ic-icon">🇫🇷</div><h4>Project Jura</h4><p>Bank of France + SNB (Switzerland) + BIS. Tested cross-border settlement of tokenised assets (euro and Swiss franc wCBDC) and foreign exchange transactions using DLT. Third-party operator model.</p></div>
+      <div class="info-card"><div class="ic-icon">🇨🇦</div><h4>Jasper-Ubin</h4><p>Bank of Canada + MAS (Singapore). Cross-border interbank payment using wCBDC with Hash Time-Locked Contracts (HTLC) for atomic PvP settlement. Demonstrated feasibility of blockchain-based cross-border PvP.</p></div>
+    </div>
+    <h3>How wCBDC Could Replace Correspondent Banking</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Tokenised CBDC on Shared Platform</h4><p>Central Banks A and B both issue tokenised versions of their currency (wCBDC-A and wCBDC-B) on a shared multi-CBDC platform (like mBridge). Both tokens represent central bank money.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Atomic PvP Settlement</h4><p>A cross-border payment triggers a smart contract: wCBDC-A is atomically swapped for wCBDC-B. Both legs settle simultaneously — no Herstatt risk, no correspondent bank needed, no pre-funded nostro accounts.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Near-Instant, Low-Cost Settlement</h4><p>Settlement completes in seconds rather than days. No correspondent bank fees. Full payment transparency. Sender and receiver banks interact directly through the wCBDC platform.</p></div></div>
+    </div>
+    <div class="highlight-box"><strong>The Vision:</strong> The BIS "Finternet" concept envisions a future where financial assets — including CBDCs, tokenised deposits, securities, and commodities — all exist on a unified financial ledger. This would enable instant atomic settlement of any transaction, in any currency, at any time — fundamentally transforming global payment infrastructure built around correspondent banking and SWIFT.</div>
+    <h3>Challenges for CBDC Adoption</h3>
+    <ul>
+      <li><strong>Financial Disintermediation:</strong> Retail CBDC could trigger bank runs if consumers move deposits to CBDC en masse — reducing commercial banks' funding base</li>
+      <li><strong>Privacy vs AML:</strong> Governments need transaction traceability for AML/CFT; citizens demand privacy. Balancing these is technically and politically complex</li>
+      <li><strong>Interoperability:</strong> Different national CBDC platforms need to interoperate for cross-border payments — requires international standards and governance agreements</li>
+      <li><strong>Cybersecurity:</strong> A central bank CBDC platform is a high-value target — a breach could undermine monetary sovereignty</li>
+      <li><strong>Monetary Policy Implications:</strong> Interest-bearing CBDC competes with bank deposits, affecting monetary transmission mechanisms</li>
+    </ul>
+  </div>
+
+  <div class="module-nav">
+    <a href="module12.html"><span>← Previous</span><strong>China FCDPS, CIPS &amp; HKMA CHATS</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body></html>
