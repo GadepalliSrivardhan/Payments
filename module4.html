@@ -22,6 +22,21 @@
       <tr><td><strong>HVPS (CNAPS)</strong></td><td>China</td><td>PBOC</td><td>CNY</td><td>~CNY 20T+</td></tr>
     </tbody></table></div>
 
+    <h3>RTGS Payment Process Flow — End-to-End</h3>
+    <p>The following is the complete step-by-step flow of a single RTGS payment from customer instruction through to final settlement confirmation:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Customer Submits Payment Instruction</h4><p>The ordering customer submits a payment instruction via online banking, corporate treasury system, or API. The instruction includes beneficiary account details, amount, value date, and payment reference.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Bank's Payment Engine Validates the Instruction</h4><p>The originating bank's payment engine performs a series of automated checks before releasing the payment: <strong>Format check</strong> — validates account numbers, BIC/IBAN, amount format and currency; <strong>Sanctions screening</strong> — real-time check of payer and payee names/accounts against OFAC, EU, UN, and domestic watchlists; <strong>Duplicate detection</strong> — compares against recent payments to identify accidental re-submissions within a configurable time window; <strong>Liquidity check</strong> — verifies the bank's settlement account at the central bank holds sufficient funds to cover the payment.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Bank Formats RTGS Message</h4><p>The payment engine formats the instruction into the RTGS-required message standard — typically a <strong>pacs.009</strong> (Financial Institution Credit Transfer, for bank-to-bank/treasury payments) or <strong>pacs.008</strong> (FI to FI Customer Credit Transfer, for customer payments). The message is digitally signed and encrypted before transmission.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Message Submitted to RTGS System</h4><p>The formatted message is submitted to the RTGS infrastructure — for example, <strong>Fedwire Funds</strong> in the USA, <strong>T2</strong> in the Eurozone, or <strong>CHAPS</strong> in the UK. The message enters the RTGS system's processing queue.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>RTGS Checks Sender's Settlement Account Balance</h4><p>The RTGS system checks the sending bank's settlement account (e.g., the Fedwire Master Account or T2 RTGS account) in real time. If the balance is sufficient to cover the payment, processing continues immediately. If not, the payment is held in queue until funds arrive (via incoming payments or intraday credit).</p></div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>Simultaneous Debit and Credit — SETTLEMENT FINAL</h4><p>If funds are sufficient: the RTGS system <strong>simultaneously debits the sender's settlement account and credits the receiver's settlement account</strong>. This single atomic operation constitutes final, irrevocable settlement. The payment is now legally complete. The receiving bank can release funds to its customer immediately with full certainty — there is zero credit risk from this point forward.</p></div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>RTGS Sends Settlement Confirmation to Both Banks</h4><p>The RTGS system sends a settlement confirmation to both the sending bank and the receiving bank. This confirmation includes: settlement timestamp, amount settled, RTGS reference number, and the UETR (Unique End-to-end Transaction Reference) where applicable.</p></div></div>
+      <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>Receiving Bank Credits Beneficiary's Account</h4><p>Upon receiving the settlement confirmation, the beneficiary bank credits the beneficiary customer's account in its own ledger. The beneficiary can now access the funds. In practice, the receiving bank may have pre-credited the customer in anticipation of settlement if it has high confidence in the payment.</p></div></div>
+      <div class="flow-step"><div class="step-num">9</div><div class="step-body"><h4>Both Banks Receive Debit/Credit Notifications</h4><p>Both the sending and receiving banks receive <strong>camt.054</strong> (BankToCustomerDebitCreditNotification) messages confirming the debit or credit to their settlement accounts at the central bank. These are used for nostro account reconciliation and internal ledger updates.</p></div></div>
+    </div>
+    <div class="highlight-box green"><strong>Key Principle:</strong> Steps 5 and 6 are atomic — the RTGS system either settles the full amount simultaneously or does nothing. There is no partial settlement. This is the defining feature that eliminates credit risk between banks in RTGS.</div>
+
     <h3>Features of RTGS for Improving Processing Efficiency</h3>
     <p>Modern RTGS systems incorporate sophisticated features to reduce liquidity requirements while maintaining real-time finality:</p>
     <ul>
@@ -46,6 +61,36 @@
     </div>
     <h3>Models for Proxy Payment Processing and Translation</h3>
     <p>When a payer enters a proxy (VPA, mobile number, etc.), the payment system must translate it to actual bank account details. This happens via a <strong>Central Directory Service</strong> or <strong>Proxy Lookup Service</strong>: (1) Payer's bank queries the directory with the proxy; (2) Directory returns the mapped IBAN/account number and destination bank BIC; (3) Payment is routed to the correct bank; (4) The proxy-to-account mapping is never exposed to the payer, protecting beneficiary privacy.</p>
+
+    <h3>P2P vs P2M Proxy Distinction</h3>
+    <p>Proxy-based payments serve two fundamentally different use cases — Person to Person (P2P) and Person to Merchant (P2M) — which differ in technical structure, data requirements, and risk profile:</p>
+    <div class="two-col">
+      <div>
+        <h4>P2P — Person to Person</h4>
+        <ul>
+          <li>Both parties are individuals (consumers)</li>
+          <li>Typically small, informal amounts (splitting bills, family transfers)</li>
+          <li>No merchant infrastructure needed</li>
+          <li>Proxy is typically a VPA or mobile number entered manually by sender</li>
+          <li>QR code encodes <strong>only the VPA</strong> — amount is entered by payer</li>
+          <li>Higher return rate potential (wrong proxy, misdirected payments)</li>
+          <li>Less structured remittance data — often just a free-text note</li>
+        </ul>
+      </div>
+      <div>
+        <h4>P2M — Person to Merchant</h4>
+        <ul>
+          <li>Merchant has a registered VPA or static/dynamic QR code</li>
+          <li>QR code encodes <strong>amount + merchant ID + transaction reference</strong> — amount is pre-populated</li>
+          <li>May include GST integration (India) — tax invoice reference embedded in payment data</li>
+          <li>Receipt/invoice reference carried in remittance information field</li>
+          <li>Lower return rates — merchant infrastructure validates payment</li>
+          <li>More structured data: merchant category code, order ID, GST number</li>
+          <li>Merchant VPA typically ends in a standardised suffix (e.g., @paytm, @razorpay)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box purple"><strong>Technical Difference — QR Codes:</strong> A P2P QR code contains only the VPA (e.g., "john@hdfc") — the sender enters the amount. A P2M dynamic QR code contains the VPA + pre-set amount + merchant transaction reference + optional GST details, making the entire transaction structured and automatable. Static merchant QR codes contain the VPA and merchant ID without an amount (amount entered by customer). Dynamic QR codes are generated per transaction and include the exact amount.</div>
   </div>
 
   <div class="topic-section fade-in">
@@ -72,6 +117,118 @@
       <tr><td><strong>FedNow</strong></td><td>USA</td><td>2023</td><td>Seconds</td><td>$500,000</td><td>Gross via Fed Reserve</td><td>24/7/365</td></tr>
       <tr><td><strong>NPP (Osko)</strong></td><td>Australia</td><td>2018</td><td>~1 sec</td><td>Bank-defined</td><td>RTGS via RBA FSS</td><td>24/7/365</td></tr>
     </tbody></table></div>
+
+    <h3>IMPS — Immediate Payment Service (India)</h3>
+    <p><strong>IMPS</strong> (Immediate Payment Service), operated by <strong>NPCI (National Payments Corporation of India)</strong>, was launched in 2010 as India's first 24/7 real-time interbank payment system. It predates UPI and remains widely used for direct account-to-account transfers.</p>
+
+    <h4>IMPS Architecture</h4>
+    <p>NPCI acts as the central hub connecting all member banks. The architecture is a classic hub-and-spoke model:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>NPCI as Central Hub</h4><p>NPCI operates the central switch, maintains the MMID directory, routes transactions between member banks, and calculates net settlement positions every 30 minutes.</p></div>
+      <div class="info-card"><div class="ic-icon">📲</div><h4>MMID — Mobile Money Identifier</h4><p>A unique <strong>7-digit number</strong> issued by each bank to a customer, linked to both the customer's mobile number and specific bank account. A customer can have multiple MMIDs — one per bank account registered for IMPS.</p></div>
+      <div class="info-card"><div class="ic-icon">🔢</div><h4>IFSC Code</h4><p>The <strong>Indian Financial System Code</strong> (11 characters) identifies the specific bank branch. Used alongside the account number for direct account-to-account IMPS transfers (alternative to MMID-based transfers).</p></div>
+      <div class="info-card"><div class="ic-icon">⏱️</div><h4>Settlement Cycle</h4><p>NPCI calculates net multilateral positions across all member banks every <strong>30 minutes</strong>. RBI then settles the net positions via NEFT settlement cycles, typically 8 times per day.</p></div>
+    </div>
+
+    <h4>IMPS Transaction Flow</h4>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Sender Initiates Transfer</h4><p>The sender enters the recipient's mobile number + MMID (or account number + IFSC) and the payment amount in their bank's mobile/internet banking app.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>NPCI Directory Lookup</h4><p>The sender's bank sends a lookup request to NPCI's central directory. NPCI resolves the mobile number + MMID combination to identify the destination bank and account.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>NPCI Routes to Destination Bank</h4><p>NPCI routes the payment instruction to the destination bank in real time. The routing is based on the MMID-to-bank mapping held in NPCI's directory.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Destination Bank Credits Account</h4><p>The destination bank validates the MMID and account, then credits the beneficiary's account in real time. The beneficiary receives an SMS/notification immediately.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Confirmation Sent</h4><p>Both the sending and receiving banks receive confirmation from NPCI. The sender receives a transaction reference number. Net positions are accumulated and settled in the next NPCI settlement cycle (every 30 minutes).</p></div></div>
+    </div>
+
+    <h4>IMPS Key Parameters</h4>
+    <div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Details</th></tr></thead><tbody>
+      <tr><td><strong>Transaction Limit</strong></td><td>Up to ₹5 lakh (₹500,000) per transaction</td></tr>
+      <tr><td><strong>Availability</strong></td><td>24/7/365 — including holidays and weekends</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Funds credited within seconds</td></tr>
+      <tr><td><strong>Charges</strong></td><td>Typically ₹2.50–₹15 depending on amount slab (bank-defined); NPCI charges member banks a small interchange fee</td></tr>
+      <tr><td><strong>Modes</strong></td><td>Mobile banking, internet banking, ATM (at some banks), SMS banking</td></tr>
+      <tr><td><strong>Settlement</strong></td><td>NPCI nets positions every 30 minutes; RBI settles via NEFT infrastructure</td></tr>
+      <tr><td><strong>Identifiers</strong></td><td>Mobile + MMID (push) or Account + IFSC (direct transfer)</td></tr>
+    </tbody></table></div>
+
+    <h4>IMPS vs UPI Comparison</h4>
+    <div class="table-wrap"><table><thead><tr><th>Feature</th><th>IMPS</th><th>UPI</th></tr></thead><tbody>
+      <tr><td><strong>Launched</strong></td><td>2010</td><td>2016</td></tr>
+      <tr><td><strong>Proxy</strong></td><td>Mobile + MMID or Account + IFSC</td><td>VPA (Virtual Payment Address) e.g., name@bank</td></tr>
+      <tr><td><strong>Limit</strong></td><td>₹5 lakh</td><td>₹1 lakh default (₹2 lakh for verified merchants; higher for specific categories)</td></tr>
+      <tr><td><strong>Authentication</strong></td><td>MPIN or OTP (bank-specific)</td><td>Device binding + UPI PIN (2-factor)</td></tr>
+      <tr><td><strong>Pull payments</strong></td><td>Not natively supported</td><td>Yes — collect/pull requests supported</td></tr>
+      <tr><td><strong>Charges</strong></td><td>₹2.50–₹15 per transaction</td><td>Free for P2P; MDR waived for P2M (as of 2020)</td></tr>
+      <tr><td><strong>Merchant payments</strong></td><td>Limited — primarily P2P</td><td>Extensively used for P2M via QR codes and VPA</td></tr>
+      <tr><td><strong>Interface</strong></td><td>Bank-specific apps</td><td>Third-party apps (PhonePe, Google Pay, Paytm) via NPCI APIs</td></tr>
+      <tr><td><strong>Volume (approx)</strong></td><td>~500M transactions/month</td><td>10B+ transactions/month</td></tr>
+      <tr><td><strong>Offline capability</strong></td><td>None</td><td>UPI Lite (on-device wallet, up to ₹500)</td></tr>
+    </tbody></table></div>
+
+    <h3>UK Faster Payments — Detailed Architecture</h3>
+    <p><strong>UK Faster Payments Service (FPS)</strong> was launched in 2008 and is one of the world's most mature instant payment systems, processing over 4 billion transactions per year. It operates as a 24/7/365 service with a transaction limit of <strong>£1 million</strong>.</p>
+
+    <h4>Governance and Infrastructure</h4>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📋</div><h4>Pay.UK — Scheme Manager</h4><p>Pay.UK owns and manages the Faster Payments scheme rules, participant obligations, and scheme development. It defines the standards, access criteria, and operating rules that all participants must follow.</p></div>
+      <div class="info-card"><div class="ic-icon">⚙️</div><h4>Vocalink — Infrastructure Operator</h4><p>Vocalink (now part of Mastercard) operates the central technical infrastructure — the central hub that all PSPs connect to for routing and clearing. Vocalink also operates the Image Clearing System (cheque clearing) and BACS.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Bank of England — Settlement</h4><p>Settlement occurs across accounts at the Bank of England via CHAPS. Net positions are settled <strong>6 times per day</strong> (approximately every 4 hours). Directly connected PSPs must hold settlement accounts at the Bank of England.</p></div>
+      <div class="info-card"><div class="ic-icon">🔗</div><h4>Central Hub Architecture</h4><p>All PSPs connect to a single central infrastructure. This reduces connectivity requirements — each PSP connects to one hub, not bilaterally to every other PSP. The hub validates, routes, and confirms each payment in real time.</p></div>
+    </div>
+
+    <h4>Access Models — Direct, Agency, and Aggregated</h4>
+    <div class="table-wrap"><table><thead><tr><th>Access Model</th><th>Description</th><th>Who Uses It</th><th>Settlement Account</th></tr></thead><tbody>
+      <tr><td><strong>Direct Access</strong></td><td>PSP connects directly to the central infrastructure and holds its own settlement account at the Bank of England. Full control, full responsibility.</td><td>Large banks (Barclays, HSBC, Lloyds, NatWest, Santander)</td><td>Own account at Bank of England</td></tr>
+      <tr><td><strong>Agency / Indirect Access</strong></td><td>Smaller bank accesses Faster Payments via a directly connected PSP (sponsor bank). The sponsor bank acts as their settlement agent. Payment flows through the sponsor.</td><td>Smaller banks, building societies, credit unions</td><td>Settles through sponsor bank's BoE account</td></tr>
+      <tr><td><strong>Aggregated / Sponsored Access</strong></td><td>Fintech/e-money institution model. The fintech connects via a sponsor bank's infrastructure. The sponsor aggregates multiple fintechs' payment flows. Popular for challenger banks (Monzo, Revolut in early days).</td><td>Fintechs, e-money institutions, payment service providers</td><td>Settles through sponsor bank's BoE account</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box"><strong>Indirect Access Risk:</strong> In the agency and aggregated models, the smaller PSP is dependent on its sponsor bank for access. If the sponsor bank withdraws access, the smaller PSP loses the ability to send/receive Faster Payments. The New Payments Architecture (NPA) — Pay.UK's long-term infrastructure replacement — aims to broaden direct access options.</div>
+
+    <h4>Faster Payments Key Statistics</h4>
+    <div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Details</th></tr></thead><tbody>
+      <tr><td><strong>Volume</strong></td><td>4 billion+ transactions per year (approx. 11M+ per day)</td></tr>
+      <tr><td><strong>Limit</strong></td><td>£1 million per transaction (scheme limit; individual banks may set lower)</td></tr>
+      <tr><td><strong>Speed</strong></td><td>~15 seconds from submission to credit; often under 5 seconds</td></tr>
+      <tr><td><strong>Settlement</strong></td><td>Net settlement via CHAPS at Bank of England, 6 cycles per day (~every 4 hours)</td></tr>
+      <tr><td><strong>Availability</strong></td><td>24/7/365</td></tr>
+      <tr><td><strong>Charges</strong></td><td>Free for consumers at most banks; small fee for business banking users</td></tr>
+      <tr><td><strong>Use cases</strong></td><td>P2P transfers, salary/wages, e-commerce, bill payments, property conveyancing (smaller transactions)</td></tr>
+    </tbody></table></div>
+
+    <h3>UPI — Unified Payments Interface (India)</h3>
+    <p><strong>UPI</strong> (Unified Payments Interface), launched by NPCI in 2016, is India's flagship instant payment system and the world's largest real-time payment system by transaction volume. UPI processes over <strong>10 billion transactions per month</strong> and has transformed the payments landscape in India.</p>
+
+    <h4>UPI Architecture</h4>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>NPCI as Switch</h4><p>NPCI operates the central UPI switch, which routes payment instructions between banks, resolves VPAs, and maintains the central directory of all registered VPAs and linked accounts. NPCI also manages the UPI ecosystem rules and APIs.</p></div>
+      <div class="info-card"><div class="ic-icon">📧</div><h4>VPA — Virtual Payment Address</h4><p>A <strong>Virtual Payment Address</strong> (e.g., rahul@hdfc, 9876543210@okaxis) acts as a proxy for the underlying bank account. The VPA is registered with a bank and mapped to an account. Payers only need the VPA — account number and IFSC are never exposed.</p></div>
+      <div class="info-card"><div class="ic-icon">🔐</div><h4>Two-Factor Authentication</h4><p>UPI uses two factors: (1) <strong>Device binding</strong> — the UPI app is registered to a specific mobile device; an OTP is sent to the registered mobile number during setup; (2) <strong>UPI PIN</strong> — a 4 or 6-digit PIN set by the user for each transaction. Both factors must be present for a payment to succeed.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>PSP Banks and Third-Party Apps</h4><p>Third-party apps like PhonePe, Google Pay, and Paytm are UPI apps built on top of PSP bank APIs. Each app is sponsored by a PSP bank. The PSP bank handles the banking layer; the app handles the user experience. NPCI certifies all UPI apps.</p></div>
+    </div>
+
+    <h4>UPI Payment Features</h4>
+
+    <div class="highlight-box gold"><strong>(a) Push Payments — Standard P2P:</strong> The most common use case. The payer initiates a payment by entering the recipient's VPA, amount, and UPI PIN. Funds are debited from the payer's account and credited to the recipient's account in seconds. Used for splitting bills, peer transfers, paying friends.</div>
+
+    <div class="highlight-box gold"><strong>(b) Collect / Pull Requests:</strong> A payee (recipient) sends a collect request to a payer's VPA. The payer receives a notification and must explicitly approve the request by entering their UPI PIN. This is a "pull" model — money is pulled from the payer only with their active consent. Used for requesting payment from customers, splitting expenses where one person requests from others.</div>
+
+    <div class="highlight-box gold"><strong>(c) UPI Mandates / AutoPay — Recurring Payments:</strong> UPI AutoPay enables standing instructions for recurring payments. The user sets up a mandate specifying: amount (fixed or variable up to a limit), frequency (daily/weekly/monthly/annual), merchant, and validity period. Once set up, recurring debits are executed automatically on schedule — no UPI PIN required for amounts up to ₹15,000 per mandate execution (above ₹15,000 requires one-time PIN approval). Use cases include SIP (Systematic Investment Plan) investments, OTT subscriptions (Netflix, Hotstar), utility bills, EMI repayments, and insurance premiums. Mandates are reversible — the user can pause or cancel at any time from their UPI app.</div>
+
+    <div class="highlight-box gold"><strong>(d) UPI Lite — Offline Payments:</strong> Launched in 2022, UPI Lite is an on-device wallet feature that enables payments of up to <strong>₹500 per transaction</strong> without an internet connection and <strong>without requiring a UPI PIN</strong>. The user loads funds (up to ₹2,000) into the on-device wallet from their linked bank account. Small payments are processed locally on the device. This dramatically reduces transaction time and eliminates server round-trips for small-value payments. UPI Lite works even in low/no connectivity scenarios — ideal for transit payments, small retail purchases, and areas with poor network coverage.</div>
+
+    <div class="highlight-box gold"><strong>(e) UPI 123PAY — Feature Phone Payments:</strong> Launched in 2022 to include the 400+ million feature phone users in India who cannot use smartphone apps. UPI 123PAY works via: <strong>IVR (Interactive Voice Response)</strong> — caller dials a number and navigates prompts to make a payment; <strong>Missed call based</strong> — missed call to a merchant number triggers a callback to confirm payment; <strong>Sound-based proximity payments</strong> — uses sound waves to initiate payment at point of sale; <strong>OEM-enabled apps</strong> — pre-installed apps on certain feature phone models. All modes use UPI's underlying infrastructure but without requiring internet data connectivity.</div>
+
+    <h4>UPI Transaction Flow — End to End</h4>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Payer Enters Recipient VPA</h4><p>The payer opens their UPI app (e.g., PhonePe) and enters the recipient's VPA (e.g., merchant@paytm) and payment amount.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>VPA Validation Request to NPCI</h4><p>The payer's app sends a VPA validation request to NPCI's switch. NPCI looks up the VPA in its central directory and returns the mapped bank name and account holder name for the payer to confirm.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Payer Confirms and Enters UPI PIN</h4><p>The payer confirms the recipient name (anti-fraud check) and enters their UPI PIN. The PIN is encrypted on the device and never transmitted in plain text.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Payer's PSP Bank Validates and Submits to NPCI</h4><p>The payer's PSP bank authenticates the device binding and validates the encrypted UPI PIN against the registered PIN (stored at the bank). The bank then submits the payment instruction to NPCI's UPI switch.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>NPCI Routes to Beneficiary Bank</h4><p>NPCI's switch routes the payment instruction to the beneficiary's bank (identified from the VPA directory lookup). NPCI acts as the central switch — neither bank communicates directly with the other.</p></div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>Beneficiary Bank Credits Account</h4><p>The beneficiary bank validates the request and credits the beneficiary's bank account mapped to their VPA. The credit is immediate and real-time.</p></div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>Confirmation Returned to NPCI</h4><p>The beneficiary bank sends a success confirmation back through NPCI. NPCI updates the transaction status and records the net interbank obligation.</p></div></div>
+      <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>Both Parties Notified; Interbank Settlement Queued</h4><p>Both payer and beneficiary receive real-time notifications (SMS and in-app). NPCI accumulates net positions between banks. The Reserve Bank of India settles net positions periodically (aligned to NEFT settlement cycles). Transaction reference (UPI Ref) is provided for records.</p></div></div>
+    </div>
+    <div class="highlight-box green"><strong>NPCI's Technical Role:</strong> NPCI operates as both the <strong>switch</strong> (routing all payments) and the <strong>directory</strong> (resolving VPAs to accounts). Without NPCI's central directory, no bank could independently resolve another bank's VPA. This is the critical infrastructure that makes UPI's interoperability possible — any UPI app can pay any VPA regardless of which bank the recipient uses.</div>
   </div>
 
   <div class="topic-section fade-in">

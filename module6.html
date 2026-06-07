@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="styles.css"/></head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">06</div><div class="module-tag">Module 6</div><h1>Single Euro Payment Area Services and T2</h1><p>Introduction to SEPA, T2/T2S Consolidated Platform, Main Cash Accounts, TARGET consolidation, ESMIG, CLM, T2 ISO 20022 message formats, and liquidity transfers.</p><div class="module-tags"><span>SEPA</span><span>T2</span><span>T2S</span><span>TIPS</span><span>TARGET</span><span>CLM</span><span>ESMIG</span><span>ISO 20022</span></div></div></div>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">06</div><div class="module-tag">Module 6</div><h1>Single Euro Payment Area Services and T2</h1><p>Introduction to SEPA, T2/T2S Consolidated Platform, Main Cash Accounts, TARGET consolidation, ESMIG, CLM, T2 ISO 20022 message formats, liquidity transfers, T2 payment flow, ancillary system settlement, and SEPA Request to Pay.</p><div class="module-tags"><span>SEPA</span><span>T2</span><span>T2S</span><span>TIPS</span><span>TARGET</span><span>CLM</span><span>ESMIG</span><span>ISO 20022</span></div></div></div>
 <section class="section"><div class="container">
 
   <div class="topic-section fade-in">
@@ -50,14 +50,98 @@
       <tr><td><strong>Technical Accounts</strong></td><td>TA</td><td>Used by ancillary systems (retail payment systems, cheque clearing, card networks) that settle their net positions in T2. Not held by individual banks.</td><td>T2 (RTGS component)</td></tr>
     </tbody></table></div>
     <div class="highlight-box"><strong>Liquidity flow:</strong> Banks hold their primary liquidity in MCAs. They can automatically sweep funds to/from TIPS-DCAs and T2S-DCAs as needed. CLM manages this auto-collateralisation and sweeping.</div>
+
+    <h3>TIPS-DCA Operational Rules</h3>
+    <p>The TIPS Dedicated Cash Account holds the pre-funded liquidity a bank makes available for instant payment settlement. Unlike some systems, TIPS itself does not set a system-level minimum balance — each participant bank defines its own <strong>floor and ceiling rules</strong> for automatic sweeping between its MCA and TIPS-DCA.</p>
+    <ul>
+      <li><strong>Floor rule:</strong> If the TIPS-DCA balance falls below the bank-defined floor, an automatic sweep is triggered from the bank's MCA to replenish the TIPS-DCA.</li>
+      <li><strong>Ceiling rule:</strong> If the TIPS-DCA balance exceeds the bank-defined ceiling (e.g., after receiving many instant payments), excess funds are automatically swept back to the MCA.</li>
+      <li><strong>Insufficient funds:</strong> If an SCT Inst payment arrives and the TIPS-DCA has insufficient funds at the moment of settlement, the payment is <strong>rejected</strong> within the 10-second window. TIPS does not queue instant payments — rejection is immediate. The sending bank will receive a pacs.002 with reason code CUST (customer refused) or a specific liquidity-related code.</li>
+    </ul>
+    <div class="highlight-box gold"><strong>Key point:</strong> Banks operating SCT Inst via TIPS must actively manage their TIPS-DCA balance, especially overnight and at weekends, to avoid liquidity gaps that cause rejections.</div>
+
+    <h3>T2S-DCA Operational Rules and Auto-Collateralisation</h3>
+    <p>The T2S Dedicated Cash Account funds the cash leg of securities transactions on T2S (Delivery versus Payment). Securities settlement can fail if the T2S-DCA has insufficient funds. To prevent settlement failures, T2S operates an <strong>auto-collateralisation</strong> mechanism:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Settlement Attempt — Insufficient Cash</h4><p>A securities transaction is due for settlement on T2S. The buyer's T2S-DCA does not have sufficient euro balance to fund the cash leg of the trade.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>T2S Identifies Eligible Collateral</h4><p>T2S automatically scans the buyer's securities holdings in T2S for assets that are eligible for use as NCB collateral (defined on the eligible assets list published by the ECB/Eurosystem).</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Intraday Repo — Securities Pledged to NCB</h4><p>T2S pledges the eligible securities to the relevant National Central Bank (NCB). The NCB credits the buyer's T2S-DCA with the required cash amount (intraday repo). This is an intraday credit facility — it is automatically unwound at end of day.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Settlement Proceeds</h4><p>With the T2S-DCA now funded, the securities settlement (DvP) proceeds: securities delivered to buyer's account, cash paid to seller's T2S-DCA.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>End-of-Day Unwind</h4><p>At end of the T2S business day, auto-collateralisation positions are unwound: the intraday repo is reversed, the pledged securities are returned to the bank's custody, and the T2S-DCA is debited for the amount borrowed. If the bank cannot repay, the position converts to overnight credit (subject to NCB rules).</p></div></div>
+    </div>
+    <div class="highlight-box"><strong>Auto-collateralisation vs intraday credit:</strong> Both provide intraday liquidity against collateral, but auto-collateralisation is T2S-specific and automated — it triggers without any bank action. Standard intraday credit in T2 (via MCA) requires the bank to have pre-pledged collateral with the NCB manually.</div>
   </div>
 
   <div class="topic-section fade-in">
     <h2><span class="t-num">6.4</span> TARGET Consolidation, ESMIG and CLM</h2>
     <h3>ESMIG — Eurosystem Single Market Infrastructure Gateway</h3>
-    <p><strong>ESMIG</strong> is the single access point for all Eurosystem market infrastructures (T2, T2S, TIPS, ECMS). Before consolidation, banks needed separate connectivity to TARGET2, T2S, and TIPS. With ESMIG, one connection provides access to all services. ESMIG handles authentication, message routing, and network access management. It supports both the SWIFT network and internet-based access (A2A — application-to-application).</p>
+    <p><strong>ESMIG</strong> is the single access point for all Eurosystem market infrastructures (T2, T2S, TIPS, ECMS — the Eurosystem Collateral Management System). Before consolidation, banks needed separate connectivity to TARGET2, T2S, and TIPS. With ESMIG, one connection provides access to all services.</p>
+
+    <h3>Network Service Providers (NSPs)</h3>
+    <p>Banks cannot connect directly to ESMIG — they must do so via one of the two officially approved <strong>Network Service Providers (NSPs)</strong>:</p>
+    <div class="two-col">
+      <div class="highlight-box"><strong>SWIFT</strong> — The established financial messaging network. Banks already using SWIFT for MT or ISO 20022 messages can leverage their existing SWIFT connectivity to reach ESMIG. Uses SWIFTNet Link and FIN/InterAct/FileAct protocols.</div>
+      <div class="highlight-box purple"><strong>SIA-COLT (now Nexi)</strong> — Italian payment technology company SIA merged with Nexi Group. Provides an IP-based network alternative to SWIFT for ESMIG connectivity, often preferred by Italian and some European banks for cost and latency reasons.</div>
+    </div>
+    <p>Each bank must contract with <strong>at least one NSP</strong>. Some larger banks contract with both for resilience. The NSPs are responsible for the physical network transport layer; ESMIG itself handles the logical routing, authentication, and message distribution to the correct TARGET service.</p>
+
+    <h3>A2A and U2A Access Modes</h3>
+    <div class="table-wrap"><table><thead><tr><th>Mode</th><th>Full Name</th><th>Description</th><th>Use Cases</th></tr></thead><tbody>
+      <tr><td><strong>A2A</strong></td><td>Application-to-Application</td><td>Automated system-to-system messaging with no human intervention. Bank's back-office payment system communicates directly with ESMIG/T2 via XML messages over the NSP network.</td><td>Payment processing (pacs.008/009), automated liquidity transfers, mass settlement file submission, account reporting</td></tr>
+      <tr><td><strong>U2A</strong></td><td>User-to-Application</td><td>Human operators at the bank access the T2 graphical user interface (GUI) via a web browser through the ESMIG portal. Requires individual PKI authentication per user.</td><td>Manual liquidity management, queue inspection and management, monitoring account balances, managing payment priorities, operational interventions, viewing account statements</td></tr>
+    </tbody></table></div>
+
+    <h3>ESMIG Authentication and Security</h3>
+    <ul>
+      <li><strong>PKI Certificates:</strong> All participants must use PKI (Public Key Infrastructure) digital certificates issued or approved by the Eurosystem. Each organisation and each U2A user must have a valid certificate.</li>
+      <li><strong>Digital Signatures:</strong> All messages sent through ESMIG must be digitally signed by the sending party. T2 validates the signature on every incoming message before processing.</li>
+      <li><strong>Four-eyes principle (U2A):</strong> Certain high-value or sensitive operations in the T2 GUI require approval by a second authorised user before execution.</li>
+      <li><strong>Message-level encryption:</strong> Messages are encrypted in transit across the NSP network.</li>
+    </ul>
+
+    <h3>ESMIG Routing Logic</h3>
+    <p>ESMIG acts as an intelligent router. It inspects each incoming message and routes it to the correct TARGET service based on the message type and content:</p>
+    <div class="table-wrap"><table><thead><tr><th>Message Type</th><th>Routed To</th></tr></thead><tbody>
+      <tr><td>pacs.008, pacs.009, camt.050 (liquidity)</td><td>T2 (RTGS component)</td></tr>
+      <tr><td>SCT Inst pacs.008 (TIPS participant)</td><td>TIPS</td></tr>
+      <tr><td>Securities settlement instructions (sese.023 etc.)</td><td>T2S</td></tr>
+      <tr><td>Collateral management instructions</td><td>ECMS</td></tr>
+      <tr><td>CLM messages (camt.003, admi.004 etc.)</td><td>CLM within T2</td></tr>
+    </tbody></table></div>
+
     <h3>CLM — Central Liquidity Management</h3>
-    <p><strong>CLM (Central Liquidity Management)</strong> is a new component introduced with the T2 consolidation. It is the central hub for managing liquidity across all Eurosystem services. CLM functions include: managing minimum reserve requirements and reserve maintenance periods, processing liquidity credit transfers between MCAs and DCAs, processing intraday credit (against pledged collateral), automated liquidity transfers (auto-collateralisation in T2S), and providing liquidity monitoring and alerts to participants.</p>
+    <p><strong>CLM (Central Liquidity Management)</strong> is a core component introduced with the T2 consolidation. It is the central hub for managing liquidity across all Eurosystem services. CLM functions include: managing minimum reserve requirements and reserve maintenance periods, processing liquidity credit transfers between MCAs and DCAs, processing intraday credit (against pledged collateral), automated liquidity transfers (auto-collateralisation in T2S), and providing liquidity monitoring and alerts to participants.</p>
+
+    <h3>CLM Business Day Schedule</h3>
+    <p>CLM operates on a schedule that deliberately brackets the T2 RTGS business day. CLM <strong>opens before T2</strong> (to allow banks to configure liquidity reservations and standing order sweeps before payments begin) and <strong>closes after T2</strong> (to allow end-of-day standing facilities access and MCA reconciliation after the last payment cycle).</p>
+    <div class="highlight-box"><strong>Practical significance:</strong> A bank's treasury team working on overnight funding and liquidity positioning must understand the CLM schedule — actions such as pledging collateral for intraday credit or setting sweep rules must be completed within the CLM window, not just the T2 window.</div>
+
+    <h3>Minimum Reserve Requirements</h3>
+    <p>The ECB requires all credit institutions (banks) established in the euro area to hold a minimum level of reserves at their National Central Bank. These reserves are held in the bank's <strong>MCA</strong> in CLM.</p>
+    <div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Rule</th></tr></thead><tbody>
+      <tr><td><strong>Reserve Ratio</strong></td><td>1% of the institution's eligible liabilities (primarily short-term deposits, money market paper, and similar instruments with maturity up to 2 years)</td></tr>
+      <tr><td><strong>Maintenance Period</strong></td><td>Approximately 6 weeks (changed from 4 weeks in 2023). The ECB Governing Council sets the start and end dates of each maintenance period.</td></tr>
+      <tr><td><strong>Compliance Basis</strong></td><td>Average daily MCA balance over the entire maintenance period must equal or exceed the required reserve amount. A bank does NOT need to hold the full reserve every single day — it can be below on some days if it is above on others, as long as the period average is met.</td></tr>
+      <tr><td><strong>Remuneration</strong></td><td>Required reserves are remunerated at the ECB's minimum bid rate (MRO rate). Excess reserves above the required amount are remunerated at the Deposit Facility rate (which can be negative, zero, or positive).</td></tr>
+    </tbody></table></div>
+    <p>CLM monitors each bank's reserve compliance on a <strong>daily basis</strong>. If the system projects that a bank will not meet its required reserve by end of the maintenance period (based on current balance and days remaining), CLM generates automated alerts to the bank and its NCB. This gives banks time to top up their MCA before the end of the period, avoiding penalties.</p>
+
+    <h3>Standing Facilities</h3>
+    <p>CLM provides access to two ECB standing facilities, which are safety valves at the extremes of a bank's liquidity position:</p>
+    <div class="two-col">
+      <div class="highlight-box"><strong>Marginal Lending Facility (MLF)</strong> — If a bank's MCA has a negative balance at the end of the T2 business day (i.e., it has spent more than it had), CLM automatically accesses the Marginal Lending Facility. The NCB lends the shortfall overnight. The interest rate is the ECB policy rate plus 25 basis points — this is a penalty rate designed to discourage reliance on emergency overnight borrowing. The bank must repay the next morning when T2 opens.</div>
+      <div class="highlight-box purple"><strong>Deposit Facility (DF)</strong> — If a bank has excess reserves in its MCA at end of day that it does not wish to leave as unremunerated (or penalised) excess reserves, it can place the excess into the Deposit Facility overnight. The interest rate is the ECB Deposit Facility rate. In recent years this has been the primary monetary policy rate of the Eurosystem (0% to 4% range depending on policy cycle).</div>
+    </div>
+    <div class="highlight-box gold"><strong>Note:</strong> Access to standing facilities is automatic (MLF) or optional (DF). Banks do not need to send a special instruction to access the MLF — CLM processes it automatically at end-of-day if the MCA is negative.</div>
+
+    <h3>CLM ISO 20022 Messages</h3>
+    <div class="table-wrap"><table><thead><tr><th>Message</th><th>Name</th><th>Purpose</th></tr></thead><tbody>
+      <tr><td><strong>camt.003</strong></td><td>Get Account</td><td>Bank queries CLM for account information (balance, reserve requirement status)</td></tr>
+      <tr><td><strong>camt.004</strong></td><td>Return Account</td><td>CLM responds to camt.003 with account details</td></tr>
+      <tr><td><strong>camt.005</strong></td><td>Get Transaction</td><td>Bank queries for transaction details or status within CLM</td></tr>
+      <tr><td><strong>camt.019</strong></td><td>Return Reservation</td><td>Returns details of liquidity reservations currently in place</td></tr>
+      <tr><td><strong>admi.004</strong></td><td>System Event Notification</td><td>CLM notifies participants of system events — business day opening/closing, settlement cycle start, maintenance windows, emergency events</td></tr>
+    </tbody></table></div>
   </div>
 
   <div class="topic-section fade-in">
@@ -92,6 +176,17 @@
       <li><strong>Liquidity Reservation:</strong> Participants can reserve liquidity for specific payment types (e.g., cash withdrawals)</li>
       <li><strong>Intraday Credit:</strong> Provided by NCBs against eligible collateral, interest-free if repaid same day</li>
     </ul>
+
+    <h3>Ancillary System Settlement in T2 — How STEP2 Settles in Central Bank Money</h3>
+    <p>Retail payment systems like <strong>STEP2</strong>, national ACH systems, and cheque clearing houses do not hold MCAs themselves. Instead, they settle their net multilateral positions through T2's <strong>Ancillary System Interface</strong> using Technical Accounts. This is how retail payments ultimately achieve interbank settlement in central bank money:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>ACH Calculates Net Positions</h4><p>STEP2 (or another ACH) runs its clearing cycle. At the end of the cycle, it calculates the <strong>multilateral net position</strong> of each participant bank. Some banks owe net (net debit position); others are owed net (net credit position). The net sum across all participants always equals zero.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>STEP2 Submits Settlement File to T2</h4><p>STEP2 submits a settlement instruction file to T2 via the Ancillary System Interface. For banks with net debit positions, STEP2 sends <strong>pacs.010</strong> (Financial Institution Direct Debit) instructions. For banks with net credit positions, corresponding credit messages are sent. The messages reference the Technical Account held by STEP2's operator in T2.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>T2 Processes via Technical Accounts</h4><p>T2 processes the settlement instructions via the <strong>Technical Accounts</strong> held by the ancillary system operator (EBA CLEARING in the case of STEP2). The Technical Account acts as the central counterparty for the settlement cycle — all debits and credits flow through it.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>T2 Settles Net Positions Against MCAs</h4><p>T2 debits the MCAs of banks with net debit positions and credits the MCAs of banks with net credit positions. Settlement is gross at the MCA level but represents the net position from the clearing cycle. Settlement is in <strong>central bank money</strong> — final and irrevocable.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Settlement Confirmation Returned to ACH</h4><p>T2 sends a settlement confirmation back to STEP2 (via pacs.002 or system acknowledgement). STEP2 marks the cycle as settled and delivers the individual transaction details (the underlying payments) to each receiving PSP. The individual payments are now backed by settled central bank money.</p></div></div>
+    </div>
+    <div class="highlight-box gold"><strong>Why this matters:</strong> Retail payments (SCT, SDD) are cleared by ACH systems like STEP2 but they achieve <em>finality</em> only when the net positions settle in T2 in central bank money. Until MCA settlement occurs, the ACH settlement is a commercial money obligation of the ACH operator. T2 settlement eliminates settlement risk.</div>
   </div>
 
   <div class="topic-section fade-in">
@@ -102,6 +197,97 @@
       <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>MCA → T2S-DCA</h4><p>Bank moves funds to T2S-DCA for securities settlement. Auto-collateralisation allows T2S to automatically transfer securities as collateral and credit the DCA for urgent settlement needs.</p></div></div>
       <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>End-of-Day Sweeping</h4><p>At end of day, all TIPS-DCA and T2S-DCA balances can be automatically swept back to the MCA. This consolidates liquidity and ensures minimum reserve requirements are met at the MCA level.</p></div></div>
     </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.8</span> T2 Payment Transaction Flow — pacs.008 Lifecycle</h2>
+    <p>Understanding the step-by-step lifecycle of a <strong>pacs.008 customer credit transfer</strong> through T2 is essential for understanding how large-value euro payments achieve finality in central bank money. The flow below traces a payment from the originating bank through ESMIG, T2 validation, settlement, and notification.</p>
+
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Ordering Bank Prepares pacs.008 with head.001 BAH Wrapper</h4><p>The ordering (sending) bank's back-office payment system constructs the ISO 20022 <strong>pacs.008 FI to FI Customer Credit Transfer</strong> message. This contains all payment details: originator information, beneficiary IBAN/BIC, amount, value date, purpose, and remittance information. The pacs.008 is wrapped in a <strong>head.001 Business Application Header (BAH)</strong> which identifies the sending and receiving parties at the application level, the message type, and a unique message ID. The head.001 is mandatory for all T2 messages.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Submitted to T2 via ESMIG</h4><p>The signed and encrypted message is submitted to ESMIG via the bank's contracted NSP (SWIFT or Nexi/SIA-COLT). ESMIG authenticates the sender using the bank's PKI certificate and validates the digital signature on the message. ESMIG routes the message to T2 (RTGS component) based on the message type (pacs.008 for customer credit transfers).</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>T2 Validates the Message</h4><p>T2 performs a multi-stage validation of the incoming pacs.008:</p>
+        <ul>
+          <li><strong>Format validation:</strong> ISO 20022 XML schema compliance, mandatory field presence, field length and code checks.</li>
+          <li><strong>BIC/IBAN validation:</strong> The receiving bank BIC must be a valid T2 participant BIC. The beneficiary IBAN is checked for correct country code and check digits.</li>
+          <li><strong>Duplicate check:</strong> T2 checks the message ID and end-to-end ID against a duplicate detection window (typically same-day). Duplicate messages are rejected with reason code AM05.</li>
+          <li><strong>Sanctions pass-through:</strong> T2 passes the payment details to the Eurosystem's sanctions screening interface. If a sanctions hit is detected, the payment is held for manual review or rejected. T2 does not perform sanctions screening itself — it interfaces with the designated screening function.</li>
+        </ul>
+      </div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>T2 Checks Sender's MCA Balance</h4><p>After successful validation, T2 checks the <strong>available balance</strong> in the ordering bank's Main Cash Account (MCA). The available balance takes into account the current MCA balance minus any reserved liquidity amounts. If the balance is sufficient to cover the payment amount, processing continues immediately. If the balance is insufficient, the payment is placed in the <strong>payment queue</strong> and will be processed when sufficient funds become available (either through incoming payments or liquidity transfers). Priority and FIFO rules apply in the queue.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Settlement — MCA Debited and Credited (FINAL)</h4><p>If the MCA balance is sufficient, T2 simultaneously and atomically:</p>
+        <ul>
+          <li>Debits the <strong>MCA of the sending bank</strong> for the full payment amount.</li>
+          <li>Credits the <strong>MCA of the receiving bank</strong> for the same amount.</li>
+        </ul>
+        <p>This is <strong>gross settlement in central bank money</strong>. The settlement is <strong>final and irrevocable</strong> — once the MCA entries are made, the payment cannot be reversed by T2. This is the moment of settlement finality under the Settlement Finality Directive.</p>
+      </div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>T2 Sends pacs.002 Payment Status Report</h4><p>T2 generates and sends a <strong>pacs.002 Payment Status Report</strong> back to the originating bank via ESMIG:</p>
+        <ul>
+          <li><strong>ACSP (Accepted Settlement in Process)</strong> — payment has been queued for settlement.</li>
+          <li><strong>ACSC (Accepted Settlement Completed)</strong> — payment has settled successfully in T2.</li>
+          <li><strong>RJCT (Rejected)</strong> — payment failed validation or sanctions screening. A reason code is included (e.g., AM05 for duplicate, RC01 for invalid BIC).</li>
+        </ul>
+      </div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>camt.054 Notifications to Both Banks</h4><p>T2 sends <strong>camt.054 Debit/Credit Notifications</strong> to both parties:</p>
+        <ul>
+          <li><strong>Sending bank</strong> receives a camt.054 <em>debit</em> notification confirming that its MCA has been debited.</li>
+          <li><strong>Receiving bank</strong> receives a camt.054 <em>credit</em> notification confirming that its MCA has been credited.</li>
+        </ul>
+        <p>These notifications allow banks' back-office reconciliation systems to automatically match and confirm settled payments against their internal records.</p>
+      </div></div>
+      <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>Receiving Bank Credits Beneficiary</h4><p>Upon receipt of the camt.054 credit notification (or upon the settlement confirmation in the pacs.002), the receiving bank credits the beneficiary customer's account in its core banking system. The bank has now received final, irrevocable central bank money and can make the funds available to the customer. For same-day value payments, the credit is applied with the same value date as the T2 settlement.</p></div></div>
+    </div>
+
+    <h3>T2 Same-Day Cut-Off Times</h3>
+    <p>T2 operates defined cut-off times that govern when same-day value payments can be processed. These are critical for treasury and operations teams:</p>
+    <div class="table-wrap"><table><thead><tr><th>Cut-Off / Event</th><th>Approximate Time (CET)</th><th>Description</th></tr></thead><tbody>
+      <tr><td><strong>Customer Payment Cut-Off</strong></td><td>17:00 CET</td><td>Last time for same-day value customer credit transfers (pacs.008). Payments submitted after this receive next business day value.</td></tr>
+      <tr><td><strong>Interbank Payment Cut-Off</strong></td><td>18:00 CET</td><td>Last time for same-day value interbank (FI-to-FI) payments (pacs.009). This later cut-off allows banks time to manage end-of-day positions after customer payments are closed.</td></tr>
+      <tr><td><strong>Ancillary System Settlement Cut-Off</strong></td><td>18:45 CET (approx.)</td><td>Final ancillary system settlement cycles (e.g., STEP2 net settlement) are processed. Times vary by ancillary system cycle schedule.</td></tr>
+      <tr><td><strong>End-of-Day Processing</strong></td><td>19:00 CET (approx.)</td><td>End-of-day routines: standing facilities access, DCA sweeps back to MCA, reserve compliance calculations, end-of-day statements (camt.053) generated.</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box gold"><strong>Important:</strong> Times shown are indicative; the exact T2 schedule is published in the ECB's T2 User Detailed Functional Specifications (UDFS). T2 is open Monday to Friday; it is closed on TARGET closing days (typically New Year's Day, Good Friday, Easter Monday, 1 May, 25 and 26 December).</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.9</span> SEPA Request to Pay (SRtp)</h2>
+    <p><strong>SEPA Request to Pay (SRtp)</strong> is an EPC-governed digital messaging scheme launched in <strong>June 2021</strong>. It is critically important to understand what SRtp is — and what it is not: <strong>SRtp is not a payment itself</strong>. It is a standardised digital request sent by a payee (creditor) to a payer (debtor) asking the payer to approve and initiate a payment. SRtp is a <em>trigger</em> or <em>request layer</em> that sits above the actual payment instrument.</p>
+
+    <h3>How SRtp Works — End-to-End Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Creditor Sends srtp.001 Request</h4><p>The creditor (merchant, biller, or individual) initiates a Request to Pay by sending an <strong>srtp.001</strong> message to their PSP (creditor PSP). The message contains: amount, currency, payee details, payment due date, reason for payment, and the creditor's preferred payment method. The creditor PSP forwards the request to the debtor's PSP.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Debtor's Bank Presents Request to Customer</h4><p>The debtor's PSP receives the srtp.001 request and presents it to the customer (debtor) through their banking interface — typically a mobile banking app, online banking portal, or via push notification. The request displays all payment details: who is requesting payment, how much, for what, and by when.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Customer Approves or Declines</h4><p>The customer reviews the payment request and makes a decision:</p>
+        <ul>
+          <li><strong>Approve:</strong> Customer confirms payment using their bank's authentication (strong customer authentication / PSD2 SCA). The decision is logged with a timestamp.</li>
+          <li><strong>Decline:</strong> Customer declines the request. The debtor PSP sends an <strong>srtp.002</strong> negative response back to the creditor PSP. The creditor is informed the request was declined.</li>
+          <li><strong>Partial payment:</strong> SRtp supports partial payment approval — the customer can accept to pay a different amount (subject to creditor acceptance).</li>
+        </ul>
+      </div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>If Approved — SCT or SCT Inst Payment Initiated</h4><p>On customer approval, the <strong>debtor's PSP initiates the actual payment</strong>. This is a standard SEPA payment instruction, separate from the SRtp message itself:</p>
+        <ul>
+          <li>If near-immediate settlement is desired: an <strong>SCT Inst</strong> (instant credit transfer) is initiated — funds arrive within 10 seconds.</li>
+          <li>If same-day or next-day settlement is acceptable: a standard <strong>SCT</strong> is initiated.</li>
+        </ul>
+        <p>The payment references the SRtp request ID to link the two messages in reconciliation.</p>
+      </div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Creditor Notified of Payment</h4><p>Once the SCT or SCT Inst payment settles, the creditor PSP receives settlement confirmation and notifies the creditor. The creditor can now reconcile the received payment against the original SRtp request using the linked reference. Automated reconciliation is a major benefit for businesses managing high volumes of invoice payments.</p></div></div>
+    </div>
+
+    <h3>SRtp Use Cases</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🛒</div><h4>E-Commerce Checkout</h4><p>Merchant sends a Request to Pay at checkout instead of redirecting the customer to a card payment page. Customer approves in their banking app. Replaces card payment with a direct bank-to-bank SCT Inst. Merchant benefits: no card interchange fees, instant funds, no chargebacks.</p></div>
+      <div class="info-card"><div class="ic-icon">📄</div><h4>Invoice Payment</h4><p>Business sends a digital invoice with embedded SRtp. Recipient's bank automatically presents the invoice for approval. One-click payment replaces manual bank transfer entry. Eliminates payment errors (wrong amount, wrong reference). Ideal for B2B and B2C billing.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>Subscription Initiation</h4><p>Subscription businesses can use SRtp to initiate regular payments — the customer must actively approve each request (unlike Direct Debit where the creditor pulls automatically). More transparent and consumer-friendly; customer retains full control.</p></div>
+    </div>
+
+    <h3>SRtp vs SEPA Direct Debit — Key Difference</h3>
+    <div class="two-col">
+      <div class="highlight-box"><strong>SEPA Direct Debit (SDD)</strong> — PULL payment. Creditor initiates the debit. Once a mandate is signed, the creditor can collect funds without further action by the debtor. Debtor must actively take action to block or return a payment. Default is: payment happens unless debtor stops it.</div>
+      <div class="highlight-box purple"><strong>SEPA Request to Pay (SRtp)</strong> — PUSH payment triggered by a request. Creditor sends a request; debtor must actively APPROVE for the payment to happen. Default is: payment does NOT happen unless debtor explicitly approves. This reversal of default is the fundamental distinction — SRtp puts the payer in control.</div>
+    </div>
+    <div class="highlight-box gold"><strong>EPC governance:</strong> The SRtp scheme is defined in the EPC's SEPA Request-to-Pay Scheme Rulebook, which specifies the srtp.001 (request) and srtp.002 (response) message formats based on ISO 20022. Version 2.0 of the rulebook introduced support for partial payments and extended the scheme to non-bank PSPs. The scheme is voluntary — PSPs are not mandated to offer SRtp.</div>
   </div>
 
   <div class="module-nav">

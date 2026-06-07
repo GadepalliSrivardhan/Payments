@@ -30,7 +30,7 @@
 <section class="section">
   <div class="container">
 
-    <!-- 1 -->
+    <!-- 1.1 -->
     <div class="topic-section fade-in">
       <h2><span class="t-num">1.1</span> Understanding Payment and Settlement</h2>
       <p>A <strong>payment</strong> is the transfer of value from one party to another in exchange for goods, services, or to fulfil a financial obligation. Payments can be made in cash, by cheque, electronically, or via card networks. In the modern banking world, the vast majority of payments are electronic.</p>
@@ -53,6 +53,24 @@
         <div class="info-card"><div class="ic-icon">📡</div><h4>SWIFT/Messaging</h4><p>Connects to SWIFT network for interbank messaging. Handles MT and MX message types for cross-border payments.</p></div>
         <div class="info-card"><div class="ic-icon">📊</div><h4>Reconciliation</h4><p>Matches internal records with external nostro statements. Breaks are investigated and resolved daily.</p></div>
       </div>
+
+      <h3>Internal Bank Payment Flow Pipeline</h3>
+      <p>Every outbound payment initiated by a bank customer travels through a multi-stage internal pipeline before it reaches the external clearing or settlement system. Understanding each stage is essential for payment operations professionals. Below is the end-to-end journey of a payment instruction from the moment a customer submits it to final settlement and reconciliation.</p>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Customer Instruction</h4><p>The customer initiates a payment via online banking, mobile app, branch counter, or API. The instruction contains beneficiary details (account number, bank code), amount, currency, value date, and payment reference. The front-end validates basic data quality — mandatory fields, IBAN checksum, BIC format — before accepting the instruction.</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Front-End Banking Application</h4><p>The instruction enters the bank's front-end banking platform (internet banking portal or mobile app backend). The system checks customer authentication, payment limits (single transaction cap, daily cap), account status (not frozen, not dormant), and available balance. A pre-authorisation hold may be placed on the customer's account to earmark the funds while the payment is in flight.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Payment Gateway / Orchestration Layer</h4><p>The payment instruction enters the bank's internal payment gateway or orchestration engine. This system determines: (a) which payment rail to use (RTGS, ACH, SWIFT, domestic instant); (b) the routing path (which correspondent bank, which clearing system); (c) the message format required (MT 103, pacs.008, etc.). The gateway is the central nervous system of payment processing — it coordinates all downstream checks and actions.</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Sanctions Screening (OFAC / UN / EU)</h4><p>The payment details — payer name, payee name, beneficiary bank, intermediary bank, country, and payment reference — are screened in real time against sanctions lists. The primary lists include: <strong>OFAC SDN list</strong> (US Treasury's Office of Foreign Assets Control — Specially Designated Nationals), <strong>UN Security Council Consolidated List</strong>, <strong>EU Consolidated List of Persons/Groups Subject to Financial Sanctions</strong>, and domestic lists (e.g., UK HM Treasury). A positive match generates an alert that freezes the payment and routes it to compliance for review. False positives are common and must be resolved quickly to avoid delays. Screening applies to all parties in the payment chain, not just the direct counterparties.</p></div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>AML Transaction Monitoring</h4><p>The payment is assessed by the <strong>Anti-Money Laundering (AML) transaction monitoring system</strong>. Rules and machine-learning models evaluate: transaction size relative to customer profile, unusual patterns (structuring below thresholds, rapid movement of funds, geographic risk), counterparty risk, and velocity (frequency of payments in a short period). Suspicious transactions generate Suspicious Activity Reports (SARs) or Suspicious Transaction Reports (STRs) filed with the relevant Financial Intelligence Unit (FinCEN in the US, NCA in the UK). High-risk transactions may be delayed for enhanced due diligence review.</p></div></div>
+        <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>Duplicate Detection</h4><p>The payment engine checks for duplicates against a rolling window of recently processed transactions (typically 24–72 hours). Duplicate detection uses a hash of key fields: amount, currency, beneficiary account, value date, and end-to-end reference. If a potential duplicate is detected, the payment is queued for manual review or automatically rejected with a notification to the customer. This protects against double-submission errors (human or system-generated) and replay attacks.</p></div></div>
+        <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>Liquidity Check</h4><p>The payment engine queries the bank's <strong>intraday liquidity management system</strong> to verify that the nostro account designated to fund the payment has sufficient available balance. For high-value payments routed via RTGS, this is a real-time check against the settlement account balance at the central bank. For lower-value batch payments, it may be a projected end-of-day liquidity check. If liquidity is insufficient, the payment is queued (in an LSM queue or batch queue) until funding arrives, or escalated to the treasury desk for intraday funding action (e.g., drawing on an intraday repo facility).</p></div></div>
+        <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>Format Transformation (MT / MX)</h4><p>The payment instruction is converted from the bank's internal format into the required external messaging standard. <strong>MT (Message Type) format</strong> is the legacy SWIFT FIN format — e.g., MT 103 for single customer credit transfer, MT 202 for bank-to-bank transfer. <strong>MX format</strong> is the modern ISO 20022 XML-based standard — e.g., pacs.008 for customer credit transfer, pacs.009 for financial institution credit transfer. The transformation engine enriches the message (adds BIC, LEI, charges codes, correspondent bank details) and validates the output against the schema. During the SWIFT migration period (2022–2025), banks must support both MT and MX formats simultaneously — requiring coexistence or in-flight translation.</p></div></div>
+        <div class="flow-step"><div class="step-num">9</div><div class="step-body"><h4>SWIFT Gateway</h4><p>The formatted payment message is sent to the bank's <strong>SWIFT interface processor</strong> (e.g., Alliance Gateway, Alliance Access, or a cloud-hosted SWIFT service bureau). The SWIFT gateway authenticates and encrypts the message, assigns sequence numbers, and submits it to the SWIFT network via the SWIFTNet FIN or InterAct service. The gateway also receives incoming messages and routes them to the appropriate internal processing system. SWIFT's Customer Security Programme (CSP) controls govern access to the SWIFT environment.</p></div></div>
+        <div class="flow-step"><div class="step-num">10</div><div class="step-body"><h4>External Clearing System</h4><p>The payment message arrives at the receiving bank or is routed through an intermediary clearing system. For domestic large-value payments this is the RTGS system (e.g., CHAPS, Fedwire, TARGET2). For cross-border payments it is the correspondent bank's processing system. The clearing system validates the message, queues it for settlement, and may perform further compliance checks. In a DNS system, the message is held and netted; in an RTGS system, settlement is attempted immediately.</p></div></div>
+        <div class="flow-step"><div class="step-num">11</div><div class="step-body"><h4>Nostro Account Debit</h4><p>When settlement occurs, the sending bank's <strong>nostro account</strong> at the correspondent or central bank is debited for the payment amount. Simultaneously, the receiving bank's account is credited. In RTGS this is instantaneous and irrevocable. The bank's internal <strong>Shadow Nostro ledger</strong> (the bank's own internal record of its nostro balance) must be updated in real time to reflect this debit. Failure to update the shadow ledger immediately leads to reconciliation breaks.</p></div></div>
+        <div class="flow-step"><div class="step-num">12</div><div class="step-body"><h4>Reconciliation</h4><p>At end of day (and intraday via MT 942 statements), the bank's reconciliation engine compares the shadow nostro ledger entries against the official nostro statement received from the correspondent (MT 940 end-of-day statement). Any discrepancy — a payment debited on the statement but not in the internal ledger, or vice versa — constitutes a <strong>reconciliation break</strong> that must be investigated and resolved within SLA. The reconciliation process is the final quality gate that confirms every payment has been properly accounted for on both sides.</p></div></div>
+      </div>
+      <div class="highlight-box green"><strong>Pipeline Principle:</strong> Each stage is a checkpoint. A payment that fails any stage is stopped, queued, or escalated — it does not proceed automatically. This sequential validation architecture is why a seemingly simple bank transfer can take seconds or hours depending on which flags are triggered along the pipeline.</div>
     </div>
 
     <!-- 1.2 -->
@@ -99,14 +117,60 @@
       <h3>4. Real Time Final / Net Settlement System (RTFS/RTNS)</h3>
       <p>An emerging model combining real-time clearing with periodic gross settlement. Used in instant payment systems where clearing happens in real time but interbank settlement is deferred to specific windows (e.g., IMPS in India where NPCI clears instantly but RBI settlement occurs in windows). This provides a practical balance between immediacy and operational efficiency.</p>
 
+      <h3>RTFS/RTNS — Architectural Distinction from Hybrid Systems</h3>
+      <p>RTFS/RTNS is architecturally distinct from a Hybrid system, even though both seek to balance speed with liquidity efficiency. The critical difference lies in the <strong>separation of the clearing layer from the settlement layer</strong>:</p>
+      <div class="two-col">
+        <div class="highlight-box">
+          <strong>Hybrid System Architecture</strong><br/><br/>
+          A single integrated system operates both clearing and settlement. The LSM (Liquidity Saving Mechanism) runs netting algorithms within the RTGS queue in real time. Netting and settlement are tightly coupled and occur continuously throughout the operating day. The settlement account at the central bank is updated immediately upon a matched netting event. There is no "clearing layer" separate from the "settlement layer" — they are one system with an embedded offset algorithm.
+        </div>
+        <div class="highlight-box purple">
+          <strong>RTFS/RTNS Architecture</strong><br/><br/>
+          Two structurally separate layers operate independently. The <strong>real-time clearing layer</strong> (operated by a retail payment infrastructure like NPCI) processes, validates, and confirms payment instructions in milliseconds — providing instant payment confirmation to end users. The <strong>windowed settlement layer</strong> (operated by the central bank) runs at discrete intervals, settling the net obligations that have accumulated in the clearing layer since the last window. The clearing layer carries intraday credit exposure between settlement windows; the settlement layer extinguishes this exposure at each window.
+        </div>
+      </div>
+
+      <h3>NPCI IMPS as RTFS — A Detailed Example</h3>
+      <p><strong>IMPS (Immediate Payment Service)</strong>, operated by NPCI (National Payments Corporation of India), is the canonical example of an RTFS architecture in production at national scale. It processes over 500 million transactions per month.</p>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Customer-Facing Real-Time Layer (NPCI)</h4><p>When a customer initiates an IMPS transfer, the sending bank submits the transaction to NPCI's clearing engine. NPCI validates the transaction, routes it to the receiving bank, and sends a confirmation to both banks — all within 30 seconds. From the customer's perspective, the money has "moved." The receiving bank credits the beneficiary's account immediately upon NPCI confirmation. However, at this point, no actual interbank funds have settled — NPCI has only confirmed the instruction and exchanged the message.</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Accumulation of Net Positions</h4><p>Between settlement windows, NPCI accumulates the net bilateral (and multilateral) positions of all member banks. Bank A may send 10,000 transactions to Bank B and receive 8,000, resulting in a net position. These positions are tracked in real time by NPCI's clearing system. The sending bank has a provisional liability to the clearing system; the receiving bank has a provisional receivable. Banks must maintain adequate liquidity buffers to cover potential net debit positions at the next settlement window.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>RBI Settlement Windows (5 per day)</h4><p>RBI operates five IMPS settlement windows per day: <strong>08:00, 11:00, 14:00, 17:00, and 20:00 IST</strong>. At each window, NPCI sends RBI the net positions of all member banks. RBI debits and credits settlement accounts (held at RBI) accordingly. Net payers have their RBI accounts debited; net receivers are credited. Settlement is final and irrevocable at the moment RBI processes the window. Banks with insufficient RBI account balances at a window trigger a settlement failure — a serious event managed by NPCI's risk controls including collateral requirements and default management procedures.</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Post-Settlement Reconciliation</h4><p>After each RBI settlement window, banks reconcile their IMPS transaction logs against the RBI settlement statement. The net amount settled at RBI should match the sum of all transactions processed in the clearing layer since the previous window. Any discrepancy triggers an exception investigation between the bank, NPCI, and RBI.</p></div></div>
+      </div>
+
+      <h3>Two-Layer Architecture Diagram</h3>
+      <div class="highlight-box">
+        <strong>RTFS Two-Layer Architecture (IMPS Example)</strong>
+        <br/><br/>
+        <pre style="font-family: monospace; font-size: 0.85em; line-height: 1.8; white-space: pre-wrap;">
+LAYER 1 — REAL-TIME CLEARING (NPCI)
+┌──────────────────────────────────────────────────────────────┐
+│  Bank A  ──────&gt; NPCI Clearing Engine ──────&gt; Bank B         │
+│  (Sends transaction in real time; confirmation in &lt;30s)      │
+│  Positions accumulate between settlement windows             │
+│  Net Positions tracked continuously                          │
+└──────────────────────────────────────────────────────────────┘
+                         ↕ (at each window: 8am, 11am, 2pm, 5pm, 8pm)
+LAYER 2 — WINDOWED SETTLEMENT (RBI)
+┌──────────────────────────────────────────────────────────────┐
+│  RBI Settlement System (RTGS infrastructure)                 │
+│  Receives net positions from NPCI                            │
+│  Debits/Credits bank settlement accounts at RBI              │
+│  Final and irrevocable settlement in central bank money      │
+└──────────────────────────────────────────────────────────────┘
+        </pre>
+      </div>
+      <div class="highlight-box gold"><strong>Intraday Credit Risk in RTFS:</strong> Between settlement windows, a risk exists. If a receiving bank credits its customers in real time but the sending bank fails before the next settlement window, NPCI's risk management framework (collateral, prefunding, default management) must cover the shortfall. This is the key residual risk in RTFS versus pure RTGS.</div>
+
       <div class="table-wrap">
         <table>
           <thead><tr><th>System Type</th><th>Settlement Timing</th><th>Settlement Risk</th><th>Liquidity Need</th><th>Examples</th></tr></thead>
           <tbody>
             <tr><td><strong>DNS</strong></td><td>End of day / periodic</td><td>High (intraday)</td><td>Low</td><td>BACS, old ACH</td></tr>
             <tr><td><strong>RTGS</strong></td><td>Real-time, per transaction</td><td>None</td><td>Very High</td><td>Fedwire, CHAPS, T2</td></tr>
-            <tr><td><strong>Hybrid</strong></td><td>Real-time with LSM</td><td>Very Low</td><td>Medium</td><td>Modern CHAPS, Lynx</td></tr>
-            <tr><td><strong>RTFS/RTNS</strong></td><td>Real-time clearing, periodic settlement</td><td>Low</td><td>Low-Medium</td><td>IMPS (India)</td></tr>
+            <tr><td><strong>Hybrid</strong></td><td>Real-time with LSM (continuous)</td><td>Very Low</td><td>Medium</td><td>Modern CHAPS, Lynx</td></tr>
+            <tr><td><strong>RTFS/RTNS</strong></td><td>Real-time clearing; settlement at windows</td><td>Low (intrawindow)</td><td>Low-Medium</td><td>IMPS (India)</td></tr>
           </tbody>
         </table>
       </div>
@@ -135,8 +199,42 @@
         <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Correspondent Processing</h4><p>Bank B debits Bank A's Nostro account, sends onward payment instruction to Bank C via local clearing.</p></div></div>
         <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Final Credit</h4><p>Bank C credits the beneficiary's account. Payment is complete.</p></div></div>
       </div>
-      <h3>Nostro Reconciliation</h3>
-      <p>A major operational challenge in correspondent banking is <strong>Nostro reconciliation</strong> — matching internal records of the Nostro account (what the bank thinks its balance is) against the external statement from the correspondent (what the correspondent says the balance is). Breaks arise from timing differences, failed payments, unexpected debits (correspondent fees, investigations), and value date discrepancies. Real-time Nostro reconciliation is increasingly important, driven by SWIFT GPI which provides real-time tracking of cross-border payments and same-day confirmation of credit.</p>
+
+      <h3>Nostro Reconciliation — Detailed Treatment</h3>
+      <p>Nostro reconciliation is one of the most operationally demanding processes in a bank's payment operations function. The bank maintains an internal <strong>shadow nostro ledger</strong> — its own record of what it believes its balance to be at each correspondent. The correspondent bank simultaneously maintains the actual nostro account. <strong>Reconciliation</strong> is the process of comparing these two records and resolving any differences (called "breaks").</p>
+
+      <h3>Types of Nostro Breaks</h3>
+      <div class="cards-grid">
+        <div class="info-card"><div class="ic-icon">⏱️</div><h4>Timing Differences</h4><p>A payment instruction has been sent but has not yet been processed by the correspondent, or the correspondent has applied it to a different value date than expected. These typically resolve on the next business day and are the most common type of break.</p></div>
+        <div class="info-card"><div class="ic-icon">❌</div><h4>Failed Payments</h4><p>A payment sent by the bank was not applied by the correspondent (e.g., due to beneficiary account issues, compliance holds, or a system error at the correspondent). The internal ledger shows a debit; the nostro statement does not — or shows the funds returned. Requires investigation with the correspondent and potentially a recall or re-execution.</p></div>
+        <div class="info-card"><div class="ic-icon">📅</div><h4>Value Date Discrepancies</h4><p>The bank and the correspondent applied the same transaction on different value dates. This creates a temporary break that resolves at the later value date but can distort intraday liquidity reporting in the interim. Common with cut-off time mismatches or time-zone differences.</p></div>
+        <div class="info-card"><div class="ic-icon">💸</div><h4>Correspondent Fees</h4><p>The correspondent charges maintenance fees, investigation fees, or FX conversion charges that are debited from the nostro account without a corresponding transaction in the bank's internal ledger. These "unexpected debits" must be identified, approved, and posted to the correct internal cost account.</p></div>
+        <div class="info-card"><div class="ic-icon">👻</div><h4>Ghost Entries</h4><p>Entries that appear on the nostro statement but cannot be matched to any known transaction in the bank's internal records. Could be misrouted payments from another bank, systems errors, or in rare cases fraudulent entries. Ghost entries require urgent investigation and may trigger a fraud report to the correspondent.</p></div>
+        <div class="info-card"><div class="ic-icon">🔄</div><h4>Returned Funds</h4><p>Funds returned by a beneficiary bank (unpaid, beneficiary account closed, invalid account) may be credited to the nostro at an unexpected time and amount, creating an unmatched credit. The reconciliation team must match this return to the original outward payment and update the internal ledger accordingly.</p></div>
+      </div>
+
+      <h3>The Nostro Reconciliation Process</h3>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Receive MT 942 Intraday Statement</h4><p>The correspondent sends <strong>MT 942</strong> messages throughout the day — intraday statements listing transactions applied to the nostro account since the last statement was sent. Banks use these to update their shadow nostro in near-real-time and to detect any unexpected debits or credits promptly. MT 942 messages are typically scheduled every 1–4 hours during the business day.</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Receive MT 940 End-of-Day Statement</h4><p>At the close of the correspondent's business day, the correspondent sends an <strong>MT 940</strong> — the official end-of-day nostro statement showing the opening balance, all transactions applied, and the closing balance for that value date. The MT 940 is the definitive record used for daily reconciliation. Banks may receive MT 940 messages for multiple correspondents in multiple time zones, staggering the reconciliation process across the evening and night.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Automated Matching Engine</h4><p>The bank's reconciliation system automatically matches MT 940 entries against internal shadow nostro ledger entries using key fields: amount, currency, value date, transaction reference, and SWIFT end-to-end reference. Exact matches are auto-reconciled. Near-matches (same amount, slightly different reference or one-day value date difference) are flagged for human review. Unmatched entries on either side become reconciliation breaks.</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Break Investigation Workflow</h4><p>Each break is logged in the bank's case management system with a unique break reference, classified by type (timing, failed payment, fee, ghost entry), and assigned to a reconciliation analyst. The analyst investigates using: SWIFT messaging history (GPI tracker for cross-border), correspondent bank investigation portal, internal payment system logs, and if needed — direct SWIFT MT 195/196 query/answer messages to the correspondent. Each break must be resolved within the SLA — typically <strong>same day for high-value, 2 business days for standard value, 5 business days maximum</strong> before escalation to the Nostro Management team.</p></div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Resolution and Posting</h4><p>Once the root cause of a break is identified, the appropriate corrective action is taken: a manual journal to post a correspondent fee; a recall instruction (MT 192) to retrieve a failed payment; a repair and re-submission of a rejected transaction; or a notification to the correspondent of an apparent error. The break is closed in the case management system once the internal ledger and nostro statement agree.</p></div></div>
+      </div>
+
+      <h3>How SWIFT GPI Has Transformed Nostro Reconciliation</h3>
+      <p><strong>SWIFT GPI (Global Payments Innovation)</strong>, launched in 2017 and now mandatory for SWIFT member banks, has fundamentally changed the transparency and speed of cross-border payment tracking — with major implications for nostro reconciliation.</p>
+      <div class="two-col">
+        <div class="highlight-box">
+          <strong>Before SWIFT GPI</strong><br/><br/>
+          Banks sent payment instructions and had no reliable way to track their progress through the correspondent chain. If a payment did not arrive, the sending bank had to send an MT 195 investigation request — which could take days to receive a response. Nostro breaks from failed or delayed payments could remain open for a week or more. Reconciliation was largely backward-looking, relying on end-of-day MT 940 statements.
+        </div>
+        <div class="highlight-box green">
+          <strong>After SWIFT GPI</strong><br/><br/>
+          Every GPI payment carries a unique <strong>UETR (Unique End-to-End Transaction Reference)</strong> that persists through the entire correspondent chain. Banks and their customers can track payment status in real time via the SWIFT Tracker. GPI mandates that payments are credited on the same day (in most cases within hours). Each bank in the chain must provide confirmation of credit and cannot change the UETR. This same-day confirmation dramatically reduces the window during which a nostro break can exist — breaks are identified and escalated faster, and most timing differences self-resolve within hours rather than days.
+        </div>
+      </div>
+      <div class="highlight-box gold"><strong>GPI and Real-Time Nostro Reconciliation:</strong> Some leading banks now use SWIFT GPI's gCCT tracker data as a real-time feed into their reconciliation engines. When the GPI tracker shows a payment has been credited by the beneficiary bank, the shadow nostro is updated proactively — even before the MT 940 arrives. This "predictive reconciliation" reduces the number of open breaks at end of day and enables intraday liquidity reporting that is more accurate than was previously possible.</div>
     </div>
 
     <!-- 1.5 -->
@@ -167,6 +265,61 @@
       <p>A debit transfer (direct debit) is initiated by the <strong>payee</strong> (the party collecting funds), with prior authorisation from the payer. The payee's bank pulls funds from the payer's bank account. Examples include utility bill payments, mortgage repayments, and subscription services. In Europe (SEPA), this is governed by the <strong>SDD (SEPA Direct Debit)</strong> scheme. In the US, ACH debits are used for the same purpose. The mandate (authorisation) from the payer is critical — it defines the amount, frequency, and duration of the debit authority.</p>
       <h3>Mandate Management System</h3>
       <p>A <strong>mandate</strong> is the authorisation given by a payer to a payee to collect direct debits from their account. A Mandate Management System (MMS) stores, validates, and manages these mandates. Key mandate attributes include: creditor identifier, debtor account details (IBAN/BIC), mandate reference, type (recurrent/one-off), amount (fixed/variable), and signature date. In SEPA, the <strong>e-Mandate</strong> scheme allows digital mandate setup. Mandate lifecycle management covers creation, amendment, cancellation, and expiry. Without a valid mandate, a direct debit is considered unauthorised and can be returned by the debtor's bank.</p>
+
+      <h3>US ACH Authorization Rules</h3>
+      <p>For ACH debit entries (pull payments), NACHA's Operating Rules require that the Originator (payee/creditor) obtain proper authorization from the consumer or business account holder before initiating any debit. The type of authorization required depends on how it was obtained and is codified in the <strong>Standard Entry Class (SEC) code</strong> attached to each ACH entry. Obtaining incorrect or insufficient authorization is one of the primary reasons for unauthorized return entries and regulatory sanctions.</p>
+
+      <h4>Written Authorization</h4>
+      <p><strong>Written authorization</strong> is a signed paper or electronic document signed by the consumer or business owner giving the originator permission to debit their account. The authorization must: clearly identify the creditor/originator; specify the account to be debited (routing number and account number); state the amount (or how the amount is determined for variable amounts); describe the frequency of debits (one-time, recurring); and include clear notice of the consumer's right to revoke. The originator must retain the signed authorization for a minimum of <strong>2 years</strong> after the last entry under the authorization. Written authorization is required for <strong>PPD</strong> (recurring consumer debits) and <strong>CCD</strong> (corporate debits).</p>
+
+      <h4>Oral Authorization (Telephone)</h4>
+      <p><strong>Oral authorization</strong> is authorization obtained over the telephone, where the consumer verbally agrees to the debit. NACHA rules for telephone-authorized entries (<strong>TEL</strong> — Telephone-Initiated Entry) require:
+      (1) The originator must either make an audio recording of the entire authorization (recording must be retained for 2 years) OR provide written notice to the consumer within a specified timeframe before the debit occurs;
+      (2) The recorded authorization must contain all key terms: consumer's name, date of call, amount, bank account, effective date, and any recurring schedule;
+      (3) TEL entries are restricted to situations where an existing relationship exists between the originator and consumer, OR the consumer has initiated the call to the originator.
+      TEL authorization is commonly used by utilities, insurance companies, and subscription services for over-the-phone payment setups.</p>
+
+      <h4>Internet Authorization (WEB Entries)</h4>
+      <p><strong>WEB (Internet-Initiated/Mobile) entries</strong> are ACH debit entries authorized via the internet or a mobile application. NACHA rules require:
+      (1) The authorization must be communicated to the consumer via a secure web session (HTTPS) or mobile app;
+      (2) The consumer must have a means to print or store the authorization (e.g., a confirmation email or downloadable PDF);
+      (3) Originators must use commercially reasonable fraud detection systems — <strong>account validation</strong> (confirming the routing number and account number are valid and belong to the consumer) is mandatory at origination;
+      (4) An <strong>annual re-verification requirement</strong>: for recurring WEB debits, originators must re-verify the consumer's account information at least annually to confirm the account is still valid and active. This is typically done via account validation services (micro-deposit verification, real-time account validation APIs, or the ACH Prenote process);
+      (5) The authorization language on the website must meet specific disclosure requirements under Regulation E.</p>
+
+      <h4>Point-of-Sale Authorization</h4>
+      <p><strong>POS (Point-of-Sale) entries</strong> are ACH debits initiated at a physical merchant terminal using a paper check as the source document. The consumer presents a cheque at the point of sale; the merchant reads the MICR data and initiates an ACH debit. Authorization is obtained by:
+      (1) The consumer handing over the cheque at the point of sale (constituting implied authorization under NACHA rules);
+      (2) The merchant voiding the original cheque and returning it to the consumer (or retaining it — rules vary by scheme);
+      (3) Posted notice at the merchant terminal that the cheque will be converted to an electronic transaction.
+      POS differs from standard ACH in that it occurs at the physical point of transaction, with same-day or next-day processing.</p>
+
+      <h3>Mandate Lifecycle — US ACH Authorization</h3>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Creation</h4><p>The originator obtains authorization from the consumer using the method appropriate to the SEC code (written, oral, internet). The authorization is recorded (audio, signed form, electronic log), and the originator's system creates a mandate record capturing all key parameters: consumer name, account details, amount, frequency, effective date, SEC code, and authorization method. The ODFI is responsible for ensuring the originator has obtained and retained valid authorization before submitting entries.</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Amendment</h4><p>If any key terms of the authorization change — new amount for a recurring debit, new account number, change in frequency — the originator must obtain fresh authorization. For some changes (e.g., de minimis amount changes within a range already authorized), prior notice to the consumer is sufficient. Material changes always require a new signed/recorded authorization. NACHA rules specify what constitutes a "material change" requiring re-authorization.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Cancellation / Revocation</h4><p>A consumer has the right to revoke an ACH authorization at any time. Under Regulation E, revocation is effective when the RDFI or originator receives it with reasonable time (typically 3 business days) before the next scheduled debit. The consumer may revoke directly with the originator or via their bank (RDFI). Upon revocation, the originator must cease initiating entries under that authorization. If the originator continues to debit after revocation, the RDFI has the right to return the entry as unauthorized (Return Code <strong>R07 — Authorization Revoked by Customer</strong>).</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Return for Unauthorized</h4><p>When a consumer disputes an ACH debit as unauthorized, the RDFI may return it using specific NACHA return codes: <strong>R10</strong> (Customer Advises Not Authorized — consumer claims no authorization was given); <strong>R29</strong> (Corporate Customer Advises Not Authorized — for CCD/CTX entries); <strong>R07</strong> (Authorization Revoked); <strong>R51</strong> (Item Related to RCK entry is ineligible). The RDFI's return deadline for unauthorized consumer debits is <strong>60 calendar days from the settlement date</strong> of the entry (under Regulation E). When the ODFI receives the return, it must pass the return back to the originator, who must investigate. Excessive return rates for unauthorized entries trigger NACHA compliance reviews and potential suspension.</p></div></div>
+      </div>
+
+      <h3>ACH Authorization Types by SEC Code</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SEC Code</th><th>Full Name</th><th>Authorization Type</th><th>Consumer/Business</th><th>Key Requirement</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PPD</strong></td><td>Prearranged Payment &amp; Deposit</td><td>Written (signed)</td><td>Consumer</td><td>Signed authorization retained 2 years; covers recurring debits and one-time</td></tr>
+            <tr><td><strong>CCD</strong></td><td>Corporate Credit or Debit</td><td>Written (contract or agreement)</td><td>Business</td><td>Written agreement between businesses; no individual consumer protections apply</td></tr>
+            <tr><td><strong>CTX</strong></td><td>Corporate Trade Exchange</td><td>Written (contract or agreement)</td><td>Business</td><td>Same as CCD but carries addenda records for remittance data (up to 9,999 addenda)</td></tr>
+            <tr><td><strong>TEL</strong></td><td>Telephone-Initiated Entry</td><td>Oral (telephone)</td><td>Consumer</td><td>Audio recording OR prior written notice; existing relationship or consumer-initiated call</td></tr>
+            <tr><td><strong>WEB</strong></td><td>Internet-Initiated / Mobile</td><td>Online / Mobile app</td><td>Consumer</td><td>Secure session; account validation at origination; annual re-verification for recurring</td></tr>
+            <tr><td><strong>POS</strong></td><td>Point-of-Sale</td><td>Implied (cheque presentment)</td><td>Consumer</td><td>MICR data read at POS; cheque voided; posted notice at terminal</td></tr>
+            <tr><td><strong>ARC</strong></td><td>Accounts Receivable Conversion</td><td>Implied (cheque mailed or dropped in lockbox)</td><td>Consumer</td><td>Cheque received via mail/lockbox; notice to consumer on billing statement; cheque not returned</td></tr>
+            <tr><td><strong>BOC</strong></td><td>Back Office Conversion</td><td>Implied (cheque presented at POS but converted later)</td><td>Consumer</td><td>Cheque accepted at register; notice posted; conversion occurs in back office after merchant day-end</td></tr>
+            <tr><td><strong>RCK</strong></td><td>Re-presented Cheque Entry</td><td>Implied (returned cheque re-presentment)</td><td>Consumer</td><td>Re-presents a returned cheque as ACH debit; strict eligibility rules; maximum two re-presentments</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="table-wrap">
         <table>
           <thead><tr><th>Feature</th><th>Credit Transfer</th><th>Direct Debit</th></tr></thead>
@@ -175,8 +328,8 @@
             <tr><td><strong>Authorisation</strong></td><td>Per-transaction</td><td>Mandate (standing authority)</td></tr>
             <tr><td><strong>Examples</strong></td><td>Payroll, supplier payments</td><td>Utility bills, subscriptions</td></tr>
             <tr><td><strong>SEPA scheme</strong></td><td>SCT / SCT Inst</td><td>SDD Core / SDD B2B</td></tr>
-            <tr><td><strong>US equivalent</strong></td><td>ACH Credit (PPD/CCD)</td><td>ACH Debit (PPD/CCD)</td></tr>
-            <tr><td><strong>Reversal window</strong></td><td>Up to 10 days</td><td>Up to 8 weeks (consumer)</td></tr>
+            <tr><td><strong>US equivalent</strong></td><td>ACH Credit (PPD/CCD)</td><td>ACH Debit (PPD/CCD/WEB/TEL)</td></tr>
+            <tr><td><strong>Reversal window</strong></td><td>Up to 10 days</td><td>Up to 8 weeks (consumer); 60 days for unauthorized</td></tr>
           </tbody>
         </table>
       </div>
