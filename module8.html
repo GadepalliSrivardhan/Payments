@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 8: Fedwire System in USA — PaymentsAcademy</title>
+<link rel="stylesheet" href="styles.css"/></head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">08</div><div class="module-tag">Module 8</div><h1>Fedwire System in USA</h1><p>US regulatory structure, Federal Reserve payment oversight, Fedwire Funds Service RTGS, Fedwire Securities book-entry settlement, and Fedwire's role supporting SWIFT GPI cross-border USD payments.</p><div class="module-tags"><span>Fedwire</span><span>Federal Reserve</span><span>RTGS</span><span>OCC</span><span>FDIC</span><span>CFPB</span><span>FinCEN</span><span>GPI</span><span>ISO 20022</span></div></div></div>
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.1</span> Overview of Regulatory Structure in the USA</h2>
+    <p>The United States operates one of the most complex and fragmented financial regulatory frameworks in the world. Unlike most countries that use a single financial regulator, the US employs a dual banking system and a multi-agency oversight model with overlapping jurisdictions at both the federal and state levels. The <strong>Dodd-Frank Wall Street Reform and Consumer Protection Act of 2010</strong>, enacted in response to the 2008 financial crisis, substantially reorganised US financial oversight — creating the CFPB, establishing FSOC, and designating systemically important financial market utilities (SIFMUs) for enhanced supervision.</p>
+    <div class="table-wrap"><table><thead><tr><th>Regulator</th><th>Full Name</th><th>Primary Mandate</th><th>Key Payments Role</th></tr></thead><tbody>
+      <tr><td><strong>Federal Reserve</strong></td><td>Federal Reserve System</td><td>Monetary policy, banking supervision, financial stability</td><td>Operates Fedwire Funds, Fedwire Securities, FedACH, FedNow; sets Regulation J (funds transfers)</td></tr>
+      <tr><td><strong>OCC</strong></td><td>Office of the Comptroller of the Currency</td><td>Charters, regulates and supervises national banks and federal savings associations</td><td>Issues guidance on payment systems, fintech charters, digital asset custody by national banks</td></tr>
+      <tr><td><strong>FDIC</strong></td><td>Federal Deposit Insurance Corporation</td><td>Deposit insurance; resolution of failed banks</td><td>Supervises state-chartered non-Fed-member banks; ensures payment continuity during bank failures</td></tr>
+      <tr><td><strong>CFPB</strong></td><td>Consumer Financial Protection Bureau</td><td>Consumer protection for financial products and services</td><td>Enforces EFTA/Regulation E for consumer EFTs; oversees remittances, prepaid cards, open banking (Section 1033)</td></tr>
+      <tr><td><strong>FinCEN</strong></td><td>Financial Crimes Enforcement Network (Treasury)</td><td>AML/CFT — anti-money laundering and countering terrorist financing</td><td>Administers Bank Secrecy Act (BSA); mandates SARs; oversees money services businesses and crypto exchanges</td></tr>
+      <tr><td><strong>FSOC</strong></td><td>Financial Stability Oversight Council</td><td>Identify systemic risks; designate SIFMUs and systemically important nonbank firms</td><td>Designated Fedwire, CHIPS, CLS Bank, DTCC as SIFMUs subject to Dodd-Frank Title VIII enhanced standards</td></tr>
+      <tr><td><strong>State Regulators</strong></td><td>State Banking Departments (e.g., NYDFS, CA DFPI)</td><td>Charter and supervise state-chartered banks; license money transmitters</td><td>NYDFS BitLicense regime for crypto; state money transmitter licenses required for PayPal, Venmo, Western Union, etc.</td></tr>
+    </tbody></table></div>
+    <h3>Dodd-Frank Act — Payment System Implications</h3>
+    <ul>
+      <li><strong>Title VIII — Payment, Clearing, and Settlement Supervision:</strong> Established enhanced risk management standards for SIFMUs including financial resources, liquidity, governance, and recovery/resolution planning requirements.</li>
+      <li><strong>Durbin Amendment (Section 1075):</strong> Directed the Federal Reserve to limit debit card interchange fees. Resulting Regulation II caps interchange at $0.21 + 0.05% per transaction for large issuers (over $10B assets).</li>
+      <li><strong>CFPB Creation:</strong> Gave consumers comprehensive protection for payment products including a right to receive remittance disclosures, error resolution rights, and limits on prepaid card fees.</li>
+      <li><strong>Volcker Rule:</strong> Restricts proprietary trading by banks, reducing market-making capacity and affecting liquidity in securities markets that settlement systems rely upon.</li>
+    </ul>
+    <div class="highlight-box"><strong>Dual Banking System:</strong> US banks may be chartered federally (national banks — OCC) or at the state level (state banks — state regulators). State banks that join the Federal Reserve System are also supervised by the Fed. This creates potentially three overlapping layers of supervision. The result is a more complex compliance environment than single-regulator jurisdictions like the UK (PRA/FCA) or EU (ECB/national competent authorities).</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.2</span> USA Payments Landscape</h2>
+    <p>The United States operates a rich and diverse payments ecosystem combining Federal Reserve-operated public infrastructure with private sector networks. The US lacks a single unified retail payment infrastructure — instead, multiple complementary systems serve different payment needs, from large-value interbank transfers to instant retail payments and consumer P2P.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>Fedwire Funds Service</h4><p>Federal Reserve RTGS for large-value, time-critical USD payments. ~$4 trillion settled daily across ~650,000 transactions. Operated by the Fed, accessible to ~9,000 financial institutions.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>CHIPS</h4><p>Clearing House Interbank Payments System — private sector large-value system by The Clearing House. ~50 participant banks, ~$1.8 trillion daily. Multilateral netting with Fedwire final settlement.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>ACH Network</h4><p>Automated Clearing House — batch EFT network with two operators: FedACH and EPN (TCH). ~30 billion transactions per year covering payroll, bill pay, vendor payments, and consumer debits.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>RTP Network</h4><p>Real-Time Payments by The Clearing House. Launched 2017, 24/7/365, up to $1M per transaction. Covers ~90% of US demand deposit accounts via participating banks.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>FedNow</h4><p>Federal Reserve's own instant payment service, launched July 2023. 24/7/365 real-time gross settlement, $500,000 transaction limit. Directly competes with RTP, open to all Fed-eligible institutions.</p></div>
+      <div class="info-card"><div class="ic-icon">📱</div><h4>Zelle</h4><p>P2P network operated by Early Warning Services (owned by major US banks). Integrated into banking apps — processed over $800B in 2023. Uses RTP or ACH rails depending on sending/receiving bank capabilities.</p></div>
+      <div class="info-card"><div class="ic-icon">💳</div><h4>Card Networks</h4><p>Visa, Mastercard (four-party open loop), American Express and Discover (three-party closed loop). Process billions of debit/credit card transactions. PIN debit uses PIN debit networks (STAR, NYCE, Pulse).</p></div>
+      <div class="info-card"><div class="ic-icon">📋</div><h4>Check 21 / Image Clearing</h4><p>Check Clearing for the 21st Century Act (2004) enabled electronic check image exchange. ~6 billion checks annually remain, declining rapidly. Federal Reserve Check Services clears check images.</p></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>System</th><th>Operator</th><th>Daily Value</th><th>Daily Volume</th><th>Settlement Type</th></tr></thead><tbody>
+      <tr><td><strong>Fedwire Funds</strong></td><td>Federal Reserve</td><td>~$4.0 trillion</td><td>~650,000 transactions</td><td>RTGS — final and irrevocable per payment</td></tr>
+      <tr><td><strong>CHIPS</strong></td><td>The Clearing House</td><td>~$1.8 trillion</td><td>~250,000 transactions</td><td>Multilateral netting + Fedwire final net settlement</td></tr>
+      <tr><td><strong>ACH (Both Operators)</strong></td><td>Fed + TCH</td><td>~$150 billion</td><td>~120 million transactions</td><td>Net settlement via NSS / Fedwire</td></tr>
+      <tr><td><strong>RTP (TCH)</strong></td><td>The Clearing House</td><td>~$8 billion</td><td>~5 million transactions</td><td>RTGS — real-time gross, 24/7/365</td></tr>
+      <tr><td><strong>FedNow</strong></td><td>Federal Reserve</td><td>Growing rapidly</td><td>Growing rapidly</td><td>RTGS — real-time gross, 24/7/365</td></tr>
+      <tr><td><strong>Visa/Mastercard (US)</strong></td><td>Card Networks</td><td>~$30 billion</td><td>~200 million transactions</td><td>Net settlement T+1 via settlement banks</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.3</span> Overview of Fedwire Funds Service</h2>
+    <p>The <strong>Fedwire Funds Service</strong> is the United States' primary large-value Real-Time Gross Settlement (RTGS) system, operated by the twelve Federal Reserve Banks. Each payment settles individually, immediately, and irrevocably at the moment it is processed — there is no netting, no end-of-day batch, and no reversal once settlement occurs. This makes Fedwire the backbone of the US financial system for time-critical, large-value dollar payments.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>Real-Time Gross Settlement</h4><p>Every Fedwire payment settles individually and instantly. No batching or netting. Settlement is final and irrevocable at the moment of processing. Eliminates intraday credit risk between participants.</p></div>
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>Federal Reserve Operated</h4><p>Operated by the 12 Federal Reserve Banks collectively. The Federal Reserve Bank of New York plays a central processing role given New York's dominance in US wholesale financial markets.</p></div>
+      <div class="info-card"><div class="ic-icon">💰</div><h4>Scale — ~$4 Trillion Daily</h4><p>Processes approximately $4 trillion in value daily — roughly equivalent to the entire US annual GDP processed every single business day. Critical for interbank settlement, fed funds market, and correspondent banking.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Broad Participation</h4><p>~9,000 financial institutions hold Federal Reserve accounts and can use Fedwire. Includes commercial banks, savings institutions, credit unions, and US branches of foreign banks.</p></div>
+    </div>
+    <h3>Operating Hours</h3>
+    <div class="table-wrap"><table><thead><tr><th>Event</th><th>Eastern Time</th><th>Notes</th></tr></thead><tbody>
+      <tr><td><strong>System Open</strong></td><td>9:00 PM prior evening</td><td>Opens for next business day at 9 PM ET the prior evening</td></tr>
+      <tr><td><strong>Customer Transfer Cutoff</strong></td><td>5:00 PM ET</td><td>Deadline for customer (non-bank) third-party payments</td></tr>
+      <tr><td><strong>Depository Institution Cutoff</strong></td><td>6:00 PM ET</td><td>Final time depository institutions can send interbank payments</td></tr>
+      <tr><td><strong>System Close</strong></td><td>6:30 PM ET</td><td>Final settlement completed; books are closed for the day</td></tr>
+      <tr><td><strong>Operating Days</strong></td><td>Monday–Friday</td><td>Closed all US federal holidays; not a 24/7 system</td></tr>
+    </tbody></table></div>
+    <h3>Account Types on Fedwire</h3>
+    <p>Financial institutions that participate in Fedwire hold accounts at their local Federal Reserve Bank. These are called <strong>master accounts</strong> (formally Reserve Accounts or Fed accounts). Balances in these accounts represent claims on the Federal Reserve — they are the highest form of settlement asset in USD, as they carry no credit risk (the Fed cannot default on USD obligations).</p>
+    <ul>
+      <li><strong>Master Account:</strong> Primary account held at a Reserve Bank. Used for all Fed services including Fedwire, ACH, and minimum reserve requirements. Earns interest on excess reserves (IOER/IORB).</li>
+      <li><strong>Joint Account:</strong> Shared account arrangement where multiple institutions pool liquidity for settlement purposes.</li>
+      <li><strong>Pass-Through Reserve Account:</strong> Account maintained by a correspondent bank on behalf of smaller respondent banks for reserve and settlement purposes.</li>
+    </ul>
+    <h3>Settlement Finality</h3>
+    <p>Under Regulation J (12 CFR Part 210), a Fedwire funds transfer is <strong>final</strong> at the moment the Federal Reserve Bank credits the receiving institution's account. This means:</p>
+    <ul>
+      <li>Payment cannot be recalled or reversed after settlement occurs</li>
+      <li>Receiving bank can release funds to its customer immediately upon receipt</li>
+      <li>No counterparty risk for the receiving bank — the Fed's credit is risk-free</li>
+      <li>Provides legal certainty under the UCC (Uniform Commercial Code) Article 4A framework for funds transfers</li>
+    </ul>
+    <h3>Fedwire Message Format and ISO 20022 Migration</h3>
+    <p>Fedwire historically uses a proprietary fixed-length tag-value format. Key identifiers include the IMAD (Input Message Accountability Data) and OMAD (Output Message Accountability Data) — unique identifiers that allow tracking of individual payments. The Fed has announced migration to <strong>ISO 20022</strong> messaging aligned with the broader industry migration and CHIPS transition.</p>
+    <div class="code-block">FEDWIRE PROPRIETARY FORMAT (CURRENT — SIMPLIFIED ILLUSTRATION)
+{1500}20                            Type Code: Funds Transfer
+{2000}000000100000                  Amount: $1,000,000.00
+{3100}021000021 JPMORGAN CHASE      Sender ABA + Name
+{3400}026009593 BANK OF AMERICA     Receiver ABA + Name
+{3600}CTP                           Business Function: Customer Transfer Plus
+{4200}D/1234567890/BENEFICIARY CO   Beneficiary Account / Name
+{5000}INVOICE INV-2024-0012         Payment Reference
+IMAD: 20240315MMQFMP6500001234     Input Message Accountability Data
+OMAD: 20240315B6B7HU4R000012345   Output Message Accountability Data</div>
+    <div class="highlight-box gold"><strong>ISO 20022 Migration:</strong> The Federal Reserve's Fedwire Funds ISO 20022 migration will enable richer remittance data (structured invoice references, LEI codes, purpose codes) to flow with USD payments — critical for straight-through processing, SWIFT GPI compatibility, and regulatory reporting. The migration is being coordinated with CHIPS to ensure simultaneous industry adoption.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.4</span> Fedwire Securities Service</h2>
+    <p>The <strong>Fedwire Securities Service</strong> is the Federal Reserve's book-entry system for the safekeeping, transfer, and settlement of US government and federal agency securities. It is a critical component of US financial market infrastructure — providing the settlement backbone for US Treasury securities, which are the world's pre-eminent safe asset and the benchmark for global risk-free rates.</p>
+    <h3>What is Book-Entry Settlement?</h3>
+    <p>Book-entry means securities exist only as electronic records — there are no physical certificates. Ownership and transfer are recorded by simple debit/credit entries on the Fedwire Securities Service ledger. The Federal Reserve Banks act as the fiscal agent for the US Treasury and as custodian for the book-entry securities.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>US Treasury Securities</h4><p>T-Bills (short-term, discount), T-Notes (2–10 year), T-Bonds (20–30 year), TIPS (inflation-indexed), FRNs (floating rate notes). All issued and settled via Fedwire Securities. The US Treasury conducts auctions via TreasuryDirect; primary dealers receive allocations settled via Fedwire.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Agency Securities</h4><p>Securities issued by US government-sponsored enterprises (GSEs): Fannie Mae (FNMA), Freddie Mac (FHLMC), Federal Home Loan Banks, Farm Credit System. Also Federal Reserve Bank securities. All settled via Fedwire Securities in book-entry form.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>DvP Settlement</h4><p>Delivery versus Payment (DvP) — securities and funds transfer simultaneously. When a buyer purchases Treasuries, Fedwire Securities moves the securities to the buyer's custody account while simultaneously Fedwire Funds (or an interlinked mechanism) debits the buyer's cash account. Eliminates principal risk.</p></div>
+      <div class="info-card"><div class="ic-icon">🔒</div><h4>Federal Reserve as Custodian</h4><p>The Fed acts as custodian for foreign central banks and international official institutions holding US Treasury securities as foreign exchange reserves. This is one of the largest custodial relationships in the world — foreign central banks hold over $7 trillion in US Treasuries.</p></div>
+    </div>
+    <h3>Fedwire Securities Operating Model</h3>
+    <p>Fedwire Securities operates through a two-tier structure:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Federal Reserve Level (Tier 1)</h4><p>Federal Reserve Banks hold securities in book-entry form directly for large institutions (primary dealers, large commercial banks, foreign central banks, government agencies). These holders receive securities credited directly to their Fedwire Securities accounts. Transfers between Tier 1 holders settle in real time via the Fedwire Securities system.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Depository Trust Company / Custodian Level (Tier 2)</h4><p>DTC (part of DTCC) holds a large omnibus account at Fedwire Securities on behalf of its broker-dealer and institutional investor participants. DTC handles intra-DTC securities settlement for the broader market — most retail and institutional Treasury transactions settle within DTC using Fedwire Securities as the ultimate custodian.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Real-Time Gross Settlement of Securities</h4><p>Securities transfers on Fedwire Securities settle on a gross, real-time basis — each transfer settles immediately and irrevocably, just like Fedwire Funds. The linked DvP mechanism ensures securities and cash move simultaneously, eliminating principal risk in Treasury market transactions.</p></div></div>
+    </div>
+    <h3>Scale of Fedwire Securities</h3>
+    <p>Fedwire Securities processes approximately $10–12 trillion in securities transfers on peak days (for example, at Treasury auction settlement dates), making it one of the largest securities settlement systems in the world. The total value of book-entry securities on Fedwire Securities exceeds $30 trillion, reflecting the enormous size of the US government securities market.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.5</span> Fedwire Support to SWIFT GPI</h2>
+    <p><strong>SWIFT GPI (Global Payments Innovation)</strong> has transformed cross-border correspondent banking by providing end-to-end payment tracking, speed commitments, and transparency on fees and FX rates. For USD cross-border payments, Fedwire plays an essential role as the domestic USD settlement backbone that ultimately settles the US-side leg of international dollar transactions.</p>
+    <h3>SWIFT GPI Overview</h3>
+    <p>SWIFT GPI introduced several key elements for cross-border payments:</p>
+    <ul>
+      <li><strong>UETR (Unique End-to-End Transaction Reference):</strong> A UUID (128-bit unique identifier) assigned to each GPI payment at origination and carried through all correspondent banks in the payment chain. Enables end-to-end tracking via the SWIFT Tracker.</li>
+      <li><strong>gpi Tracker:</strong> Cloud-based database where each correspondent bank in the chain confirms processing and forwards the UETR. Originating banks and their customers can see real-time status of where the payment is in the correspondent chain.</li>
+      <li><strong>Speed Commitments:</strong> GPI member banks commit to same-day use of funds for payments received before cutoff times. For USD payments, this typically means completion within hours rather than days.</li>
+      <li><strong>Fee Transparency:</strong> Each correspondent bank must report what fee they deducted, so the beneficiary receives the net amount and the originator knows the deduction chain.</li>
+    </ul>
+    <h3>Role of Fedwire in USD Cross-Border Payments</h3>
+    <p>For cross-border USD payments using correspondent banking, the payment flow typically involves:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Non-US Bank Initiates via Correspondent</h4><p>A non-US bank (e.g., a German bank) sends a SWIFT MT 103 (or pacs.008 in ISO 20022) payment to its US correspondent bank (e.g., JPMorgan or Citibank). The message carries the UETR and payment details. The German bank's nostro account at the US correspondent will be debited.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>US Correspondent Processes via Fedwire or CHIPS</h4><p>The US correspondent bank receives the SWIFT instruction and executes a USD payment to the beneficiary's bank. For large-value or time-critical payments, this is done via Fedwire Funds (RTGS). For net-settled interbank payments, it may route via CHIPS. The SWIFT UETR is carried in the payment reference data.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Fedwire Settles Final USD Leg</h4><p>Fedwire processes the payment RTGS — debiting the sending bank's Fed master account and crediting the receiving bank's Fed master account. Settlement is final and irrevocable. The UETR can be referenced via the Fedwire payment reference fields.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>GPI Tracker Updated</h4><p>Each bank in the chain updates the SWIFT GPI Tracker with payment status. Originating bank and beneficiary bank can see the full chain of events, timing, fees, and FX rates applied. The UETR links the SWIFT GPI record to the underlying Fedwire settlement.</p></div></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Attribute</th><th>SWIFT GPI Role</th><th>Fedwire Role</th></tr></thead><tbody>
+      <tr><td><strong>Messaging</strong></td><td>Carries GPI/UETR tracking data (MT 103 / pacs.008)</td><td>Proprietary Fedwire message or future ISO 20022</td></tr>
+      <tr><td><strong>Settlement</strong></td><td>Does not settle funds — messaging layer only</td><td>Final USD settlement in central bank money</td></tr>
+      <tr><td><strong>Tracking</strong></td><td>UETR enables end-to-end payment visibility</td><td>IMAD/OMAD provides Fedwire-specific reference</td></tr>
+      <tr><td><strong>Speed</strong></td><td>GPI commitments: same-day completion</td><td>RTGS: instant settlement within Fedwire hours</td></tr>
+      <tr><td><strong>Hours</strong></td><td>SWIFT messaging 24/7</td><td>Fedwire: 9 PM–6:30 PM ET business days only</td></tr>
+      <tr><td><strong>ISO 20022</strong></td><td>SWIFT migrating to pacs.008 (CBPR+)</td><td>Fed migrating Fedwire to ISO 20022 (coordinated)</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box purple"><strong>Correspondent Banking in USD:</strong> Because Fedwire is only accessible to institutions with Federal Reserve master accounts, most non-US banks must use a US correspondent bank (a Fedwire participant) to make dollar payments. The correspondent acts as an intermediary — holding a nostro/vostro relationship with the foreign bank. SWIFT GPI provides the messaging and tracking layer over this correspondent banking chain, while Fedwire provides the final USD settlement.</div>
+  </div>
+
+  <div class="module-nav">
+    <a href="module7.html"><span>← Previous</span><strong>SEPA STEP2 SCT, SDD &amp; SCT Inst</strong></a>
+    <a href="module9.html" class="next"><span>Next Module →</span><strong>CHIPS High Value Payments USA</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body></html>

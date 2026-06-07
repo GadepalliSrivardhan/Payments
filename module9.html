@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 9: CHIPS High Value Payments USA — PaymentsAcademy</title>
+<link rel="stylesheet" href="styles.css"/></head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">09</div><div class="module-tag">Module 9</div><h1>CHIPS — Clearing House Interbank Payments System</h1><p>Deep dive into CHIPS architecture, prefunding model, risk management, bilateral netting algorithm, transaction processing, liquidity management, and comparison with Fedwire.</p><div class="module-tags"><span>CHIPS</span><span>Prefunding</span><span>Netting</span><span>Liquidity</span><span>The Clearing House</span><span>USD</span></div></div></div>
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">9.1</span> CHIPS Overview</h2>
+    <p><strong>CHIPS (Clearing House Interbank Payments System)</strong> is a privately operated large-value payment system in the United States, owned and operated by <strong>The Clearing House (TCH)</strong> — a banking association and payments company owned by the largest US commercial banks (JPMorgan Chase, Bank of America, Citibank, Wells Fargo, and others). CHIPS is one of the world's largest private-sector payment systems and the primary clearing house for large-value USD transactions, particularly international dollar payments.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>Operator</h4><p>The Clearing House (TCH) — a private banking utility owned by major US banks. Regulated by the New York State Department of Financial Services (NYDFS).</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Participants</h4><p>Approximately 43–50 major financial institutions. CHIPS participants must be chartered US banks or US branches of foreign banks. Non-participants access CHIPS indirectly through participants.</p></div>
+      <div class="info-card"><div class="ic-icon">💵</div><h4>Daily Volume</h4><p>~$1.8 trillion settled daily across ~500,000 transactions. Handles approximately 95% of all international USD transfers processed within the US.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>Netting Efficiency</h4><p>Multilateral netting reduces gross settlement needs by approximately 95%. $1.8T gross transactions settle with only ~$60–90B in net funding through Fedwire.</p></div>
+    </div>
+    <h3>CHIPS vs Fedwire — Positioning</h3>
+    <p>CHIPS and Fedwire are complementary systems. <strong>Fedwire</strong> is a pure RTGS — each payment settles individually and immediately in Federal Reserve accounts. <strong>CHIPS</strong> uses multilateral netting with end-of-day Fedwire settlement — providing far greater liquidity efficiency for high volumes of interconnected dollar payments, particularly in the correspondent banking and FX settlement space.</p>
+    <div class="highlight-box"><strong>Key Distinction:</strong> Fedwire achieves immediate finality for every individual payment. CHIPS achieves end-of-day finality with 95%+ liquidity saving — making it the preferred system for banks that are net positions within the system and need liquidity efficiency.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">9.2</span> CHIPS Risk Management</h2>
+    <h3>Prefunding Model</h3>
+    <p>CHIPS uses a <strong>prefunding model</strong> to eliminate credit risk. Before CHIPS opens each business day (typically 9:00 AM ET), each participant must transfer its required opening position to the <strong>CHIPS Prefunded Balance Account</strong> held at the Federal Reserve Bank of New York (FRBNY). This prefunding is transferred via <strong>Fedwire</strong>. The prefunded amount is calculated by CHIPS based on historical payment patterns and represents the amount needed to ensure smooth operation. Because all participants have prefunded, CHIPS carries <strong>zero credit risk</strong> — there is no intraday extension of credit between participants.</p>
+    <h3>Bilateral and Multilateral Credit Limits</h3>
+    <p>Although CHIPS operates on a prefunded basis, participants may also set <strong>bilateral credit limits</strong> — maximum net debit positions they are willing to accept from individual counterparties during the day. These limits provide an additional control layer over the multilateral netting algorithm, allowing banks to manage their exposure to specific counterparties while the system is in operation.</p>
+    <h3>Default and Loss-Sharing Rules</h3>
+    <p>In the highly unlikely event of a participant default, CHIPS rules provide for a structured loss-sharing arrangement. The CHIPS rulebook (filed with NYDFS) defines: (1) how the defaulter's remaining prefunded balance is used; (2) how any residual loss is allocated among surviving participants; (3) the process for unwinding or completing payment obligations. The prefunded balance model means defaults are extremely unlikely to leave significant unfunded exposures.</p>
+    <div class="highlight-box green"><strong>Credit Risk Elimination:</strong> Unlike pre-2001 CHIPS (which operated on a DNS model with debit caps), the modern prefunded CHIPS model eliminates settlement credit risk entirely. Every payment that enters the system is backed by real Federal Reserve money already transferred to the CHIPS account.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">9.3</span> CHIPS Transaction Processing</h2>
+    <h3>Payment Submission and Queue Management</h3>
+    <p>CHIPS accepts payment messages from participants starting at <strong>9:00 AM ET</strong> (the opening of the CHIPS processing day). Participants submit payment instructions in <strong>CHIPS message format</strong> (transitioning to ISO 20022 under the Fedwire/CHIPS ISO 20022 migration). Each payment instruction includes: sender, receiver, amount, value date, and a reference number. Submitted payments enter CHIPS's central queue where they await matching and settlement.</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Submission</h4><p>Participant submits payment instruction to CHIPS (via SWIFT or direct connection). Payment enters the central queue. CHIPS timestamps the receipt.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Bilateral Matching</h4><p>CHIPS continuously scans queued payments for bilateral pairs: Bank A owes Bank B AND Bank B owes Bank A. If found, these are settled simultaneously using the smallest net amount.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Multilateral Netting (Algorithm)</h4><p>CHIPS's proprietary algorithm continuously searches for cycles of payments (A→B→C→A) that can all settle simultaneously without any single bank needing additional liquidity. This is run continuously throughout the day.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Settlement</h4><p>Matched/netted payments are settled by adjusting participant balances in the CHIPS prefunded balance account at FRBNY. Settlement is final and irrevocable once processed.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>End-of-Day</h4><p>At 5:00 PM ET, CHIPS enters an end-of-day processing phase. Remaining queued payments are settled through a final multilateral netting. Any residual net positions are settled via Fedwire transfers.</p></div></div>
+    </div>
+    <h3>Continuous Bilateral Offset Algorithm</h3>
+    <p>CHIPS's core innovation is its <strong>proprietary netting algorithm</strong> (sometimes called the "CHIPS algorithm" or continuous bilateral offset). It runs continuously throughout the processing day, scanning all queued payments for offsetting opportunities. When a cycle of payments is found where A→B, B→C, C→A, all three payments can be settled simultaneously using only the net differences. The algorithm is designed to maximise settlement throughput while minimising the net liquidity consumed, achieving the ~95% netting efficiency that makes CHIPS so valuable for high-volume dollar clearing.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">9.4</span> CHIPS Liquidity Management</h2>
+    <h3>Opening Prefund and Intraday Liquidity Recycling</h3>
+    <p>The <strong>prefunded balance</strong> that each participant transfers at opening is the primary source of intraday liquidity in CHIPS. As payments settle throughout the day, participants that receive more than they pay see their CHIPS balance increase (inflows exceeding outflows). This liquidity is immediately available to fund further outgoing payments — creating an efficient recycling effect. Banks with large inbound flows early in the day effectively provide liquidity to the system, enabling other participants' payments to settle.</p>
+    <h3>Intraday Top-Up</h3>
+    <p>If a participant's CHIPS balance runs low during the day (e.g., due to high outbound payment volume), it can top up its balance by sending additional Fedwire transfers to the CHIPS prefunded balance account at FRBNY. This gives participants flexibility to manage intraday liquidity without holding excess prefunding at opening.</p>
+    <h3>End-of-Day Final Netting via Fedwire</h3>
+    <p>At end of day, after the final CHIPS algorithm run, net positions are calculated. Participants with net debit positions (owe more than they received) must transfer additional funds via Fedwire to CHIPS. Participants with net credit positions receive Fedwire transfers from CHIPS. This final Fedwire-based settlement is typically completed by <strong>6:00 PM ET</strong>. The net settlement amounts are a tiny fraction of the gross — illustrating the enormous liquidity saving CHIPS provides.</p>
+    <div class="table-wrap"><table><thead><tr><th>Metric</th><th>Typical Value</th><th>Explanation</th></tr></thead><tbody>
+      <tr><td><strong>Gross Payment Volume</strong></td><td>~$1.8 trillion/day</td><td>Total value of all payments submitted to CHIPS</td></tr>
+      <tr><td><strong>Opening Prefund Total</strong></td><td>~$50–70 billion</td><td>Combined opening prefund from all participants</td></tr>
+      <tr><td><strong>Netting Efficiency</strong></td><td>~95%</td><td>Gross settled with only ~5% in actual funds</td></tr>
+      <tr><td><strong>Transactions Per Day</strong></td><td>~500,000</td><td>Number of individual payment instructions processed</td></tr>
+      <tr><td><strong>Processing Hours</strong></td><td>9:00 AM – 6:00 PM ET</td><td>Active business hours (not 24/7)</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">9.5</span> CHIPS vs Fedwire — Detailed Comparison</h2>
+    <div class="table-wrap"><table><thead><tr><th>Attribute</th><th>CHIPS</th><th>Fedwire Funds Service</th></tr></thead><tbody>
+      <tr><td><strong>Operator</strong></td><td>The Clearing House (private)</td><td>Federal Reserve Banks (central bank)</td></tr>
+      <tr><td><strong>Settlement Model</strong></td><td>Multilateral netting + Fedwire final settlement</td><td>Pure RTGS — gross, per-transaction</td></tr>
+      <tr><td><strong>Settlement Asset</strong></td><td>Federal Reserve balances (via CHIPS prefund account)</td><td>Federal Reserve balances (direct)</td></tr>
+      <tr><td><strong>Participants</strong></td><td>~43–50 large banks only</td><td>~9,000+ — any Fed-eligible depository institution</td></tr>
+      <tr><td><strong>Daily Volume</strong></td><td>~$1.8 trillion</td><td>~$4+ trillion</td></tr>
+      <tr><td><strong>Finality</strong></td><td>Intraday (as matched) + end-of-day final</td><td>Immediate and irrevocable</td></tr>
+      <tr><td><strong>Liquidity Efficiency</strong></td><td>Very high (~95% netting)</td><td>Low (each payment needs full gross funding)</td></tr>
+      <tr><td><strong>Operating Hours</strong></td><td>9:00 AM – 6:00 PM ET</td><td>9:00 PM – 6:30 PM ET (21 hours, near-24/7)</td></tr>
+      <tr><td><strong>Primary Use</strong></td><td>International USD payments, interbank, FX cover</td><td>Large-value domestic US payments, govt transfers</td></tr>
+      <tr><td><strong>Credit Risk</strong></td><td>Eliminated via prefunding</td><td>Eliminated — immediate settlement</td></tr>
+      <tr><td><strong>Cost</strong></td><td>Lower per-transaction (netting efficiency)</td><td>Higher per-transaction (full gross funding)</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box purple"><strong>Relationship:</strong> CHIPS and Fedwire are deeply intertwined. CHIPS relies on Fedwire for: (1) collecting participant prefunding at opening; (2) final end-of-day net settlement; (3) intraday top-up transfers. Fedwire is the ultimate settlement backbone that underpins CHIPS's operation.</div>
+  </div>
+
+  <div class="module-nav">
+    <a href="module8.html"><span>← Previous</span><strong>Fedwire System in USA</strong></a>
+    <a href="module10.html" class="next"><span>Next Module →</span><strong>ACH Operations &amp; NSS USA</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body></html>
