@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payments Training — Professional Course</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">⬡</span>
+        <span>PaymentsAcademy</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="modules.html">Modules</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#modules-grid">Curriculum</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Professional Training Program</div>
+      <h1>Global Payments &amp;<br/>Settlement Systems</h1>
+      <p class="hero-sub">A comprehensive, module-by-module deep-dive into the world's payment infrastructure — from domestic ACH to SWIFT ISO 20022, SEPA, Fedwire, CHIPS, and beyond.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">13</span><span class="stat-label">Modules</span></div>
+        <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Topics</span></div>
+        <div class="stat"><span class="stat-num">Global</span><span class="stat-label">Coverage</span></div>
+      </div>
+      <a href="modules.html" class="btn-primary">Explore All Modules</a>
+    </div>
+    <div class="hero-visual">
+      <div class="globe-ring ring1"></div>
+      <div class="globe-ring ring2"></div>
+      <div class="globe-ring ring3"></div>
+      <div class="globe-center">
+        <span>💳</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- OVERVIEW SECTION -->
+  <section class="section overview" id="overview">
+    <div class="container">
+      <div class="section-label">What You'll Learn</div>
+      <h2 class="section-title">End-to-End Payments Expertise</h2>
+      <p class="section-desc">This course covers every layer of the global payments ecosystem — from fundamental concepts of clearing and settlement to cutting-edge topics like ISO 20022 migration, blockchain, and Central Bank Digital Currencies.</p>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="ov-icon">🏦</div>
+          <h3>Core Infrastructure</h3>
+          <p>RTGS, DNS, ACH, CHIPS, Fedwire — the backbone systems that move trillions daily.</p>
+        </div>
+        <div class="overview-card">
+          <div class="ov-icon">🌐</div>
+          <h3>Global Networks</h3>
+          <p>SWIFT MT &amp; ISO 20022, SEPA, T2, STEP2, Lynx, China CIPS, HKMA CHATS.</p>
+        </div>
+        <div class="overview-card">
+          <div class="ov-icon">⚡</div>
+          <h3>Instant Payments</h3>
+          <p>Real-time payment systems: IMPS, UPI, UK Faster Payments, SEPA Inst, USA RTP, FedNow.</p>
+        </div>
+        <div class="overview-card">
+          <div class="ov-icon">🔒</div>
+          <h3>Risk &amp; Compliance</h3>
+          <p>Settlement risk, Herstatt risk, CLS, liquidity management, and risk mitigation techniques.</p>
+        </div>
+        <div class="overview-card">
+          <div class="ov-icon">🔗</div>
+          <h3>DLT &amp; Crypto</h3>
+          <p>Blockchain, smart contracts, cryptocurrencies, and Central Bank Digital Currency (CBDC).</p>
+        </div>
+        <div class="overview-card">
+          <div class="ov-icon">📋</div>
+          <h3>Standards &amp; Messaging</h3>
+          <p>ISO 20022 migration impacts, SWIFT MX messages, pacs, camt, pain message families.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULES GRID -->
+  <section class="section modules-sec" id="modules-grid">
+    <div class="container">
+      <div class="section-label">Course Curriculum</div>
+      <h2 class="section-title">13 Comprehensive Modules</h2>
+      <div class="modules-grid">
+
+        <a href="module1.html" class="module-card" data-num="01">
+          <div class="mc-num">01</div>
+          <div class="mc-body">
+            <h3>Basics of Payment Systems</h3>
+            <p>Payment &amp; settlement fundamentals, domestic transaction processing, clearing houses, cross-border processing, cheques, ACH, debit transfers.</p>
+            <div class="mc-tags"><span>RTGS</span><span>DNS</span><span>Nostro/Vostro</span><span>ACH</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module2.html" class="module-card" data-num="02">
+          <div class="mc-num">02</div>
+          <div class="mc-body">
+            <h3>Risks in Payment Systems</h3>
+            <p>Credit risk, liquidity risk, settlement risk, systemic risk, and comprehensive mitigation techniques used by global payment systems.</p>
+            <div class="mc-tags"><span>Settlement Risk</span><span>Liquidity Risk</span><span>Mitigation</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module3.html" class="module-card" data-num="03">
+          <div class="mc-num">03</div>
+          <div class="mc-body">
+            <h3>CLS Bank Operations</h3>
+            <p>Continuous Linked Settlement — how CLS eliminates FX settlement risk, Herstatt risk, and the mechanics of CLS Bank transaction processing.</p>
+            <div class="mc-tags"><span>CLS</span><span>Herstatt Risk</span><span>FX Settlement</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module4.html" class="module-card" data-num="04">
+          <div class="mc-num">04</div>
+          <div class="mc-body">
+            <h3>RTGS, Low Value &amp; Hybrid Systems</h3>
+            <p>Real-Time Gross Settlement, instant retail payments (IMPS, UPI, Faster Payments, RTP, FedNow), hybrid models, and Australia NPP.</p>
+            <div class="mc-tags"><span>RTGS</span><span>UPI</span><span>FedNow</span><span>NPP</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module5.html" class="module-card" data-num="05">
+          <div class="mc-num">05</div>
+          <div class="mc-body">
+            <h3>SWIFT MT &amp; ISO 20022 Messaging</h3>
+            <p>SWIFT message types (MT 1XX, 2XX, 9XX), ISO 20022 adoption, MX messages (pacs, camt, pain), migration impacts, GPI, and payment controls.</p>
+            <div class="mc-tags"><span>SWIFT</span><span>ISO 20022</span><span>MX Messages</span><span>GPI</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module6.html" class="module-card" data-num="06">
+          <div class="mc-num">06</div>
+          <div class="mc-body">
+            <h3>SEPA Services &amp; T2</h3>
+            <p>Single Euro Payments Area, T2/T2S Consolidated Platform, Main Cash Accounts, TARGET consolidation, ESMIG, CLM, T2 ISO 20022 formats.</p>
+            <div class="mc-tags"><span>SEPA</span><span>T2</span><span>TARGET</span><span>CLM</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module7.html" class="module-card" data-num="07">
+          <div class="mc-num">07</div>
+          <div class="mc-body">
+            <h3>SEPA STEP2 SCT, SDD &amp; SCT Inst</h3>
+            <p>STEP2 Pan-European ACH, Credit Transfer (SCT), Direct Debit (SDD), Instant Credit Transfer Scheme, TIPS, and RT1 processing.</p>
+            <div class="mc-tags"><span>STEP2</span><span>SCT</span><span>SDD</span><span>TIPS</span><span>RT1</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module8.html" class="module-card" data-num="08">
+          <div class="mc-num">08</div>
+          <div class="mc-body">
+            <h3>Fedwire System in USA</h3>
+            <p>US regulatory structure, Fedwire Funds Service, Fedwire Securities Service, operational flows, and GPI integration with Fedwire.</p>
+            <div class="mc-tags"><span>Fedwire</span><span>Federal Reserve</span><span>GPI</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module9.html" class="module-card" data-num="09">
+          <div class="mc-num">09</div>
+          <div class="mc-body">
+            <h3>CHIPS — High Value Payments USA</h3>
+            <p>Clearing House Interbank Payments System, risk management, prefunding, liquidity optimization, and transaction processing details.</p>
+            <div class="mc-tags"><span>CHIPS</span><span>Prefunding</span><span>Liquidity</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module10.html" class="module-card" data-num="10">
+          <div class="mc-num">10</div>
+          <div class="mc-body">
+            <h3>ACH Operations &amp; NSS USA</h3>
+            <p>ACH network, NACHA rules, same-day ACH, next-day ACH, Phixius information exchange, and National Settlement Service (NSS) process.</p>
+            <div class="mc-tags"><span>ACH</span><span>NACHA</span><span>Same-Day ACH</span><span>NSS</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module11.html" class="module-card" data-num="11">
+          <div class="mc-num">11</div>
+          <div class="mc-body">
+            <h3>Lynx RTGS System — Canada</h3>
+            <p>Bank of Canada's Lynx payment system, liquidity management, settlement mechanisms — UPM, LSM, RCM, RTM — replacing the legacy LVTS.</p>
+            <div class="mc-tags"><span>Lynx</span><span>Canada</span><span>LSM</span><span>UPM</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module12.html" class="module-card" data-num="12">
+          <div class="mc-num">12</div>
+          <div class="mc-body">
+            <h3>China FCDPS, CIPS &amp; HKMA CHATS</h3>
+            <p>China's domestic &amp; cross-border payment infrastructure — CDFCPS, CIPS, Hong Kong CHATS — from a strategic and operational perspective.</p>
+            <div class="mc-tags"><span>CIPS</span><span>CDFCPS</span><span>CHATS</span><span>China</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+        <a href="module13.html" class="module-card" data-num="13">
+          <div class="mc-num">13</div>
+          <div class="mc-body">
+            <h3>DLT, Smart Contracts &amp; CBDC</h3>
+            <p>Distributed Ledger Technology, blockchain in payments, smart contracts, cryptocurrency fundamentals, and Central Bank Digital Currency landscape.</p>
+            <div class="mc-tags"><span>Blockchain</span><span>DLT</span><span>CBDC</span><span>Smart Contracts</span></div>
+          </div>
+          <div class="mc-arrow">→</div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">⬡</span>
+        <span>PaymentsAcademy</span>
+      </div>
+      <p>Professional training in global payment systems &amp; settlement infrastructure.</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
