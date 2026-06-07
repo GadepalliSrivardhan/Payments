@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1: Basics of Payment Systems — PaymentsAcademy</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="modules.html" class="active">Modules</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="module-hero">
+  <div class="module-hero-inner">
+    <div class="module-num">01</div>
+    <div class="module-tag">Module 1</div>
+    <h1>Basics of Payment Systems</h1>
+    <p>Introduction to payment and settlement systems, domestic transaction processing, cross-border payments, clearing houses, cheque processing, ACH, and debit transfers.</p>
+    <div class="module-tags"><span>Payment &amp; Settlement</span><span>RTGS</span><span>DNS</span><span>Hybrid</span><span>Nostro/Vostro</span><span>ACH</span><span>Cheque Truncation</span></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- 1 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.1</span> Understanding Payment and Settlement</h2>
+      <p>A <strong>payment</strong> is the transfer of value from one party to another in exchange for goods, services, or to fulfil a financial obligation. Payments can be made in cash, by cheque, electronically, or via card networks. In the modern banking world, the vast majority of payments are electronic.</p>
+      <p><strong>Settlement</strong> is the final, irrevocable transfer of funds between financial institutions to discharge the obligations arising from a payment. When a customer instructs their bank to pay another party, the interbank settlement is the movement of funds between the two banks — typically through a central bank or clearing system. There is always a gap between the moment a payment is initiated and when it is finally settled, called the <strong>settlement lag</strong>.</p>
+      <div class="two-col">
+        <div class="highlight-box">
+          <strong>Payment</strong><br/>The instruction or message that initiates the transfer. E.g., "Pay €500 to account X." The instruction is processed by the payment system.
+        </div>
+        <div class="highlight-box purple">
+          <strong>Settlement</strong><br/>The actual movement of funds between institutions, typically in central bank money (reserves). Settlement is final and irrevocable.
+        </div>
+      </div>
+      <h3>Overview of Bank's IT Ecosystem for Payment Processing</h3>
+      <p>A bank's payment processing infrastructure typically consists of multiple layers. The <strong>Core Banking System (CBS)</strong> maintains customer accounts and ledgers. Sitting above this are <strong>payment processing engines</strong> that handle message transformation, routing, validation, and compliance checks. Surrounding these are <strong>ancillary systems</strong>: sanction screening (OFAC, UN lists), AML monitoring, liquidity management, and reconciliation engines. The bank then connects to external <strong>market infrastructure</strong> — interbank clearing systems, central banks, and messaging networks like SWIFT.</p>
+      <div class="cards-grid">
+        <div class="info-card"><div class="ic-icon">🏛️</div><h4>Core Banking System</h4><p>Maintains customer accounts, processes debits/credits, holds the ledger of record for all account balances.</p></div>
+        <div class="info-card"><div class="ic-icon">⚙️</div><h4>Payment Engine</h4><p>Routes, transforms and enriches payment messages. Handles format conversion (MT↔MX), validation, duplicate checks.</p></div>
+        <div class="info-card"><div class="ic-icon">🔍</div><h4>Sanctions &amp; AML</h4><p>Real-time screening against OFAC, EU, UN sanctions lists. Transaction monitoring for suspicious patterns.</p></div>
+        <div class="info-card"><div class="ic-icon">💧</div><h4>Liquidity Management</h4><p>Manages intraday cash positions across nostro accounts. Optimises settlement queues to minimise funding costs.</p></div>
+        <div class="info-card"><div class="ic-icon">📡</div><h4>SWIFT/Messaging</h4><p>Connects to SWIFT network for interbank messaging. Handles MT and MX message types for cross-border payments.</p></div>
+        <div class="info-card"><div class="ic-icon">📊</div><h4>Reconciliation</h4><p>Matches internal records with external nostro statements. Breaks are investigated and resolved daily.</p></div>
+      </div>
+    </div>
+
+    <!-- 1.2 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.2</span> Domestic Transaction Processing</h2>
+      <h3>Book Payments</h3>
+      <p>A <strong>book payment</strong> (also called an intra-bank transfer) is a payment where both the payer and the payee hold accounts at the same bank. The bank simply debits one account and credits another on its own ledger — no interbank settlement or external message is needed. Book payments are instantaneous, free of external cost, and represent a significant portion of a bank's transaction volume. Examples include a customer transferring between their own current and savings accounts, or two customers of the same bank paying each other.</p>
+      <h3>Local Payments Through Clearing Houses</h3>
+      <p>When the payer and payee are at different banks, the payment must pass through a <strong>clearing and settlement mechanism</strong>. A <strong>Clearing House</strong> acts as a central counterparty or processing hub that receives payment instructions from member banks, validates them, and facilitates the exchange of funds. Clearing can be bilateral (two banks exchange directly) or multilateral (all banks send to a central hub, which nets positions and instructs settlement).</p>
+      <h3>Role of Clearing House and Settlement Institutions</h3>
+      <p>Clearing houses perform three key functions: (1) <strong>Clearing</strong> — exchanging payment instructions between participants; (2) <strong>Netting</strong> — offsetting obligations to reduce the gross amount that needs to be settled; (3) <strong>Settlement</strong> — final transfer of funds in central bank money. Settlement institutions are typically central banks (e.g., Bank of England for CHAPS, ECB for T2, Federal Reserve for Fedwire/FedACH). Central bank money is the ultimate risk-free settlement asset because it carries no credit risk.</p>
+      <h3>Types of Payments Based on Various Parameters</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Types</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Value</strong></td><td>High Value, Low Value / Retail</td><td>Fedwire, CHIPS vs ACH, SEPA SCT</td></tr>
+            <tr><td><strong>Urgency</strong></td><td>Time-Critical, Standard, Batch</td><td>RTGS same-day vs ACH next-day</td></tr>
+            <tr><td><strong>Channel</strong></td><td>Internet banking, mobile, branch, API</td><td>Online transfer, USSD, SWIFT</td></tr>
+            <tr><td><strong>Direction</strong></td><td>Push (credit), Pull (debit)</td><td>Credit transfer vs Direct Debit</td></tr>
+            <tr><td><strong>Geography</strong></td><td>Domestic, Cross-border</td><td>Local ACH vs SWIFT cross-border</td></tr>
+            <tr><td><strong>Currency</strong></td><td>Single currency, Multi-currency</td><td>EUR SEPA vs multi-currency SWIFT</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 1.3 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.3</span> Types of Payment Systems</h2>
+      <p>Every payment system is built on three key elements: the <strong>Message</strong> (instruction carrying payment details), <strong>Clearing/Netting</strong> (exchange and offsetting of obligations), and <strong>Settlement</strong> (final transfer of funds). The architecture of these elements determines what type of system it is.</p>
+
+      <h3>1. Deferred Net Settlement (DNS)</h3>
+      <p>In a DNS system, payment instructions accumulate throughout the day and are not settled individually. At a designated point (end of day or multiple times per day), all obligations are <strong>netted</strong> across participants, and only the net balances are settled in central bank money. This dramatically reduces the gross amount that needs to be settled — often by 90%+ — reducing the need for intraday liquidity. However, DNS carries <strong>intraday settlement risk</strong>: if a participant defaults before end-of-day netting, all transactions involving that participant may be unwound, potentially causing systemic disruption. Examples: BACS (UK), older ACH systems.</p>
+      <div class="highlight-box gold"><strong>DNS Risk:</strong> If a participant fails intraday, all their transactions may be unwound, causing cascading failures for other participants who had relied on those incoming funds.</div>
+
+      <h3>2. Real Time Gross Settlement (RTGS)</h3>
+      <p>In an RTGS system, each payment is settled individually and immediately across central bank accounts, in real time, on a gross (non-netted) basis. Each transaction is final and irrevocable the moment it settles. Because each transaction requires its own liquidity, RTGS systems demand significantly more intraday liquidity from participants. However, they eliminate settlement risk entirely — there is no accumulation of unsettled obligations. RTGS is used for large-value, time-critical, systemically important payments. Examples: Fedwire (USA), CHAPS (UK), TARGET2/T2 (Eurozone), BOJ-NET (Japan), Lynx (Canada).</p>
+      <div class="highlight-box green"><strong>RTGS Safety:</strong> Settlement is immediate and final. No end-of-day unwinding risk. The trade-off is high intraday liquidity requirements — banks must pre-fund their settlement accounts.</div>
+
+      <h3>3. Hybrid System</h3>
+      <p>Hybrid systems combine the liquidity efficiency of DNS with the settlement safety of RTGS. They use <strong>Liquidity Saving Mechanisms (LSM)</strong> — algorithms that continuously scan queues for offsetting payments that can be netted and settled together. This reduces the liquidity needed while maintaining RTGS-like finality for settled transactions. Examples: CHAPS (post-2017), Lynx (Canada), many modern RTGS systems incorporate hybrid features.</p>
+
+      <h3>4. Real Time Final / Net Settlement System (RTFS/RTNS)</h3>
+      <p>An emerging model combining real-time clearing with periodic gross settlement. Used in instant payment systems where clearing happens in real time but interbank settlement is deferred to specific windows (e.g., IMPS in India where NPCI clears instantly but RBI settlement occurs in windows). This provides a practical balance between immediacy and operational efficiency.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>System Type</th><th>Settlement Timing</th><th>Settlement Risk</th><th>Liquidity Need</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DNS</strong></td><td>End of day / periodic</td><td>High (intraday)</td><td>Low</td><td>BACS, old ACH</td></tr>
+            <tr><td><strong>RTGS</strong></td><td>Real-time, per transaction</td><td>None</td><td>Very High</td><td>Fedwire, CHAPS, T2</td></tr>
+            <tr><td><strong>Hybrid</strong></td><td>Real-time with LSM</td><td>Very Low</td><td>Medium</td><td>Modern CHAPS, Lynx</td></tr>
+            <tr><td><strong>RTFS/RTNS</strong></td><td>Real-time clearing, periodic settlement</td><td>Low</td><td>Low-Medium</td><td>IMPS (India)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 1.4 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.4</span> Cross Border Payment Processing</h2>
+      <h3>Correspondent Banking — Nostro/Vostro Relationship</h3>
+      <p>When two banks in different countries need to exchange funds, they typically do not have a direct relationship. Instead, they use <strong>correspondent banks</strong> — third-party banks that maintain accounts on behalf of other banks and facilitate cross-border payments. This is the foundation of the correspondent banking model that has existed for centuries.</p>
+      <p>The key account types are <strong>Nostro</strong> and <strong>Vostro</strong> accounts, two perspectives on the same relationship:</p>
+      <div class="two-col">
+        <div class="highlight-box">
+          <strong>Nostro Account</strong> ("Our account at your bank")<br/><br/>
+          Bank A holds an account at Bank B in Bank B's currency. Bank A refers to this as its Nostro account. Example: A UK bank holds a USD Nostro account at a US correspondent bank. The UK bank uses this to make USD payments.
+        </div>
+        <div class="highlight-box purple">
+          <strong>Vostro Account</strong> ("Your account at our bank")<br/><br/>
+          Bank B refers to the same account (Bank A's account held at Bank B) as a Vostro account. The same account — different perspectives. The Vostro account holder (Bank B) is the correspondent.
+        </div>
+      </div>
+      <h3>How a Cross-Border Payment Works</h3>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Customer Instruction</h4><p>Customer at Bank A instructs payment to a beneficiary at Bank C in another country.</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>SWIFT Message</h4><p>Bank A sends a SWIFT MT 103 (or pacs.008 in ISO 20022) to Bank B (correspondent), instructing payment to Bank C.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Correspondent Processing</h4><p>Bank B debits Bank A's Nostro account, sends onward payment instruction to Bank C via local clearing.</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Final Credit</h4><p>Bank C credits the beneficiary's account. Payment is complete.</p></div></div>
+      </div>
+      <h3>Nostro Reconciliation</h3>
+      <p>A major operational challenge in correspondent banking is <strong>Nostro reconciliation</strong> — matching internal records of the Nostro account (what the bank thinks its balance is) against the external statement from the correspondent (what the correspondent says the balance is). Breaks arise from timing differences, failed payments, unexpected debits (correspondent fees, investigations), and value date discrepancies. Real-time Nostro reconciliation is increasingly important, driven by SWIFT GPI which provides real-time tracking of cross-border payments and same-day confirmation of credit.</p>
+    </div>
+
+    <!-- 1.5 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.5</span> Components of Payment Processing</h2>
+      <h3>Role of Non-Banking Players</h3>
+      <p>The payment ecosystem includes many non-bank participants who play critical roles in processing and facilitating payments. <strong>Card Networks</strong> (Visa, Mastercard, American Express, UnionPay) operate the infrastructure for card-based payments — authorisation, clearing, and settlement between issuers and acquirers. <strong>Payment Service Providers (PSPs)</strong> (PayPal, Stripe, Adyen) aggregate payment instruments and provide merchant-facing payment acceptance. <strong>FinTechs</strong> (Wise, Revolut, Ripple) offer alternative payment rails, often with lower costs and faster processing than traditional correspondent banking. <strong>Central Counterparties (CCPs)</strong> sit between buyers and sellers in financial markets, reducing bilateral counterparty risk.</p>
+      <h3>Overview of Foreign Exchange from Payments Perspective</h3>
+      <p>When a payment crosses currency boundaries, a foreign exchange conversion is required. The <strong>FX rate</strong> applied determines how much of the destination currency the beneficiary receives. Key concepts include: <strong>Spot rate</strong> (current market rate for immediate settlement), <strong>Forward rate</strong> (locked-in rate for future settlement), <strong>Cross-rate</strong> (derived rate between two non-USD currencies via USD), and <strong>Spread</strong> (bank's margin between buy and sell rates). In payments processing, FX conversion adds complexity: which party bears the FX risk? Who chooses the FX provider? SWIFT's GPI initiative introduced <strong>OUR/SHA/BEN</strong> charge codes to control who pays fees, and SWIFT gCCT (Global Currency Conversion) aims to provide transparent FX in cross-border payments.</p>
+    </div>
+
+    <!-- 1.6 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.6</span> Cheque Based Payment Processing</h2>
+      <h3>Cheque Truncation and Imaging</h3>
+      <p><strong>Cheque truncation</strong> is the process of stopping a physical cheque's journey at some point in the clearing cycle by replacing it with an electronic image or digital record. Instead of physically transporting paper cheques between banks and clearing houses, the <strong>digital image</strong> of the front and back of the cheque is captured and transmitted electronically. This dramatically reduces processing time (from days to hours), eliminates the risk of physical loss or damage, and cuts transportation costs. In India, the <strong>Cheque Truncation System (CTS)</strong> operated by RBI processes millions of cheques daily using image-based clearing.</p>
+      <h3>Cheque Conversion</h3>
+      <p><strong>Cheque conversion</strong> goes a step further — a paper cheque is converted into an electronic ACH debit transaction at the point of presentment (e.g., at a retail counter or via remote deposit capture). The MICR (Magnetic Ink Character Recognition) data from the bottom of the cheque is read and converted into an ACH entry. The original paper cheque is voided and returned to the customer. This is common in the USA under NACHA rules for point-of-sale conversion (POS), accounts receivable conversion (ARC), and back-office conversion (BOC).</p>
+    </div>
+
+    <!-- 1.7 -->
+    <div class="topic-section fade-in">
+      <h2><span class="t-num">1.7</span> Automated Clearing House (ACH)</h2>
+      <p>An <strong>Automated Clearing House</strong> is an electronic network for financial transactions — specifically batch-based credit transfers and direct debits. ACH systems process large volumes of low-value payments efficiently by batching transactions together and settling net positions rather than gross amounts.</p>
+      <h3>Credit Transfers (Push Payments)</h3>
+      <p>A credit transfer is initiated by the <strong>payer</strong> (the person sending money). The payer instructs their bank to push funds to the payee's bank. Examples include payroll, supplier payments, government welfare payments, and tax refunds. In ACH terms, the payer's bank is the <strong>ODFI (Originating Depository Financial Institution)</strong> and the payee's bank is the <strong>RDFI (Receiving Depository Financial Institution)</strong>. The common NACHA entry codes for credit transfers are <strong>PPD</strong> (Prearranged Payment &amp; Deposit for consumer), <strong>CCD</strong> (Corporate Credit or Debit), and <strong>CTX</strong> (Corporate Trade Exchange with remittance info).</p>
+      <h3>Debit Transfers / Direct Debits (Pull Payments)</h3>
+      <p>A debit transfer (direct debit) is initiated by the <strong>payee</strong> (the party collecting funds), with prior authorisation from the payer. The payee's bank pulls funds from the payer's bank account. Examples include utility bill payments, mortgage repayments, and subscription services. In Europe (SEPA), this is governed by the <strong>SDD (SEPA Direct Debit)</strong> scheme. In the US, ACH debits are used for the same purpose. The mandate (authorisation) from the payer is critical — it defines the amount, frequency, and duration of the debit authority.</p>
+      <h3>Mandate Management System</h3>
+      <p>A <strong>mandate</strong> is the authorisation given by a payer to a payee to collect direct debits from their account. A Mandate Management System (MMS) stores, validates, and manages these mandates. Key mandate attributes include: creditor identifier, debtor account details (IBAN/BIC), mandate reference, type (recurrent/one-off), amount (fixed/variable), and signature date. In SEPA, the <strong>e-Mandate</strong> scheme allows digital mandate setup. Mandate lifecycle management covers creation, amendment, cancellation, and expiry. Without a valid mandate, a direct debit is considered unauthorised and can be returned by the debtor's bank.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Credit Transfer</th><th>Direct Debit</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Initiated by</strong></td><td>Payer (push)</td><td>Payee (pull)</td></tr>
+            <tr><td><strong>Authorisation</strong></td><td>Per-transaction</td><td>Mandate (standing authority)</td></tr>
+            <tr><td><strong>Examples</strong></td><td>Payroll, supplier payments</td><td>Utility bills, subscriptions</td></tr>
+            <tr><td><strong>SEPA scheme</strong></td><td>SCT / SCT Inst</td><td>SDD Core / SDD B2B</td></tr>
+            <tr><td><strong>US equivalent</strong></td><td>ACH Credit (PPD/CCD)</td><td>ACH Debit (PPD/CCD)</td></tr>
+            <tr><td><strong>Reversal window</strong></td><td>Up to 10 days</td><td>Up to 8 weeks (consumer)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <a href="index.html"><span>← Back to</span><strong>Home</strong></a>
+      <a href="module2.html" class="next"><span>Next Module →</span><strong>Risks in Payment Systems</strong></a>
+    </div>
+
+  </div>
+</section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body>
+</html>

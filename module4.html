@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 4: RTGS, Low Value &amp; Hybrid Payment Systems — PaymentsAcademy</title>
+<link rel="stylesheet" href="styles.css"/></head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">04</div><div class="module-tag">Module 4</div><h1>RTGS, Low Value Real Time &amp; Hybrid Payment Systems</h1><p>Understanding RTGS systems, instant retail payment systems (IMPS, UPI, UK Faster Payments, RTP, FedNow, NPP), proxy-based payments, and hybrid retail payment models.</p><div class="module-tags"><span>RTGS</span><span>Instant Payments</span><span>UPI</span><span>FedNow</span><span>Faster Payments</span><span>NPP</span><span>TIPS</span></div></div></div>
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">4.1</span> Real Time Gross Settlement Systems (Generic)</h2>
+    <h3>Understanding RTGS Payment Process</h3>
+    <p>A <strong>Real Time Gross Settlement (RTGS)</strong> system settles each payment individually and immediately — in real time, on a gross (non-netted) basis — across settlement accounts held at the central bank. The defining characteristics are: <strong>real time</strong> (no delay), <strong>gross</strong> (no netting), and <strong>central bank money</strong> (no credit risk on the settlement asset). Once a payment settles, it is final and irrevocable — the receiving bank can use the funds immediately with certainty.</p>
+    <p>RTGS systems are designed for <strong>large-value, time-critical payments</strong> — interbank transactions, corporate treasury payments, property purchases, and securities settlement. They operate during defined business hours (though many are extending to near-24/7) and require participants to maintain sufficient central bank reserves to fund each payment in real time.</p>
+    <div class="table-wrap"><table><thead><tr><th>RTGS System</th><th>Country</th><th>Operated by</th><th>Currency</th><th>Daily Volume</th></tr></thead><tbody>
+      <tr><td><strong>Fedwire</strong></td><td>USA</td><td>Federal Reserve</td><td>USD</td><td>~$4T+</td></tr>
+      <tr><td><strong>CHAPS</strong></td><td>UK</td><td>Bank of England</td><td>GBP</td><td>~£400B</td></tr>
+      <tr><td><strong>T2 (TARGET2)</strong></td><td>Eurozone</td><td>ECB/Eurosystem</td><td>EUR</td><td>~€2.2T</td></tr>
+      <tr><td><strong>BOJ-NET</strong></td><td>Japan</td><td>Bank of Japan</td><td>JPY</td><td>~¥150T</td></tr>
+      <tr><td><strong>Lynx</strong></td><td>Canada</td><td>Payments Canada</td><td>CAD</td><td>~CAD 200B</td></tr>
+      <tr><td><strong>HVPS (CNAPS)</strong></td><td>China</td><td>PBOC</td><td>CNY</td><td>~CNY 20T+</td></tr>
+    </tbody></table></div>
+
+    <h3>Features of RTGS for Improving Processing Efficiency</h3>
+    <p>Modern RTGS systems incorporate sophisticated features to reduce liquidity requirements while maintaining real-time finality:</p>
+    <ul>
+      <li><strong>Queue Management:</strong> Payments that cannot be settled immediately (due to insufficient funds) are held in a queue. When funds arrive, queued payments are released in order or by priority.</li>
+      <li><strong>Bilateral Offsetting:</strong> The system identifies pairs of payments between two banks that can be settled simultaneously, requiring only the net difference in liquidity.</li>
+      <li><strong>Multilateral Offsetting / Gridlock Resolution:</strong> Algorithms scan for cycles of payments (A owes B, B owes C, C owes A) that can all settle simultaneously with zero net liquidity.</li>
+      <li><strong>Liquidity Saving Mechanism (LSM):</strong> Combines real-time gross settlement with netting efficiency — found in hybrid systems like modern CHAPS and Lynx.</li>
+      <li><strong>Throughput Guidelines:</strong> Central banks may set percentage targets for payment throughput (e.g., 50% settled by noon, 75% by 2pm) to encourage smooth liquidity distribution throughout the day and prevent end-of-day gridlock.</li>
+      <li><strong>Priority Queues:</strong> Urgent or high-value payments can be assigned higher priority to ensure they settle without waiting behind lower-priority batches.</li>
+    </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">4.2</span> Instant Retail Payment Systems</h2>
+    <h3>Proxy Payment Initiation Using VPA, QR Code etc.</h3>
+    <p>Traditional bank payments require the sender to know the recipient's full bank account details (IBAN, account number, sort code). Instant payment systems have introduced <strong>proxy-based payment initiation</strong> — the payer uses a simple, memorable identifier (a proxy) to initiate a payment without knowing the recipient's account details.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📱</div><h4>VPA (Virtual Payment Address)</h4><p>Used in India's UPI. Format: name@bankname (e.g., john@hdfc). The proxy maps to an underlying bank account via a central directory service.</p></div>
+      <div class="info-card"><div class="ic-icon">📷</div><h4>QR Code</h4><p>A QR code encodes payment details (VPA, amount, merchant ID). The payer scans and confirms — widely used for merchant payments in India, Singapore (PayNow), China (Alipay/WeChat Pay).</p></div>
+      <div class="info-card"><div class="ic-icon">📞</div><h4>Mobile Number</h4><p>Used in Australia (PayID), Singapore (PayNow), and India (IMPS). The mobile number is registered in a central directory and mapped to a bank account.</p></div>
+      <div class="info-card"><div class="ic-icon">✉️</div><h4>Email Address</h4><p>Australia's NPP PayID supports email addresses as proxies. The email is registered and mapped to a BSB+account number.</p></div>
+    </div>
+    <h3>Models for Proxy Payment Processing and Translation</h3>
+    <p>When a payer enters a proxy (VPA, mobile number, etc.), the payment system must translate it to actual bank account details. This happens via a <strong>Central Directory Service</strong> or <strong>Proxy Lookup Service</strong>: (1) Payer's bank queries the directory with the proxy; (2) Directory returns the mapped IBAN/account number and destination bank BIC; (3) Payment is routed to the correct bank; (4) The proxy-to-account mapping is never exposed to the payer, protecting beneficiary privacy.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">4.3</span> Approaches in Clearing and Settlement for Instant Payment Systems</h2>
+
+    <h3>1. Hub Approach — India IMPS, UK Faster Payments</h3>
+    <p>In the hub model, a central infrastructure (hub) connects all participating banks. The hub acts as the central counterparty for clearing — each bank connects to the hub, not to every other bank. This reduces the number of bilateral connections from N×(N-1) to just N. <strong>India's IMPS</strong> (Immediate Payment Service, operated by NPCI) and <strong>UK's Faster Payments</strong> (operated by Pay.UK) use this model. The hub validates the payment, routes it to the destination bank, and provides settlement certainty. Settlement is typically in periodic cycles (net settlement via central bank) rather than real-time gross.</p>
+
+    <h3>2. RTGS Approach — SEPA TIPS, USA RTP, USA FedNow</h3>
+    <p>Some instant payment systems use an RTGS-like model where each instant payment is settled individually and immediately in central bank money. <strong>SEPA TIPS</strong> (TARGET Instant Payment Settlement, operated by ECB) settles each SCT Inst transaction gross in central bank money in real time. Similarly, <strong>USA RTP</strong> (The Clearing House) and <strong>USA FedNow</strong> (Federal Reserve) provide immediate finality for each payment. Participants pre-fund a dedicated account and each payment is settled against this prefunded balance — providing true instant settlement finality.</p>
+
+    <h3>3. Distributed Clearing Approach — Australia NPP</h3>
+    <p><strong>Australia's New Payments Platform (NPP)</strong>, launched 2018, uses a unique architecture: a <strong>Basic Infrastructure (BI)</strong> that enables real-time address resolution and messaging, and a <strong>Fast Settlement Service (FSS)</strong> operated by the Reserve Bank of Australia for real-time gross settlement. Unlike hub models, NPP uses a distributed architecture where participating financial institutions connect bilaterally through the BI infrastructure. Payments are addressed using PayID (a proxy service). Settlement occurs individually and immediately in RBA Exchange Settlement Accounts (ESAs) — making NPP a true RTGS-based instant payment system.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">4.4</span> Major Instant Payment Systems — Country by Country</h2>
+    <div class="table-wrap"><table><thead><tr><th>System</th><th>Country</th><th>Launched</th><th>Speed</th><th>Limit</th><th>Settlement</th><th>Operating Hours</th></tr></thead><tbody>
+      <tr><td><strong>IMPS</strong></td><td>India</td><td>2010</td><td>Seconds</td><td>₹5 lakh</td><td>Net via RBI (periodic)</td><td>24/7/365</td></tr>
+      <tr><td><strong>UPI</strong></td><td>India</td><td>2016</td><td>Seconds</td><td>₹1 lakh (default)</td><td>Net via RBI (periodic)</td><td>24/7/365</td></tr>
+      <tr><td><strong>Faster Payments</strong></td><td>UK</td><td>2008</td><td>~15 sec</td><td>£1 million</td><td>Net via BoE (periodic)</td><td>24/7/365</td></tr>
+      <tr><td><strong>SCT Inst</strong></td><td>SEPA Europe</td><td>2017</td><td>Max 10 sec</td><td>€100,000</td><td>TIPS (RTGS) / RT1</td><td>24/7/365</td></tr>
+      <tr><td><strong>RTP</strong></td><td>USA</td><td>2017</td><td>Seconds</td><td>$1 million</td><td>Gross via TCH account</td><td>24/7/365</td></tr>
+      <tr><td><strong>FedNow</strong></td><td>USA</td><td>2023</td><td>Seconds</td><td>$500,000</td><td>Gross via Fed Reserve</td><td>24/7/365</td></tr>
+      <tr><td><strong>NPP (Osko)</strong></td><td>Australia</td><td>2018</td><td>~1 sec</td><td>Bank-defined</td><td>RTGS via RBA FSS</td><td>24/7/365</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">4.5</span> Hybrid Retail Payment Systems (Generic)</h2>
+    <p>A <strong>hybrid retail payment system</strong> combines elements of instant (real-time) clearing with deferred net settlement. The process flow typically works as follows:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Real-Time Clearing</h4><p>The payment instruction is validated, routed, and cleared in real time (seconds). The beneficiary bank immediately credits the customer's account, knowing it will receive funds later.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Interbank Obligation Created</h4><p>The originating bank now owes the beneficiary bank. This obligation is recorded and accumulates with other payment obligations throughout the day.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Settlement Cycle</h4><p>At defined intervals (e.g., every 30 minutes for UK Faster Payments, several times daily for IMPS), net positions across all participants are calculated and settled in central bank money.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Finality</h4><p>Once net settlement occurs, all individual payments in that cycle achieve final settlement. The beneficiary's credit was provisional until this point but in practice is never reversed.</p></div></div>
+    </div>
+    <div class="highlight-box purple"><strong>Key Distinction:</strong> In hybrid systems, the customer experience is real-time (instant credit) but the interbank settlement is periodic. True RTGS-based instant systems (TIPS, FedNow) provide immediate interbank settlement finality for every individual payment.</div>
+  </div>
+
+  <div class="module-nav">
+    <a href="module3.html"><span>← Previous</span><strong>CLS Bank Operations</strong></a>
+    <a href="module5.html" class="next"><span>Next Module →</span><strong>SWIFT MT &amp; ISO 20022 Messaging</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body></html>

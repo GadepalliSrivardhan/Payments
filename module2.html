@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2: Risks in Payment Systems — PaymentsAcademy</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+
+<div class="module-hero">
+  <div class="module-hero-inner">
+    <div class="module-num">02</div>
+    <div class="module-tag">Module 2</div>
+    <h1>Risks in Payment Systems</h1>
+    <p>Understanding various risks that exist in payment and settlement systems, and the techniques used by central banks, clearing houses and financial institutions to mitigate them.</p>
+    <div class="module-tags"><span>Settlement Risk</span><span>Credit Risk</span><span>Liquidity Risk</span><span>Systemic Risk</span><span>Herstatt Risk</span><span>Risk Mitigation</span></div>
+  </div>
+</div>
+
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">2.1</span> Why Risk Management Matters in Payment Systems</h2>
+    <p>Payment systems are the arteries of the financial system — they move trillions of dollars, euros, and other currencies every single day. The global value of payments settled through large-value payment systems alone exceeds <strong>$5–10 trillion per day</strong>. The systemic importance of these systems means that failures can cascade rapidly across the entire financial sector. The collapse of a single major participant can trigger a chain reaction — other institutions that were counting on receiving funds cannot meet their own obligations, and a gridlock or systemic crisis develops.</p>
+    <p>Regulators, central banks, and financial institutions devote enormous resources to identifying, measuring, and mitigating payment system risks. The BIS (Bank for International Settlements) and CPMI (Committee on Payments and Market Infrastructures) publish global standards — the <strong>CPMI-IOSCO Principles for Financial Market Infrastructures (PFMI)</strong> — that define expectations for risk management in systemically important payment systems.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">2.2</span> Various Risks in Payment Systems</h2>
+
+    <h3>1. Credit Risk</h3>
+    <p><strong>Credit risk</strong> (also called counterparty risk) is the risk that a participant in a payment system will be unable to meet its payment obligations, either at the time due or at any time thereafter. In payment systems, this arises when a bank extends intraday or overnight credit to another participant, or when a clearing house guarantees payments before settlement. If the obligor defaults, the creditor suffers a loss equal to the full amount owed. Credit risk is most significant in DNS systems where settlement occurs after a delay, leaving an accumulation of unsettled obligations.</p>
+    <div class="highlight-box"><strong>Example:</strong> In a DNS system, Bank A sends €500m to Bank B throughout the day. Bank B fails before end-of-day settlement. Bank A has a €500m credit exposure and may not recover the full amount.</div>
+
+    <h3>2. Liquidity Risk</h3>
+    <p><strong>Liquidity risk</strong> is the risk that a participant cannot fund its payment obligations when due, even though it may be solvent overall. A bank may have sufficient assets but insufficient liquid funds at a specific moment to settle obligations. This can cause a temporary failure to pay, which in turn delays payments to other participants who were relying on incoming funds to settle their own obligations — creating a <strong>liquidity gridlock</strong>. Liquidity risk is particularly acute in RTGS systems where each payment requires immediate funding.</p>
+
+    <h3>3. Settlement Risk</h3>
+    <p><strong>Settlement risk</strong> is the overarching risk that settlement will not occur as expected. It encompasses both credit risk (the counterparty defaults) and liquidity risk (the counterparty cannot fund on time). In the context of foreign exchange, settlement risk takes on special significance due to time-zone differences — one leg of an FX trade may settle in one currency before the other leg settles, creating an exposure window that can last for hours.</p>
+
+    <h3>4. Systemic Risk</h3>
+    <p><strong>Systemic risk</strong> is the risk that the failure of one participant in a payment system — or the failure of the system itself — triggers a chain reaction of failures across the broader financial system. Payment systems are tightly interconnected: Bank A's receipt depends on Bank B's payment, which depends on Bank C's receipt, and so on. This interdependency means that a single default can propagate rapidly. The 2008 financial crisis illustrated how interconnected financial institutions can amplify shocks. Systemically important payment systems (SIPS) are subject to heightened regulatory oversight precisely to prevent this scenario.</p>
+
+    <h3>5. Operational Risk</h3>
+    <p><strong>Operational risk</strong> is the risk of loss resulting from inadequate or failed internal processes, people, systems, or external events. In payment systems this includes: IT system outages, cyber attacks (DDoS, ransomware, SWIFT-targeted attacks), human errors in payment processing, fraud (internal or external), natural disasters affecting data centres, and third-party vendor failures. The 2016 Bangladesh Bank heist — where attackers stole $81m via fraudulent SWIFT messages — is a prominent example of operational/cyber risk in payments.</p>
+
+    <h3>6. Legal Risk</h3>
+    <p><strong>Legal risk</strong> arises from legal or regulatory actions that may affect a payment system's ability to enforce its rules. Uncertainty about the finality of payments (is a settled payment truly irrevocable under local law?), enforceability of netting agreements across jurisdictions, or inadequate legal frameworks for electronic payments can all create legal risk. Most major payment systems have worked with legislators to establish clear statutory finality — ensuring that once a payment is settled, it cannot be reversed by a court order or insolvency proceeding.</p>
+
+    <h3>7. FX Settlement Risk (Herstatt Risk)</h3>
+    <p><strong>FX settlement risk</strong>, famously called <strong>Herstatt Risk</strong>, is the specific risk in foreign exchange transactions that one party delivers its sold currency but fails to receive its purchased currency. This arises because the two legs of an FX trade settle in different countries, in different currencies, at different times. The risk window is the period between when the first currency is irrevocably delivered and when the second currency is received.</p>
+    <div class="highlight-box gold"><strong>The Herstatt Collapse (1974):</strong> Bankhaus Herstatt (a German bank) was closed by German regulators on 26 June 1974 after Frankfurt banking hours (when DEM payments for the day had been made by US counterparties). The US dollar payments due to those counterparties were never made, as US dollar payments don't process until New York opens. Several US banks lost their USD legs entirely. This event defined FX settlement risk for the next 50 years until CLS Bank was created to eliminate it.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">2.3</span> Risk Mitigation Techniques</h2>
+
+    <h3>Real-Time Gross Settlement (RTGS)</h3>
+    <p>Moving from DNS to RTGS is the most fundamental risk mitigation. By settling each transaction individually and immediately in central bank money, RTGS eliminates the accumulation of intraday credit exposures and ensures settlement finality with no possibility of unwinding. All major economies now operate RTGS systems for large-value payments.</p>
+
+    <h3>Multilateral Netting</h3>
+    <p>In a multilateral netting arrangement, a central counterparty (CCP) or clearing house calculates the net position of each participant across all their bilateral obligations. Instead of settling each bilateral pair, only net positions are settled. This dramatically reduces settlement amounts — a bank with $10B gross obligations might have only $500m net. ACH systems, CHIPS, and DNS systems all use multilateral netting. The efficiency gain is significant but so is the concentration risk at the central counterparty.</p>
+
+    <h3>Central Counterparty Clearing (CCP)</h3>
+    <p>A <strong>CCP</strong> interposes itself between buyers and sellers, becoming the buyer to every seller and the seller to every buyer. It mutualises risk through initial margin, variation margin, default funds, and guarantee funds. If a clearing member defaults, the CCP absorbs the loss using the defaulter's margin, the default fund, and ultimately its own capital. CCPs are used extensively in derivatives and securities markets (e.g., LCH, CME, Eurex Clearing) and increasingly in repo and other money market instruments.</p>
+
+    <h3>Payment vs Payment (PvP) — CLS Bank</h3>
+    <p><strong>PvP</strong> is the specific mitigation for FX settlement risk. Both legs of an FX trade are settled simultaneously — neither party can receive their purchased currency without simultaneously delivering their sold currency. <strong>CLS Bank</strong> (Continuous Linked Settlement) implements PvP for FX trades, settling 18 major currencies and eliminating Herstatt risk for its members. CLS settles ~$6 trillion in FX value daily.</p>
+
+    <h3>Delivery vs Payment (DvP)</h3>
+    <p><strong>DvP</strong> is the equivalent mitigation for securities settlement — a security is transferred only if and when the corresponding payment is received, and vice versa. DvP eliminates the risk of delivering securities without receiving payment. The three DvP models (as defined by BIS) differ in the granularity of netting: Model 1 (gross/gross), Model 2 (gross/net), Model 3 (net/net).</p>
+
+    <h3>Collateral and Prefunding</h3>
+    <p>Participants may be required to provide <strong>collateral</strong> (eligible securities pledged to the clearing house) to cover potential exposures. In CHIPS, participants must <strong>prefund</strong> their opening position each day via Fedwire before the system opens. This ensures that every payment that enters the system is backed by real, already-transferred funds — eliminating credit risk entirely.</p>
+
+    <h3>Debit Caps and Position Limits</h3>
+    <p>DNS systems often impose <strong>debit caps</strong> — a maximum net debit position any single participant can accumulate before end-of-day settlement. This caps the exposure to any single participant's default. Similarly, <strong>bilateral credit limits</strong> allow participants to set maximum exposure to each other.</p>
+
+    <h3>Liquidity Management Tools</h3>
+    <p>Central banks provide <strong>intraday liquidity</strong> (repos, overdraft facilities) to RTGS participants to ensure that a temporary funding shortage doesn't cause a gridlock. <strong>Liquidity bridges</strong> (e.g., the Bank of England's Euro Liquidity Bridge) allow participants to use euro collateral to raise sterling intraday liquidity. RTGS systems also use <strong>gridlock resolution algorithms</strong> that scan payment queues for offsetting transactions that can be settled simultaneously without new liquidity.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Risk Type</th><th>Primary Mitigation</th><th>Mechanism</th></tr></thead>
+        <tbody>
+          <tr><td>Credit Risk</td><td>RTGS, Collateral</td><td>Immediate settlement, margin requirements</td></tr>
+          <tr><td>Liquidity Risk</td><td>Intraday credit, LSM</td><td>Central bank repos, queue offsetting</td></tr>
+          <tr><td>FX Settlement Risk</td><td>PvP via CLS Bank</td><td>Simultaneous settlement of both FX legs</td></tr>
+          <tr><td>Securities Risk</td><td>DvP</td><td>Simultaneous delivery and payment</td></tr>
+          <tr><td>Systemic Risk</td><td>CCP, Loss sharing</td><td>Default fund, capital buffers</td></tr>
+          <tr><td>Operational Risk</td><td>Business Continuity</td><td>Redundant systems, DR sites, cyber controls</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="module-nav">
+    <a href="module1.html"><span>← Previous</span><strong>Basics of Payment Systems</strong></a>
+    <a href="module3.html" class="next"><span>Next Module →</span><strong>CLS Bank Operations</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body>
+</html>

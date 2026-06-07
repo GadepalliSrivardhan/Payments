@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 6: SEPA Services &amp; T2 — PaymentsAcademy</title>
+<link rel="stylesheet" href="styles.css"/></head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">06</div><div class="module-tag">Module 6</div><h1>Single Euro Payment Area Services and T2</h1><p>Introduction to SEPA, T2/T2S Consolidated Platform, Main Cash Accounts, TARGET consolidation, ESMIG, CLM, T2 ISO 20022 message formats, and liquidity transfers.</p><div class="module-tags"><span>SEPA</span><span>T2</span><span>T2S</span><span>TIPS</span><span>TARGET</span><span>CLM</span><span>ESMIG</span><span>ISO 20022</span></div></div></div>
+<section class="section"><div class="container">
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.1</span> Introduction to SEPA</h2>
+    <p><strong>SEPA (Single Euro Payments Area)</strong> was created to harmonise non-cash euro payments across Europe, making cross-border euro payments as easy and cheap as domestic payments. SEPA covers <strong>36 countries</strong> — all 27 EU member states plus Iceland, Liechtenstein, Norway, Switzerland, United Kingdom, Monaco, San Marino, Andorra, Vatican City, and others. SEPA payments are processed using standardised rules defined by the <strong>European Payments Council (EPC)</strong>.</p>
+    <div class="table-wrap"><table><thead><tr><th>Attribute</th><th>Detail</th></tr></thead><tbody>
+      <tr><td><strong>Name</strong></td><td>Single Euro Payments Area</td></tr>
+      <tr><td><strong>Implementation Year</strong></td><td>2014 for euro area countries; 2016 for non-euro SEPA countries</td></tr>
+      <tr><td><strong>Currency</strong></td><td>Euro (€) only</td></tr>
+      <tr><td><strong>Payment Instruments</strong></td><td>Credit transfer, direct debit, instant credit transfer</td></tr>
+      <tr><td><strong>Speed</strong></td><td>SCT: max 1 business day; SCT Inst: max 10 seconds</td></tr>
+      <tr><td><strong>Geographic Scope</strong></td><td>36 countries</td></tr>
+      <tr><td><strong>Governing Body</strong></td><td>European Payments Council (EPC)</td></tr>
+      <tr><td><strong>Role of Eurosystem</strong></td><td>Catalyst — ECB provides T2/TIPS settlement infrastructure</td></tr>
+    </tbody></table></div>
+    <h3>SEPA Payment Schemes</h3>
+    <ul>
+      <li><strong>SEPA Credit Transfer (SCT)</strong> — effective January 2008. Standard credit transfer, max D+1 settlement.</li>
+      <li><strong>SEPA Direct Debit Core (SDD Core)</strong> — effective November 2009. Consumer direct debits with mandate.</li>
+      <li><strong>SEPA Direct Debit B2B (SDD B2B)</strong> — effective November 2009. Business-to-business direct debits.</li>
+      <li><strong>SEPA Instant Credit Transfer (SCT Inst)</strong> — effective November 2017. Real-time, 10-second execution, 24/7/365.</li>
+      <li><strong>SEPA Request to Pay (SRtp)</strong> — introduced June 2021. Digital request-to-pay message preceding a payment.</li>
+    </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.2</span> Structure of T2/T2S Consolidated Platform</h2>
+    <p>The <strong>TARGET Consolidation</strong> project (launched 20 March 2023) merged three separate Eurosystem market infrastructures onto a single technical platform: <strong>T2</strong> (formerly TARGET2, the RTGS system), <strong>T2S</strong> (TARGET2-Securities, the securities settlement platform), and <strong>TIPS</strong> (TARGET Instant Payment Settlement) — all accessible through a single gateway: ESMIG.</p>
+    <p>This consolidation significantly simplifies connectivity for banks (one gateway instead of three), enables more efficient cross-system liquidity management, and standardises all messaging on ISO 20022.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>T2 (RTGS)</h4><p>Real-Time Gross Settlement for large-value euro payments. Replaces TARGET2. Uses ISO 20022 exclusively. Settles ~€2.2 trillion daily.</p></div>
+      <div class="info-card"><div class="ic-icon">📈</div><h4>T2S (Securities)</h4><p>Pan-European securities settlement platform. Settles securities transactions DvP (Delivery vs Payment) in central bank money.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>TIPS (Instant)</h4><p>TARGET Instant Payment Settlement — real-time gross settlement of SEPA Instant (SCT Inst) payments, 24/7/365, in central bank money.</p></div>
+    </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.3</span> Account Types — Main Cash Account, Dedicated Cash Account, Technical Accounts</h2>
+    <div class="table-wrap"><table><thead><tr><th>Account Type</th><th>Abbreviation</th><th>Used For</th><th>Held In</th></tr></thead><tbody>
+      <tr><td><strong>Main Cash Account</strong></td><td>MCA</td><td>Primary account for RTGS settlement in T2. Used for large-value payments, minimum reserve management, and intraday credit.</td><td>T2 (RTGS component)</td></tr>
+      <tr><td><strong>Dedicated Cash Account</strong></td><td>DCA</td><td>Sub-account dedicated to a specific service: T2S-DCA for securities settlement, TIPS-DCA for instant payment settlement. Linked to the MCA.</td><td>T2S or TIPS component</td></tr>
+      <tr><td><strong>Technical Accounts</strong></td><td>TA</td><td>Used by ancillary systems (retail payment systems, cheque clearing, card networks) that settle their net positions in T2. Not held by individual banks.</td><td>T2 (RTGS component)</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box"><strong>Liquidity flow:</strong> Banks hold their primary liquidity in MCAs. They can automatically sweep funds to/from TIPS-DCAs and T2S-DCAs as needed. CLM manages this auto-collateralisation and sweeping.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.4</span> TARGET Consolidation, ESMIG and CLM</h2>
+    <h3>ESMIG — Eurosystem Single Market Infrastructure Gateway</h3>
+    <p><strong>ESMIG</strong> is the single access point for all Eurosystem market infrastructures (T2, T2S, TIPS, ECMS). Before consolidation, banks needed separate connectivity to TARGET2, T2S, and TIPS. With ESMIG, one connection provides access to all services. ESMIG handles authentication, message routing, and network access management. It supports both the SWIFT network and internet-based access (A2A — application-to-application).</p>
+    <h3>CLM — Central Liquidity Management</h3>
+    <p><strong>CLM (Central Liquidity Management)</strong> is a new component introduced with the T2 consolidation. It is the central hub for managing liquidity across all Eurosystem services. CLM functions include: managing minimum reserve requirements and reserve maintenance periods, processing liquidity credit transfers between MCAs and DCAs, processing intraday credit (against pledged collateral), automated liquidity transfers (auto-collateralisation in T2S), and providing liquidity monitoring and alerts to participants.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.5</span> T2 ISO 20022 Message Formats</h2>
+    <p>All T2 messages use ISO 20022 XML. Key messages include:</p>
+    <div class="table-wrap"><table><thead><tr><th>Message</th><th>Purpose</th></tr></thead><tbody>
+      <tr><td><strong>pacs.008</strong></td><td>FI to FI Customer Credit Transfer — customer payments processed through T2</td></tr>
+      <tr><td><strong>pacs.009</strong></td><td>Financial Institution Credit Transfer — interbank/treasury payments</td></tr>
+      <tr><td><strong>pacs.010</strong></td><td>Financial Institution Direct Debit — used for ancillary system settlement</td></tr>
+      <tr><td><strong>camt.050</strong></td><td>Liquidity Credit Transfer — moving liquidity between MCA and DCA</td></tr>
+      <tr><td><strong>camt.052</strong></td><td>Bank to Customer Account Report — intraday account information</td></tr>
+      <tr><td><strong>camt.053</strong></td><td>Bank to Customer Statement — end-of-day account statement</td></tr>
+      <tr><td><strong>camt.054</strong></td><td>Bank to Customer Debit/Credit Notification</td></tr>
+      <tr><td><strong>head.001</strong></td><td>Business Application Header — wraps all ISO 20022 messages in T2</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.6</span> T2 Payment Transaction Types, Features and Services</h2>
+    <h3>Payment Transaction Types</h3>
+    <ul>
+      <li><strong>Customer Credit Transfers</strong> — payments initiated by bank customers, processed through T2 for same-day settlement (pacs.008)</li>
+      <li><strong>Interbank / FI-to-FI Transfers</strong> — treasury and money market transactions between banks (pacs.009)</li>
+      <li><strong>Ancillary System Settlement</strong> — retail clearing systems (STEP2, CORE, Equens etc.) submit net settlement files; T2 settles them via technical accounts</li>
+      <li><strong>Liquidity Transfers</strong> — automated or manual transfers between MCA, TIPS-DCA, and T2S-DCA</li>
+    </ul>
+    <h3>T2 Features and Services</h3>
+    <ul>
+      <li><strong>Queue Management:</strong> Payments queued when insufficient funds; prioritised FIFO or by value</li>
+      <li><strong>Gridlock Resolution:</strong> Algorithm resolves circular payment dependencies</li>
+      <li><strong>Throughput Guidelines:</strong> ECB recommends % of daily value to be settled by specific times</li>
+      <li><strong>Liquidity Reservation:</strong> Participants can reserve liquidity for specific payment types (e.g., cash withdrawals)</li>
+      <li><strong>Intraday Credit:</strong> Provided by NCBs against eligible collateral, interest-free if repaid same day</li>
+    </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">6.7</span> T2 Liquidity Transfers for RTGS, TIPS and T2S</h2>
+    <p>A key benefit of the consolidated T2 platform is seamless liquidity movement between the RTGS (MCA), TIPS (DCA), and T2S (DCA) components.</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>MCA → TIPS-DCA</h4><p>Bank sweeps funds from its Main Cash Account to its TIPS Dedicated Cash Account to fund instant payment settlement. Can be automated (floor/ceiling rules) or manual.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>MCA → T2S-DCA</h4><p>Bank moves funds to T2S-DCA for securities settlement. Auto-collateralisation allows T2S to automatically transfer securities as collateral and credit the DCA for urgent settlement needs.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>End-of-Day Sweeping</h4><p>At end of day, all TIPS-DCA and T2S-DCA balances can be automatically swept back to the MCA. This consolidates liquidity and ensures minimum reserve requirements are met at the MCA level.</p></div></div>
+    </div>
+  </div>
+
+  <div class="module-nav">
+    <a href="module5.html"><span>← Previous</span><strong>SWIFT MT &amp; ISO 20022 Messaging</strong></a>
+    <a href="module7.html" class="next"><span>Next Module →</span><strong>SEPA STEP2 SCT, SDD &amp; SCT Inst</strong></a>
+  </div>
+</div></section>
+<footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
+<script src="main.js"></script>
+</body></html>
