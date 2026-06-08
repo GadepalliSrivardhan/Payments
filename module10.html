@@ -42,6 +42,25 @@
   </div>
 
   <div class="topic-section fade-in">
+    <h2><span class="t-num">10.2b</span> FedACH vs EPN Interoperability</h2>
+    <p>The ACH network operates through two competing but fully interoperable operators. Understanding how they coexist and exchange files is essential for understanding ACH routing.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>FedACH</h4><p>Operated by the Federal Reserve Banks. Processes approximately <strong>60% of US ACH volume</strong>. All Federal Reserve member banks have direct access. FedACH is the largest ACH operator by transaction count.</p></div>
+      <div class="info-card"><div class="ic-icon">🏢</div><h4>EPN — Electronic Payments Network</h4><p>Operated by The Clearing House (TCH). Processes approximately <strong>40% of US ACH volume</strong>. Primarily used by large commercial banks. TCH is owned by major US banks including JPMorgan Chase, Bank of America, Citibank, and Wells Fargo.</p></div>
+    </div>
+    <h3>Mandatory Interoperability</h3>
+    <p>NACHA rules require that FedACH and EPN interoperate fully. An ODFI using FedACH can send an ACH entry to an RDFI whose primary operator is EPN — and vice versa. From the originator's perspective, the operator distinction is invisible: they simply submit a NACHA-formatted file to their ODFI, and the routing happens automatically.</p>
+    <h3>How Inter-Operator Exchange Works</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>ODFI Submits to Its Operator</h4><p>An ODFI that uses FedACH submits its ACH file to FedACH. The file may contain entries destined for RDFIs that use EPN as their operator.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Operator Sorts by RDFI</h4><p>FedACH sorts all incoming entries by the RDFI's routing number. Entries destined for RDFIs that use EPN are identified and packaged into an exchange file for EPN. Entries for FedACH-member RDFIs are retained for direct delivery.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Bilateral File Exchange</h4><p>FedACH and EPN exchange files bilaterally each processing cycle. EPN delivers the FedACH-originated entries to its RDFI members; FedACH delivers EPN-originated entries to its RDFI members. This exchange happens multiple times per day.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Bilateral Net Settlement via Fedwire</h4><p>FedACH and EPN calculate their bilateral net position with each other at the end of each processing cycle. The net amount between the two operators is settled via <strong>Fedwire Funds</strong> — real-time gross settlement in Federal Reserve accounts. This is separate from the multilateral settlement of each operator's own participants via NSS.</p></div></div>
+    </div>
+    <div class="highlight-box"><strong>Practical Impact for Originators:</strong> Originators and ODFIs do not need to know — and typically do not know — which ACH operator their counterparty's RDFI uses. The routing is handled entirely at the operator level. This seamless interoperability is one of NACHA's core governance achievements, ensuring the ACH network behaves as a single unified system despite having two separate operators.</div>
+  </div>
+
+  <div class="topic-section fade-in">
     <h2><span class="t-num">10.3</span> ACH Transaction Flow</h2>
     <p>Every ACH transaction involves: an <strong>Originator</strong> (the entity initiating the payment), an <strong>ODFI (Originating Depository Financial Institution)</strong> (the originator's bank), the <strong>ACH Operator</strong> (FedACH or EPN), an <strong>RDFI (Receiving Depository Financial Institution)</strong> (the receiver's bank), and a <strong>Receiver</strong> (the end beneficiary or payer).</p>
     <div class="flow-steps">
@@ -53,6 +72,37 @@
     </div>
     <h3>NACHA ACH File Format</h3>
     <p>NACHA files follow a fixed-width text format with specific record types: <strong>File Header (1-record)</strong>, <strong>Batch Header (5-record)</strong>, <strong>Individual Entry Detail (6-record)</strong>, <strong>Addenda (7-record)</strong> for remittance data, <strong>Batch Control (8-record)</strong>, and <strong>File Control (9-record)</strong>. Each record is exactly 94 characters wide. This rigid format (unchanged since the 1970s in its core structure) ensures interoperability across all ACH participants.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">10.3b</span> NACHA Risk Framework</h2>
+    <p>NACHA's Operating Rules create a layered risk framework that assigns clear responsibilities and warranties to each participant. The framework is designed to ensure that the party closest to the origination risk — the ODFI — bears responsibility for entries that violate the rules.</p>
+    <h3>ODFI Warranties</h3>
+    <p>When an ODFI submits an ACH file to the network, it provides binding warranties to all other network participants. These are not merely representations — they are legally enforceable obligations under the NACHA Operating Rules:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📜</div><h4>Rules Compliance</h4><p>The entry complies with the NACHA Operating Rules in all respects — correct SEC code, correct format, correct timing, and appropriate authorisation type.</p></div>
+      <div class="info-card"><div class="ic-icon">✍️</div><h4>Proper Authorisation</h4><p>The originator has obtained proper authorisation from the receiver. For debit entries, this means a valid written (or other NACHA-approved) authorisation agreement exists. For consumer debits, this is typically a signed authorisation form or recorded verbal consent.</p></div>
+      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Not Fraudulent</h4><p>The entry is not fraudulent — it reflects a legitimate, authorised transaction initiated by the identified originator for the stated purpose. The ODFI must have a reasonable basis to trust that its originator is not submitting fictitious entries.</p></div>
+      <div class="info-card"><div class="ic-icon">⚠️</div><h4>Liability on Breach</h4><p>If any warranty is violated, the ODFI is liable for losses caused to the RDFI or receiver — including the full face value of fraudulent debits plus consequential damages in some circumstances.</p></div>
+    </div>
+    <div class="highlight-box gold"><strong>Why ODFI Liability Matters:</strong> This warranty structure is what makes ACH debit possible for consumers. The receiver does not need to verify the originator's legitimacy directly — the RDFI relies on the ODFI's warranties. If a fraudulent debit is submitted, the consumer can dispute it with their RDFI, and the RDFI can claim against the ODFI. This creates a strong incentive for ODFIs to perform thorough originator due diligence before providing ACH origination services.</div>
+    <h3>Return Rate Thresholds</h3>
+    <p>NACHA monitors return rates by SEC code and originator. High return rates are a leading indicator of fraud, errors, or poor originator practices. NACHA has established the following thresholds:</p>
+    <div class="table-wrap"><table><thead><tr><th>Threshold Type</th><th>Rate</th><th>Applicable Return Codes</th><th>Consequence if Exceeded</th></tr></thead><tbody>
+      <tr><td><strong>Administrative Returns</strong></td><td>3% of entries</td><td>R02 (Account Closed), R03 (No Account), R04 (Invalid Account Number)</td><td>NACHA investigation; ODFI must remediate originator or cease origination</td></tr>
+      <tr><td><strong>Unauthorised Returns</strong></td><td>0.5% of entries</td><td>R05 (Unauthorised Debit), R07 (Auth Revoked), R10 (Customer Advises Unauthorised), R29 (Corporate Not Authorised), R51 (Item is Ineligible)</td><td>Immediate NACHA investigation; potential suspension</td></tr>
+      <tr><td><strong>Overall Return Rate</strong></td><td>No fixed threshold</td><td>All return codes</td><td>NACHA monitors for outliers; high overall rates trigger compliance review regardless of individual thresholds</td></tr>
+    </tbody></table></div>
+    <h3>NACHA Enforcement Mechanism</h3>
+    <p>When NACHA identifies a potential rules violation — through return rate monitoring, complaints from ODFIs, RDFIs, or consumers, or its own audit activities — it follows a structured enforcement process:</p>
+    <ul>
+      <li><strong>Warning Letter:</strong> NACHA notifies the ODFI that a threshold has been exceeded or a violation identified, and requests a remediation plan within a defined timeframe.</li>
+      <li><strong>Formal Investigation:</strong> If the issue is not resolved or is serious, NACHA opens a formal compliance investigation. The ODFI must provide documentation of its originator screening, authorisation records, and return rate management procedures.</li>
+      <li><strong>Remediation Plan:</strong> ODFI and originator must implement a documented remediation plan — e.g., suspending problematic originators, implementing pre-notification requirements, or adopting enhanced authorisation verification.</li>
+      <li><strong>Financial Fines:</strong> NACHA can levy fines of up to <strong>$500,000 per occurrence</strong> for rules violations. Fines may be assessed against the ODFI directly.</li>
+      <li><strong>Suspension from Network:</strong> Repeated or egregious violations can result in the ODFI — or the originator — being suspended from the ACH network. This is the nuclear option and is rarely used, but the threat drives compliance.</li>
+    </ul>
+    <div class="highlight-box"><strong>Regulatory Coordination:</strong> NACHA coordinates with federal bank regulators — FDIC, OCC, and CFPB — on systemic fraud patterns and compliance failures. A pattern of ACH fraud at a bank may trigger a formal supervisory action by the bank's primary regulator in addition to NACHA enforcement.</div>
   </div>
 
   <div class="topic-section fade-in">
@@ -90,6 +140,22 @@
   </div>
 
   <div class="topic-section fade-in">
+    <h2><span class="t-num">10.5b</span> Phixius as Information Exchange Platform</h2>
+    <p>It is important to understand what Phixius is and is not. <strong>Phixius is NOT a payment rail</strong> — no money moves through Phixius. It is a pre-payment and post-payment <em>data</em> exchange platform, built on NACHA's trusted governance framework with API-based (REST/JSON) connectivity. Phixius participants query and respond to data requests; the actual payment flows through ACH, RTP, or other rails independently.</p>
+    <h3>Services Available via Phixius</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🔑</div><h4>1. Account Validation</h4><p>Verify that a routing number and account number combination is valid and currently active before originating a payment. Reduces R02/R03/R04 returns caused by invalid account details.</p></div>
+      <div class="info-card"><div class="ic-icon">👤</div><h4>2. Payee Name Validation</h4><p>Match a payee name to a bank account — similar to the UK's Confirmation of Payee (CoP) or SEPA's IBAN Name Check. Prevents Authorised Push Payment (APP) fraud where funds are sent to a wrong or fraudulent account.</p></div>
+      <div class="info-card"><div class="ic-icon">🛤️</div><h4>3. Real-Time Payment Routing</h4><p>Determine which payment rails a given account can receive payments on — ACH, Same-Day ACH, RTP (The Clearing House), FedNow. Enables dynamic payment rail selection at the time of origination.</p></div>
+      <div class="info-card"><div class="ic-icon">📉</div><h4>4. Return Prediction</h4><p>Risk scoring to predict the likelihood of a return before origination. An ODFI or originator queries Phixius and receives a risk signal; if the score is high, they can choose not to originate or seek additional authorisation.</p></div>
+      <div class="info-card"><div class="ic-icon">🔔</div><h4>5. Fraud Intelligence Sharing</h4><p>Participating institutions anonymously share fraud signals — known bad accounts, suspicious patterns, recent fraud events — across the network. Collective intelligence benefits all participants without exposing individual customers' data.</p></div>
+    </div>
+    <h3>Governance and Adoption</h3>
+    <p>NACHA launched Phixius in 2020 and adoption has been growing among large banks and fintechs seeking to reduce ACH return rates and fraud losses. NACHA operates as the <strong>trust anchor</strong> — it sets data standards, security requirements, and liability frameworks. Participants sign data-sharing agreements and consent management is built into the platform, ensuring data is only used for the purpose for which it was shared. No participant can use Phixius data for secondary purposes such as marketing.</p>
+    <div class="highlight-box gold"><strong>Phixius vs Zelle / RTP:</strong> A common misconception is that Phixius competes with real-time payment networks. It does not — Phixius is a data layer that works alongside payment rails. A bank could use Phixius to validate an account and confirm the payee name, then use RTP or ACH to actually send the money. The services are complementary.</div>
+  </div>
+
+  <div class="topic-section fade-in">
     <h2><span class="t-num">10.6</span> National Settlement Service (NSS)</h2>
     <p>The <strong>National Settlement Service (NSS)</strong>, operated by the Federal Reserve Banks, provides settlement services for financial networks and payment systems that need to settle net interbank obligations in Federal Reserve account balances. NSS is the backbone settlement mechanism for ACH operators, cheque clearinghouses, card networks, and other private-sector multilateral clearing arrangements.</p>
     <h3>How NSS Works</h3>
@@ -109,6 +175,66 @@
       <li><strong>Regional ACH Associations</strong> — Smaller regional clearinghouses use NSS for settlement</li>
     </ul>
     <div class="highlight-box gold"><strong>NSS Operating Hours:</strong> NSS operates Monday–Friday, 7:30 AM – 5:30 PM ET. Settlement must be submitted and confirmed within this window. Many clearinghouses schedule their final settlement runs to meet the afternoon NSS cutoff.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">10.6b</span> NSS Settlement Windows</h2>
+    <p>NSS does not process a single batch at close of day — it operates across multiple settlement windows throughout the business day to accommodate the different clearing cycles of ACH, Same-Day ACH, and card networks.</p>
+    <div class="table-wrap"><table><thead><tr><th>Window</th><th>Approximate Time (ET)</th><th>Primary Purpose</th></tr></thead><tbody>
+      <tr><td><strong>Morning Window</strong></td><td>~9:00 AM ET</td><td>Standard (next-day) ACH credits processed overnight settle. Payroll, government benefits, and pre-authorised bill pay debits from the prior day's origination cycle post to accounts.</td></tr>
+      <tr><td><strong>Midday Window 1</strong></td><td>~11:30 AM ET</td><td>Same-Day ACH morning cycle settlement. Entries submitted by the 10:30 AM ET cutoff settle here — allowing same-day payroll and emergency B2B payments to post.</td></tr>
+      <tr><td><strong>Midday Window 2</strong></td><td>~1:30 PM ET</td><td>Second Same-Day ACH cycle settlement and any deferred morning items. Provides a second intraday settlement point for higher-volume operators.</td></tr>
+      <tr><td><strong>Afternoon Window</strong></td><td>~5:00 PM ET</td><td>Same-Day ACH afternoon cycle (2:45 PM ET cutoff) settles. Also used by card networks (Visa, Mastercard, Discover) for their daily interbank net settlement.</td></tr>
+    </tbody></table></div>
+    <h3>Mandatory Participation and Advice Notifications</h3>
+    <p>NSS is <strong>mandatory</strong> for clearinghouses and payment systems that use Federal Reserve accounts for final settlement. A clearinghouse cannot opt to use Fedwire directly for multilateral settlement — NSS is the designated mechanism. This ensures consistency, auditability, and finality of settlement across all clearinghouses.</p>
+    <p>When NSS processes a settlement window, each participating institution receives a <strong>Fedwire credit or debit advice</strong> notification confirming the amount settled. These advices are the authoritative record of settlement for accounting and reconciliation purposes.</p>
+    <div class="highlight-box"><strong>NSS vs Fedwire:</strong> NSS and Fedwire Funds are both Federal Reserve services but serve different purposes. Fedwire is a real-time, gross, payment-by-payment settlement service for individual large-value transfers. NSS is a net, multilateral, batch settlement service for clearinghouses. A card network settling its daily interbank positions uses NSS; a corporate sending an urgent $50M payment uses Fedwire.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">10.6c</span> ACH Corporate Treasury — CTX and ERP Integration</h2>
+    <p>For corporate treasury and accounts payable functions, one of the most powerful — and least understood — capabilities of ACH is <strong>CTX (Corporate Trade Exchange)</strong>, the SEC code designed specifically for B2B payments with full remittance detail.</p>
+    <h3>What Is CTX?</h3>
+    <p>CTX is an ACH entry type that extends the standard CCD (Corporate Credit or Debit) entry by allowing up to <strong>9,999 addenda records</strong> to be attached to a single payment. Each addenda record is 94 characters of structured remittance data. The remittance data is formatted using <strong>ANSI ASC X12 820</strong> — the Payment Order/Remittance Advice electronic data interchange (EDI) standard — embedded within the addenda records.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📦</div><h4>Up to 9,999 Addenda</h4><p>A single CTX payment can carry remittance detail for thousands of invoices. A manufacturer paying a distributor $5M can include the detail for every individual purchase order that the payment covers — all in one ACH entry.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>ANSI ASC X12 820 Format</h4><p>The X12 820 transaction set is the EDI standard for payment and remittance advice. It allows structured fields for invoice numbers, purchase order numbers, discount amounts, and deduction codes — enabling fully automated reconciliation at the receiving company.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>Straight-Through Processing (STP)</h4><p>When a CTX payment arrives at the RDFI, the RDFI delivers both the payment and the addenda remittance data to the receiving company's ERP system. The ERP automatically matches each invoice line to an open receivable and closes it — zero manual intervention.</p></div>
+      <div class="info-card"><div class="ic-icon">🏭</div><h4>Major Use Case</h4><p>Large manufacturers and retailers paying hundreds of suppliers via ACH with full remittance detail. Automotive OEMs, grocery retailers, and government agencies are among the heaviest CTX users.</p></div>
+    </div>
+    <h3>CTX vs Wire Transfer for B2B Payments</h3>
+    <div class="table-wrap"><table><thead><tr><th>Dimension</th><th>Wire Transfer (Fedwire/CHIPS)</th><th>CTX (ACH)</th></tr></thead><tbody>
+      <tr><td><strong>Cost</strong></td><td>$15–$35 per transaction (typical bank charges)</td><td>$0.02–$0.10 per transaction</td></tr>
+      <tr><td><strong>Remittance Data</strong></td><td>Limited (140 characters in Fedwire OBI field; more in SWIFT MT 103 field 70)</td><td>Up to 9,999 × 94 characters of structured ANSI X12 820 data</td></tr>
+      <tr><td><strong>Reconciliation</strong></td><td>Manual — AR team must match wire to invoices using separate remittance advice email/fax</td><td>Automated — ERP receives X12 820 data and matches invoices without human intervention</td></tr>
+      <tr><td><strong>Settlement Speed</strong></td><td>Real-time (Fedwire), same-day (CHIPS)</td><td>Next-day or Same-Day ACH</td></tr>
+      <tr><td><strong>Ideal for</strong></td><td>Urgent, high-value, one-off payments</td><td>High-volume recurring B2B payments with complex remittance requirements</td></tr>
+    </tbody></table></div>
+    <h3>Without CTX vs With CTX</h3>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>Without CTX (Wire or CCD)</strong><br/><br/>
+        <ul style="margin: 0.5em 0 0 1em; padding: 0;">
+          <li>Payment arrives in beneficiary's account with minimal reference data</li>
+          <li>Payer must separately email or fax a remittance advice listing which invoices are being paid</li>
+          <li>Accounts receivable team manually matches the wire to open invoices in the ERP</li>
+          <li>With hundreds of invoices per payment, this process takes hours and is error-prone</li>
+          <li>Deductions (short-pays for damaged goods, pricing disputes) require additional manual investigation</li>
+        </ul>
+      </div>
+      <div class="highlight-box purple">
+        <strong>With CTX</strong><br/><br/>
+        <ul style="margin: 0.5em 0 0 1em; padding: 0;">
+          <li>Payment and full remittance data (ANSI X12 820) arrive together in a single ACH transaction</li>
+          <li>RDFI delivers both payment and addenda data to the receiving company's ERP or TMS</li>
+          <li>ERP automatically matches each invoice number and purchase order to open receivables</li>
+          <li>Deduction codes in the X12 820 allow automatic posting of partial payments with reason codes</li>
+          <li>Accounts receivable team only reviews exceptions — unmatched items — rather than processing every invoice manually</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box"><strong>Treasury Management Systems and CTX:</strong> Major TMS (Treasury Management System) vendors — Kyriba, ION Treasury, SAP Treasury, Oracle Treasury — all support CTX and ANSI X12 820 natively. A corporate deploying CTX typically integrates their ERP (SAP, Oracle, Microsoft Dynamics) directly with their bank's ACH origination platform, with the TMS handling the X12 820 formatting and the NACHA file construction automatically.</div>
   </div>
 
   <div class="module-nav">
