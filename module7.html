@@ -1,143 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Module 7: SEPA STEP2 SCT, SDD &amp; SCT Inst — PaymentsAcademy</title>
-<link rel="stylesheet" href="styles.css"/></head>
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 7: SEPA STEP2 SCT, SDD &amp; SCT Inst — PaymentsAcademy</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">07</div><div class="module-tag">Module 7</div><h1>SEPA STEP2 Credit Transfer, Direct Debit &amp; Instant Credit Transfer</h1><p>STEP2 Pan-European ACH, SCT &amp; SDD transaction processing, SCT Inst scheme rules, 7-step workflow, ISO 20022 messages, reject/return/recall procedures, TIPS and RT1.</p><div class="module-tags"><span>STEP2</span><span>SCT</span><span>SDD</span><span>SCT Inst</span><span>TIPS</span><span>RT1</span><span>pacs.008</span><span>camt.056</span></div></div></div>
+
+<div class="module-hero">
+  <div class="module-hero-inner">
+    <div class="module-num">07</div>
+    <div class="module-tag">Module 7</div>
+    <h1>SEPA STEP2: Credit Transfer, Direct Debit &amp; Instant Credit Transfer</h1>
+    <p>STEP2 Pan-European ACH architecture and settlement model, SCT and SDD processing lifecycles, mandate validation mechanics, SCT Inst scheme rules, TIPS vs RT1 infrastructure comparison, full ISO 20022 message suite, and SEPA recall procedures.</p>
+    <div class="module-tags"><span>STEP2</span><span>EBA CLEARING</span><span>SCT</span><span>SDD Core</span><span>SDD B2B</span><span>SCT Inst</span><span>TIPS</span><span>RT1</span><span>pacs.008</span><span>camt.056</span><span>Mandate</span><span>Recall</span></div>
+  </div>
+</div>
+
 <section class="section"><div class="container">
 
+  <!-- ═══════════════════════════════════════════════════
+       7.1  STEP2 — Pan-European ACH Overview
+  ═══════════════════════════════════════════════════ -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">7.1</span> STEP2 — Pan European Automated Clearing House</h2>
-    <h3>What is STEP2-T Platform?</h3>
-    <p><strong>STEP2</strong> is the pan-European Automated Clearing House (ACH) operated by <strong>EBA CLEARING</strong>. It processes SEPA Credit Transfers (SCT), SEPA Direct Debits (SDD), and supports ancillary settlement. The <strong>STEP2-T</strong> platform is the current iteration — a highly resilient, scalable infrastructure processing billions of transactions annually across 36 SEPA countries. STEP2 connects approximately 2,500+ payment service providers across Europe through a single multilateral platform.</p>
-    <h3>Phases in Payment Transaction Processing</h3>
-    <div class="flow-steps">
-      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Submission</h4><p>PSPs submit payment files to STEP2 during defined submission windows. Files are in ISO 20022 XML format (pacs.008 for SCT, pacs.003 for SDD).</p></div></div>
-      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Validation</h4><p>STEP2 validates each transaction: format checks, BIC/IBAN validation, scheme rule compliance. Invalid transactions are rejected with reason codes.</p></div></div>
-      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Clearing</h4><p>Valid transactions are sorted by receiving PSP. Bilateral net positions are calculated between all participant pairs.</p></div></div>
-      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Settlement</h4><p>Net settlement positions are passed to T2 (via ancillary system interface). T2 settles the net amounts in central bank money across participant MCAs.</p></div></div>
-      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Delivery</h4><p>After settlement, STEP2 delivers individual payment details to each receiving PSP via their STEP2 output files.</p></div></div>
-    </div>
-    <h3>Processing Modes and Continuous Gross Settlement Model</h3>
-    <p>STEP2 offers multiple processing modes: <strong>standard batch cycles</strong> (multiple times per day for SCT), <strong>bulk processing</strong> (large file submissions), and a <strong>Continuous Gross Settlement (CGS)</strong> model for SEPA Instant. In CGS mode, each instant transaction is validated and submitted for gross real-time settlement immediately rather than being batched.</p>
-  </div>
+    <h2><span class="t-num">7.1</span> STEP2 — Pan-European ACH Overview</h2>
 
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.2</span> STEP2 Credit Transfer (SCT) System</h2>
-    <h3>SCT Overview</h3>
-    <p>The <strong>SEPA Credit Transfer (SCT)</strong> scheme is a push payment — the payer's bank initiates the transfer. Key features: euro-only, IBAN mandatory (BIC optional since 2016), no upper limit set by scheme (though banks may impose limits), maximum execution time D+1 (next business day), and uses ISO 20022 XML messaging (pacs.008). The SCT scheme rules are defined in the <strong>EPC SCT Rulebook</strong>, updated annually.</p>
-    <h3>SCT Settlement Model</h3>
-    <p>SCT settlement occurs via STEP2's ancillary system connection to T2. Net positions calculated by STEP2 are submitted to T2 for settlement during defined settlement cycles (multiple times per business day). Settlement is in central bank money via participant MCAs. D+1 means a payment submitted on Monday settles by end of Tuesday.</p>
-    <h3>SCT Transaction Processing — Including Rejects, Returns, Refusals</h3>
-    <div class="table-wrap"><table><thead><tr><th>Exception Type</th><th>Message</th><th>When</th><th>Who Initiates</th><th>Key Point</th></tr></thead><tbody>
-      <tr><td><strong>Reject</strong></td><td>pacs.002</td><td>Before settlement</td><td>Receiving PSP or STEP2</td><td>Transaction did not pass validation. Reason code mandatory. Funds never left originating bank.</td></tr>
-      <tr><td><strong>Return</strong></td><td>pacs.004</td><td>After settlement</td><td>Receiving PSP</td><td>Payment settled but cannot be applied (wrong account, account closed). Funds returned within scheme timelines.</td></tr>
-      <tr><td><strong>Refusal</strong></td><td>pacs.002 (negative)</td><td>Before settlement</td><td>Receiving PSP</td><td>PSP refuses to process for business reasons (not scheme non-compliance).</td></tr>
-      <tr><td><strong>Recall</strong></td><td>camt.056</td><td>After settlement</td><td>Originating PSP</td><td>Originator requests cancellation. Allowed for: duplicate, technical error, fraudulent credit transfer.</td></tr>
-      <tr><td><strong>Revocation</strong></td><td>pain.007 / camt.055</td><td>Before settlement</td><td>Originator customer</td><td>Customer requests cancellation before the payment has settled.</td></tr>
-    </tbody></table></div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.3</span> STEP2 Direct Debit (SDD) System</h2>
-    <h3>SDD Overview — Core and B2B Schemes</h3>
-    <p>The <strong>SEPA Direct Debit (SDD)</strong> is a pull payment — the payee's PSP initiates the collection after receiving a mandate from the payer. Two schemes exist: <strong>SDD Core</strong> (for consumer debtors — individuals) and <strong>SDD B2B</strong> (for business debtors). SDD Core allows debtors to request a refund up to 8 weeks after debit (13 months if no valid mandate). SDD B2B has no refund right and the debtor bank must check mandate existence before executing.</p>
-    <h3>SDD Settlement Model</h3>
-    <p>SDD pre-settlement timelines are critical: <strong>SDD Core</strong> requires advance presentation (D-1 for first/one-off, D-1 for recurrent since 2013 update) before settlement on D. <strong>SDD B2B</strong> requires D-1 advance presentation. Creditor PSPs must provide the mandate reference in all collection files. STEP2 validates mandate consistency checks where applicable.</p>
-    <h3>SDD Transaction Processing — Rejects, Returns, Refunds, Reversals</h3>
-    <div class="table-wrap"><table><thead><tr><th>Exception</th><th>Message</th><th>Reason Example</th><th>Timeframe</th></tr></thead><tbody>
-      <tr><td><strong>Reject</strong></td><td>pacs.002</td><td>Invalid IBAN, missing mandate ref</td><td>Before settlement (D)</td></tr>
-      <tr><td><strong>Return</strong></td><td>pacs.004</td><td>Account closed, insufficient funds</td><td>Up to 5 business days after settlement</td></tr>
-      <tr><td><strong>Refund</strong></td><td>pacs.004</td><td>Authorised but debtor disputes (8-week window for Core)</td><td>Up to 8 weeks (Core); 13 months if no mandate</td></tr>
-      <tr><td><strong>Reversal</strong></td><td>pacs.007</td><td>Creditor reverses collected funds</td><td>Up to 5 business days after settlement</td></tr>
-    </tbody></table></div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.4</span> SEPA Instant Credit Transfer Scheme (SCT Inst) and TIPS</h2>
-    <h3>What is SCT Inst?</h3>
-    <p>The <strong>SEPA Instant Credit Transfer (SCT Inst)</strong> scheme, governed by the EPC, enables real-time euro payments 24/7/365 across SEPA. Key rules: maximum execution time <strong>10 seconds</strong> end-to-end (25 seconds in exception); scheme default amount limit <strong>€100,000 per instruction</strong>; uses ISO 20022 XML messaging; available every day of the year with no downtime. From <strong>9 January 2025</strong>, SCT Inst became mandatory for EU banks that already offer SCT to customers (for inbound payments). From <strong>9 October 2025</strong>, mandatory for outbound as well.</p>
-
-    <h3>SCT Inst Mandatory Scope and Live Dates</h3>
-    <div class="table-wrap"><table><thead><tr><th>Functionality</th><th>Live Date</th></tr></thead><tbody>
-      <tr><td>Inbound SCT Inst — EU countries (France, Germany, Luxembourg, etc.)</td><td><strong>9 January 2025</strong></td></tr>
-      <tr><td>Outbound SCT Inst — EU countries</td><td><strong>9 October 2025</strong></td></tr>
-      <tr><td>Inbound SCT Inst — Non-EU SEPA countries (UK, Switzerland, etc.)</td><td><strong>9 January 2027</strong></td></tr>
-      <tr><td>Outbound SCT Inst — Non-EU SEPA countries</td><td><strong>9 October 2027</strong></td></tr>
-    </tbody></table></div>
-    <p><em>* Dates subject to change as governed by EPC</em></p>
-
-    <h3>SCT Inst Use Cases</h3>
-    <div class="table-wrap"><table><thead><tr><th>Payment Type</th><th>Examples</th></tr></thead><tbody>
-      <tr><td><strong>Person to Person</strong></td><td>Emergency fund transfers; splitting restaurant bills; buying goods from another consumer online or face-to-face</td></tr>
-      <tr><td><strong>Person to Business</strong></td><td>Online purchases; paying home services (electrician, cleaner); invoice payments to avoid late penalties; tax/insurance payments; charity donations</td></tr>
-      <tr><td><strong>Business to Person</strong></td><td>Urgent compensation/welfare/insurance claim payouts; merchant refunds for returned goods; payments to freelancers and day workers</td></tr>
-    </tbody></table></div>
-
-    <h3>TIPS vs RT1 — CSM Options for SCT Inst</h3>
-    <div class="two-col">
-      <div class="highlight-box"><strong>TIPS (ECB)</strong> — TARGET Instant Payment Settlement. Operated by the ECB/Eurosystem. Settles each SCT Inst transaction gross in central bank money (TIPS-DCA) in real time. Available 24/7/365. Part of the T2 consolidated platform. True RTGS model for instant payments.</div>
-      <div class="highlight-box purple"><strong>RT1 (EBA CLEARING)</strong> — Real-Time 1. Operated by EBA CLEARING. Real-time gross settlement system for SCT Inst. Processes transactions in under 1 second on average. Also 24/7/365. Provides an alternative to TIPS for PSPs that already have STEP2 connectivity.</div>
-    </div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.5</span> SCT Inst Workflow — 7 Steps</h2>
-    <div class="flow-steps">
-      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Originator → Originator PSP (pain.001)</h4><p>Originator sends SCT Inst instruction to their PSP (bank). Originator PSP executes validation checks and funds availability. If successful, reserves the amount on the originator's account and timestamps the transaction (this is the start time for the 10-second clock). Prepares pacs.008 SCT Inst Transaction.</p></div></div>
-      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Originator PSP → CSM (pacs.008)</h4><p>Originator PSP sends pacs.008 SCT Inst Transaction to the CSM (TIPS or RT1). Simultaneously authorises the CSM to reserve funds on its settlement account as cover. This provides upfront settlement certainty to the CSM.</p></div></div>
-      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>CSM → Beneficiary PSP (pacs.008)</h4><p>CSM sends the pacs.008 to the Beneficiary PSP. Receipt of this message gives the Beneficiary PSP settlement certainty — it knows it will receive the funds. Beneficiary PSP verifies it can apply the transaction and executes validation checks.</p></div></div>
-      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Beneficiary PSP → CSM (pacs.002 Accept/Reject)</h4><p>Beneficiary PSP sends pacs.002 to CSM indicating positive acceptance (ACCP) or rejection (RJCT). CSM acknowledges receipt. On acceptance, CSM executes settlement: debits Originator PSP's account, credits Beneficiary PSP's account.</p></div></div>
-      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Beneficiary PSP Credits Customer</h4><p>Beneficiary PSP immediately makes funds available to the beneficiary customer. Funds must be made available instantly upon receipt of the positive CSM settlement confirmation.</p></div></div>
-      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>CSM → Originator PSP (pacs.002 Final Confirmation)</h4><p>CSM sends final confirmation to Originator PSP confirming whether the SCT Inst transaction was successful or not. Settlement is completed.</p></div></div>
-      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>Originator PSP → Originator (pain.002)</h4><p>If transaction successful: reservation is converted to actual debit; originator is notified via payment status report. If unsuccessful: reservation is released immediately, originator is notified of failure with reason code.</p></div></div>
-    </div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.6</span> ISO 20022 Messages in SCT Inst</h2>
-    <div class="table-wrap"><table><thead><tr><th>Message</th><th>Purpose</th><th>Direction</th></tr></thead><tbody>
-      <tr><td><strong>pain.001.001.09</strong></td><td>SCT Instant Instruction — customer to bank payment initiation</td><td>Originator → Originator PSP</td></tr>
-      <tr><td><strong>pacs.008.001.08</strong></td><td>SCT Instant Transaction — interbank credit transfer</td><td>Originator PSP ↔ CSM ↔ Beneficiary PSP</td></tr>
-      <tr><td><strong>pacs.002.001.10</strong></td><td>Payment Status Report — Accept (ACCP) or Reject (RJCT)</td><td>Beneficiary PSP → CSM → Originator PSP</td></tr>
-      <tr><td><strong>pacs.028.001.01</strong></td><td>Payment Status Request — query status of an SCT Inst transaction</td><td>Any PSP → CSM</td></tr>
-      <tr><td><strong>pain.002.001.03</strong></td><td>Payment Status Report — bank to customer notification</td><td>Originator PSP → Originator</td></tr>
-      <tr><td><strong>camt.055.001.01</strong></td><td>Customer Payment Cancellation Request — from originator</td><td>Originator → Originator PSP</td></tr>
-      <tr><td><strong>camt.056.001.08</strong></td><td>Payment Cancellation Request (Recall) — interbank</td><td>Originator PSP → CSM → Beneficiary PSP</td></tr>
-      <tr><td><strong>pacs.004.001.09</strong></td><td>Payment Return — positive response to recall</td><td>Beneficiary PSP → CSM → Originator PSP</td></tr>
-      <tr><td><strong>camt.029.001.09</strong></td><td>Resolution of Investigation — negative response to recall</td><td>Beneficiary PSP → Originator PSP</td></tr>
-      <tr><td><strong>camt.052.001.02</strong></td><td>Intraday Account Report</td><td>PSP ↔ Customer</td></tr>
-      <tr><td><strong>camt.053.001.02</strong></td><td>End-of-Day Account Statement</td><td>PSP → Customer</td></tr>
-      <tr><td><strong>camt.054.001.08</strong></td><td>Debit/Credit Notification</td><td>PSP → Customer</td></tr>
-    </tbody></table></div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">7.7</span> PAIN, PACS and CAMT — Message Space Explained</h2>
+    <h3>What is STEP2?</h3>
+    <p><strong>STEP2</strong> is the Pan-European Automated Clearing House (PE-ACH) operated by <strong>EBA CLEARING</strong>. It was launched in <strong>2003</strong> and is today the primary multilateral clearing infrastructure for SEPA payment schemes across 36 SEPA countries. STEP2 processes four schemes:</p>
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">📤</div><h4>PAIN — PAyment INitiation</h4><p>Used between <strong>customer and bank</strong> (C2B space). Customers send payment instructions (pain.001) and receive status reports (pain.002). Used exclusively in the customer-to-bank space. Not used in interbank messaging.</p></div>
-      <div class="info-card"><div class="ic-icon">🔄</div><h4>PACS — PAyment Clearing &amp; Settlement</h4><p>Used between <strong>financial institutions</strong> (interbank space). Transfers funds between banks. pacs.008 for credit transfers, pacs.003 for direct debits, pacs.004 for returns. Used exclusively interbank.</p></div>
-      <div class="info-card"><div class="ic-icon">💼</div><h4>CAMT — CAsh ManagemenT</h4><p>Used in <strong>both C2B and interbank</strong>. In C2B: informs customer of account activity (camt.052/053/054). Both spaces: cancellation requests (camt.055/056) and investigation resolution (camt.029).</p></div>
+      <div class="info-card"><div class="ic-icon">📤</div><h4>SCT — SEPA Credit Transfer</h4><p>Push credit transfer: payer's PSP sends funds to payee's PSP. Same-day or next-business-day settlement. Batch-cycle processing with multiple clearing windows per business day.</p></div>
+      <div class="info-card"><div class="ic-icon">📥</div><h4>SDD Core — Direct Debit Core</h4><p>Pull collection for <strong>consumer debtors</strong>. Creditor initiates collection under a signed mandate. Debtors retain unconditional refund rights within defined windows.</p></div>
+      <div class="info-card"><div class="ic-icon">🏢</div><h4>SDD B2B — Direct Debit Business</h4><p>Pull collection for <strong>business debtors only</strong>. Stricter mandate validation at debtor bank. No unconditional refund right. Tighter exception timeframes.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>SCT Inst — Instant Credit Transfer</h4><p>Real-time push credit transfer. 10-second end-to-end maximum. 24/7/365 availability. €100,000 per-transaction scheme limit. Processed via RT1 (continuous) or TIPS.</p></div>
+    </div>
+
+    <h3>Network Topology and Scale</h3>
+    <p>STEP2 operates a <strong>hub-and-spoke model</strong> connecting over <strong>2,000 Payment Service Providers (PSPs)</strong> across the SEPA zone through a single centralised platform. PSPs connect directly to STEP2 as Direct Participants or access the system indirectly through a Direct Participant acting as their gateway. This architecture means any PSP in the network can exchange payments with any other PSP through a single multilateral infrastructure — removing the need for thousands of bilateral agreements.</p>
+    <p>PSPs connected to STEP2 include commercial banks, savings banks, credit unions, electronic money institutions, and payment institutions licensed under PSD2. National central banks participate indirectly via their settlement connection to T2.</p>
+
+    <h3>CGS — Clearing and Settlement Model</h3>
+    <p>STEP2 operates under the <strong>CGS (Clearing and Settlement) model</strong> in which <strong>STEP2 performs clearing</strong> — validating, disaggregating, sorting, and calculating net positions — while <strong>T2 performs settlement</strong> of those net positions in <strong>central bank money</strong>. The settlement leg works as follows:</p>
+    <div class="highlight-box">
+      <strong>CGS Settlement Flow:</strong> After each clearing cycle, STEP2 calculates the multilateral net position of every participating PSP. STEP2 submits a settlement file (via pacs.010 Ancillary System Settlement Instruction) to T2. T2 debits or credits each PSP's <strong>MCA (Main Cash Account)</strong> or designated <strong>Technical Account</strong> by the net settlement amount. T2 confirms settlement completion back to STEP2, which then releases output files to receiving PSPs.
+    </div>
+    <p>This model means SEPA payments ultimately settle in risk-free central bank money — the highest quality settlement asset — despite being cleared through a private infrastructure.</p>
+
+    <h3>Operating Cycles</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Scheme</th><th>Processing Model</th><th>Cycles Per Day</th><th>Settlement</th></tr></thead>
+      <tbody>
+        <tr><td><strong>SCT</strong></td><td>Batch cycles (file-based)</td><td>Multiple cycles per business day (cut-off windows throughout day)</td><td>Net settlement via T2 MCAs; D+1 maximum execution</td></tr>
+        <tr><td><strong>SDD Core</strong></td><td>Batch cycles</td><td>Multiple cycles; pre-notification D-1 before settlement on D</td><td>Net settlement via T2 MCAs on settlement date D</td></tr>
+        <tr><td><strong>SDD B2B</strong></td><td>Batch cycles</td><td>Multiple cycles; D-1 advance presentation required</td><td>Net settlement via T2 MCAs on settlement date D</td></tr>
+        <tr><td><strong>SCT Inst</strong></td><td>Continuous (transaction-by-transaction)</td><td>24/7/365 continuous via RT1; or via TIPS for gross RTGS</td><td>Gross real-time (TIPS) or near-real-time DNS every 10 min (RT1)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.2  SCT Processing and Exceptions
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.2</span> SCT Processing and Exceptions</h2>
+
+    <h3>SCT Processing Lifecycle — 7 Steps</h3>
+    <p>The <strong>SEPA Credit Transfer (SCT)</strong> is a push payment initiated by the payer's PSP. The end-to-end lifecycle from instruction submission to final crediting of the beneficiary follows seven steps:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Customer Initiation → PSP A (pain.001)</h4><p>The originating customer submits a payment instruction to PSP A (their bank) via a pain.001 Customer Credit Transfer Initiation message — either as a single transaction or as a batch file. PSP A validates: IBAN format, sanctions screening, AML checks, and available balance.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>PSP A Submits to STEP2 (pacs.008 batch)</h4><p>PSP A submits a batch file to STEP2 containing individual pacs.008 FI to FI Customer Credit Transfer messages. The batch must reach STEP2 within the relevant submission window for the target clearing cycle. STEP2 acknowledges receipt and begins validation.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>STEP2 Validates and Disaggregates</h4><p>STEP2 validates each transaction in the batch: format compliance with ISO 20022 SCT schema, BIC/IBAN consistency, scheme rule compliance (amount in euros, SEPA country codes, mandatory fields). Invalid transactions are rejected back to PSP A with reason codes. Valid transactions are disaggregated from the batch and routed individually.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>STEP2 Routes pacs.008 to PSP B</h4><p>STEP2 routes each valid pacs.008 instruction to the receiving PSP B based on the beneficiary's BIC (derived from the IBAN via the SEPA BIC directory). Net positions between all PSP pairs are accumulated across the clearing cycle.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>STEP2 Submits Net Settlement File to T2 (pacs.010)</h4><p>At end of each clearing cycle, STEP2 calculates the multilateral net position for every PSP in the cycle and submits a settlement instruction (pacs.010 Ancillary System Settlement Instruction) to T2's ancillary system interface (ASI). Each PSP's net debit or net credit for the cycle is consolidated into a single settlement amount.</p></div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>T2 Settles MCAs; Confirms to STEP2</h4><p>T2 debits the net debit PSPs and credits the net credit PSPs across their Main Cash Accounts (MCAs) or Technical Accounts. Settlement is in central bank money. T2 returns settlement confirmation to STEP2 upon successful completion. If settlement fails (insufficient MCA balance), STEP2 applies its failure-to-settle procedures.</p></div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>STEP2 Delivers to PSP B; PSP B Credits Beneficiary</h4><p>Following settlement confirmation, STEP2 releases output files to PSP B containing the individual pacs.008 instructions settled in that cycle. PSP B credits the beneficiary's account and may send a camt.054 Debit/Credit Notification to the beneficiary customer.</p></div></div>
+    </div>
+
+    <h3>R-Transaction Types in SEPA — Complete Guide</h3>
+    <p>SEPA defines a comprehensive set of <strong>R-transactions</strong> (exception messages) covering pre-settlement and post-settlement scenarios. Understanding their precise timing and initiator is essential:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>R-Type</th><th>Message</th><th>Timing</th><th>Initiator</th><th>Key Characteristics</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Reject</strong></td><td>pacs.002 (RJCT)</td><td><em>Before</em> settlement</td><td>STEP2 or Receiving PSP</td><td>Transaction fails validation — format error, invalid IBAN, sanctions hit, scheme rule violation. Funds never leave originating bank. Reason code mandatory.</td></tr>
+        <tr><td><strong>Return</strong></td><td>pacs.004</td><td><em>After</em> settlement</td><td>Beneficiary PSP (PSP B)</td><td>Payment settled but cannot be applied — account closed, account blocked, wrong beneficiary details. PSP B returns funds. D+5 business days maximum for SCT.</td></tr>
+        <tr><td><strong>Recall</strong></td><td>camt.056</td><td><em>After</em> settlement</td><td>Originating PSP (PSP A)</td><td>PSP A requests cancellation of settled payment. Reasons limited to: DUPL (duplicate), FRAD (fraud), TECH (technical error). Beneficiary PSP must respond within 15 business days.</td></tr>
+        <tr><td><strong>Reversal</strong></td><td>pacs.007</td><td><em>After</em> settlement (same day)</td><td>Originating PSP (PSP A)</td><td>Same-day reversal mechanism — faster track than camt.056 recall. Used for duplicate or erroneous payments discovered on the same business day as settlement. More expedient but narrower window.</td></tr>
+        <tr><td><strong>Refusal</strong></td><td>pacs.002 (negative)</td><td><em>Before</em> settlement</td><td>Beneficiary PSP (PSP B)</td><td>PSP B declines to process for business reasons (e.g., beneficiary relationship ended, PSP policy). Distinct from Reject — Refusal is a business decision, not a technical validation failure.</td></tr>
+        <tr><td><strong>Revocation</strong></td><td>camt.055 (C2B)</td><td><em>Before</em> settlement</td><td>Originating <em>customer</em></td><td>Customer asks PSP A to cancel the payment before it has settled. PSP A may or may not be able to act depending on whether the payment has already been submitted to STEP2. If PSP A can still act, it sends a pacs.007 or contacts STEP2.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Recall Process — camt.056 → pacs.004 or camt.029</h3>
+    <p>The <strong>recall process</strong> is one of the most operationally significant exception flows in SEPA. There are two timeframe tracks:</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>Same-Day Recall (Reversal — pacs.007)</strong><br/><br/>
+        When a duplicate or erroneous payment is identified on the <em>same business day</em> as settlement, PSP A can send a <strong>pacs.007 Payment Reversal</strong> directly via STEP2. This is the faster track — it travels through the ACH clearing infrastructure using the same-day cycle and reverses the funds more quickly than a standard recall. The pacs.007 must reference the original pacs.008 End-to-End ID and Transaction ID. PSP B must credit the reversal upon receipt if the beneficiary's account still holds the funds.
+      </div>
+      <div class="highlight-box purple">
+        <strong>Standard Recall (up to 13 months — camt.056)</strong><br/><br/>
+        For payments discovered after the settlement date, PSP A sends a <strong>camt.056 FI to FI Payment Cancellation Request</strong> to PSP B (routed via STEP2 or bilaterally). The camt.056 must contain a valid recall reason (DUPL, FRAD, or TECH). PSP B has <strong>15 business days</strong> to respond. If PSP B agrees, it returns the funds via <strong>pacs.004 Payment Return</strong>. If PSP B refuses (e.g., beneficiary will not return funds), PSP B sends a <strong>camt.029 Resolution of Investigation</strong> with a negative response. The standard recall window is <strong>13 months</strong> from the original settlement date. After 13 months, PSP A must pursue civil recovery outside the scheme.
+      </div>
+    </div>
+
+    <h3>Common Reject Reason Codes</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Code</th><th>Name</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AM04</strong></td><td>Insufficient Funds</td><td>The debtor's account has insufficient funds to execute the payment (relevant for SDD and SCT where PSP checks available balance).</td></tr>
+        <tr><td><strong>AC01</strong></td><td>Incorrect Account Number</td><td>The account number provided (IBAN) is structurally invalid or does not pass the check digit algorithm.</td></tr>
+        <tr><td><strong>AC04</strong></td><td>Closed Account Number</td><td>The beneficiary/debtor account has been closed at the receiving bank.</td></tr>
+        <tr><td><strong>BE01</strong></td><td>Inconsistent With End Customer</td><td>The name of the account holder does not match the name provided in the payment instruction — triggered where IBAN/name matching is performed.</td></tr>
+        <tr><td><strong>FF01</strong></td><td>Invalid File Format</td><td>The payment file does not conform to the required ISO 20022 XML schema.</td></tr>
+        <tr><td><strong>MD01</strong></td><td>No Mandate</td><td>For SDD: no valid mandate exists for the requested direct debit (especially relevant in SDD B2B where debtor bank validates mandate).</td></tr>
+        <tr><td><strong>MS02</strong></td><td>Reason Not Specified</td><td>The PSP cannot or will not specify the actual reason for rejection. Use of this code is discouraged by scheme rules.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.3  SDD Core vs SDD B2B — Full Comparison
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.3</span> SDD Core vs SDD B2B — Full Comparison</h2>
+
+    <h3>Overview</h3>
+    <p>The <strong>SEPA Direct Debit (SDD)</strong> is a pull payment — the creditor (payee) initiates the collection from the debtor's (payer's) account, based on authority granted through a <strong>mandate</strong>. Two distinct schemes exist, each with different rules optimised for their target market:</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Feature</th><th>SDD Core</th><th>SDD B2B</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Target Debtors</strong></td><td>Consumers (individuals) — and businesses if agreed</td><td>Business debtors <em>only</em> — cannot be used for consumer accounts</td></tr>
+        <tr><td><strong>Mandate Type</strong></td><td>Consumer mandate — signed by individual debtor, given to creditor</td><td>Business mandate — signed by debtor business, given to creditor AND submitted to debtor's bank</td></tr>
+        <tr><td><strong>Pre-Notification Period</strong></td><td>Creditor must notify debtor <strong>14 calendar days</strong> before collection date (can be shortened by creditor-debtor agreement)</td><td>As agreed between creditor and debtor — no fixed minimum imposed by scheme (parties negotiate)</td></tr>
+        <tr><td><strong>Mandate Validation by Debtor Bank (RDFI)</strong></td><td>Debtor bank does <strong>NOT</strong> pre-validate the mandate. It only validates on receipt of the first collection. There is no pre-registration of Core mandates at the debtor bank.</td><td>Debtor bank <strong>MUST</strong> validate the mandate BEFORE the first collection. Debtor submits mandate to their bank. Bank stores and cross-checks every incoming SDD B2B against registered mandates. If no mandate registered, bank returns the collection.</td></tr>
+        <tr><td><strong>Unconditional Refund Right</strong></td><td><strong>Yes</strong> — debtor has 8-week unconditional refund right from debit date, no questions asked</td><td><strong>No</strong> — there is NO unconditional refund right for authorised SDD B2B collections</td></tr>
+        <tr><td><strong>Unauthorised Transaction Refund</strong></td><td>13 months from debit date if debtor claims no valid mandate existed</td><td>Not applicable — debtor's bank validated mandate before execution; claims go through dispute/civil route</td></tr>
+        <tr><td><strong>Return Timeline (D+ days)</strong></td><td>Up to <strong>D+5 business days</strong> after settlement for returns (e.g., insufficient funds, account closed)</td><td>Up to <strong>D+2 business days</strong> after settlement — tighter window reflecting stronger pre-validation</td></tr>
+        <tr><td><strong>RBAC (Refund Blocked Against Creditor)</strong></td><td><strong>Available in Core only</strong> — creditor can request RBAC to block specific refund claims where evidence of authorisation exists. Debtor's bank handles the dispute.</td><td>Not applicable — no unconditional refund right to block</td></tr>
+        <tr><td><strong>Mandate Storage</strong></td><td>Held by <strong>creditor only</strong>. Debtor bank has no stored mandate. Debtor bank simply processes collections received via STEP2 without pre-validation against stored mandates.</td><td>Held by creditor AND must be stored/registered at the <strong>debtor's bank</strong>. Debtor bank maintains its own mandate register and validates every incoming collection against it.</td></tr>
+        <tr><td><strong>Advance Presentation (Pre-notification to STEP2)</strong></td><td>D-1 (1 business day before settlement date) — since EPC 2013 update aligning first and recurrent cycles</td><td>D-1 (1 business day before settlement date)</td></tr>
+        <tr><td><strong>Use Case Examples</strong></td><td>Utility bills, insurance premiums, gym memberships, streaming subscriptions, mortgage repayments, charity donations</td><td>B2B trade invoices, corporate treasury collections, intercompany settlements, corporate insurance premiums</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>SDD Mandate Validation Mechanics — Deep Dive</h3>
+    <p>The mandate validation mechanic is the most fundamental difference between the two SDD schemes and has significant operational implications for both creditor banks (ODFIs) and debtor banks (RDFIs):</p>
+
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>SDD Core — Mandate Mechanics</strong><br/><br/>
+        <strong>Step 1:</strong> Creditor issues a mandate to the debtor. The mandate contains a <strong>Unique Mandate Reference (UMR)</strong> — a reference unique to the creditor-debtor relationship — and the creditor's <strong>Creditor Identifier (CI)</strong> — a unique pan-European identifier issued to the creditor by their national authority.<br/><br/>
+        <strong>Step 2:</strong> The debtor signs the mandate and returns it to the creditor. The creditor stores the mandate.<br/><br/>
+        <strong>Step 3:</strong> The debtor bank (RDFI) receives the SDD Core collection via STEP2. It does <em>not</em> pre-validate against any stored mandate — there is none. It validates only that the account exists, is active, and has not been blocked by the debtor.<br/><br/>
+        <strong>Step 4:</strong> If the debtor later disputes the collection (claims the mandate was not authorised or was exceeded), the debtor claims a refund via their bank using an R-transaction. The debtor bank processes the refund using the 8-week or 13-month window and debits the creditor bank's net position in the next clearing cycle.<br/><br/>
+        <em>Key principle: the creditor carries the mandate risk in Core — the system relies on the creditor holding valid mandates and the dispute resolution process to handle disputes post-payment.</em>
+      </div>
+      <div class="highlight-box purple">
+        <strong>SDD B2B — Mandate Mechanics</strong><br/><br/>
+        <strong>Step 1:</strong> Creditor issues a mandate (containing UMR and CI) and the debtor business signs it.<br/><br/>
+        <strong>Step 2:</strong> The debtor submits the mandate details to <em>their own bank</em> (RDFI). The RDFI stores the mandate in its mandate register, recording: CI, UMR, debtor account, creditor account, mandate type (one-off or recurring), and any amount/frequency constraints.<br/><br/>
+        <strong>Step 3:</strong> When the creditor initiates a collection via STEP2, the RDFI receives the pacs.003 instruction. <em>Before processing</em>, the RDFI cross-checks: (a) Is there a registered mandate with this CI and UMR? (b) Does the collection match the mandate parameters?<br/><br/>
+        <strong>Step 4:</strong> If no matching mandate is registered, or if the collection deviates from mandate parameters, the RDFI <strong>must return the collection</strong> (MD01 — No Mandate, or MD06 — Mandate Cancelled). The collection never reaches the debtor's account.<br/><br/>
+        <strong>Step 5:</strong> If the mandate is valid, the RDFI executes the debit. There is no unconditional refund right — the RDFI has pre-validated.<br/><br/>
+        <em>Key principle: the RDFI carries mandate validation responsibility in B2B — this shifts risk from post-payment dispute to pre-payment validation, enabling the no-refund rule.</em>
+      </div>
+    </div>
+
+    <div class="highlight-box gold">
+      <strong>Creditor Identifier (CI) — What It Is and Why It Matters</strong><br/><br/>
+      The <strong>Creditor Identifier (CI)</strong> is a unique alphanumeric identifier assigned to every SDD creditor by the relevant national authority (e.g., Bundesbank in Germany, Banque de France in France). The CI has a standardised pan-European format: 2-character country code + 2-digit check digits + 3-character creditor business code + up to 28-character national identifier. Example: DE98ZZZ09999999999. The CI is included in every SDD instruction — both Core and B2B — and allows debtor banks to identify the creditor uniquely across SEPA. In SDD B2B, the CI is the primary key used by the RDFI to look up stored mandates.
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════
+       7.4  SCT Inst — SEPA Instant Credit Transfer
+  ═══════════════════════════════════════════════════ -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">7.8</span> Reject vs Return vs Recall — Key Differences</h2>
-    <div class="table-wrap"><table><thead><tr><th>Exception</th><th>Message</th><th>Timing</th><th>Initiator</th><th>Reason Example</th><th>Funds Movement</th></tr></thead><tbody>
-      <tr><td><strong>Reject</strong></td><td>pacs.002 (RJCT)</td><td>Before settlement</td><td>Any PSP / CSM</td><td>Invalid IBAN (FF01), Sanctions hit (FF05)</td><td>No debit — funds stay with originator</td></tr>
-      <tr><td><strong>Return</strong></td><td>pacs.004</td><td>After settlement</td><td>Beneficiary PSP</td><td>Account closed (AC04), Wrong beneficiary (BE04)</td><td>Funds returned via pacs.004</td></tr>
-      <tr><td><strong>Recall</strong></td><td>camt.056</td><td>After settlement</td><td>Originator PSP</td><td>Duplicate (DUPL), Fraud (FRAD), Technical error (TECH)</td><td>Beneficiary PSP may return funds or refuse</td></tr>
-    </tbody></table></div>
-    <div class="highlight-box gold"><strong>SCT Inst Recall Rules:</strong> Recall must be sent within 10 banking business days for duplicate/technical error reasons. For fraudulent transactions, within 13 months. Beneficiary PSP must respond (positively or negatively) within 15 banking business days.</div>
+    <h2><span class="t-num">7.4</span> SCT Inst — SEPA Instant Credit Transfer</h2>
+
+    <h3>EPC SCT Inst Scheme Rules</h3>
+    <p>The <strong>SEPA Instant Credit Transfer (SCT Inst)</strong> scheme is governed by the <strong>EPC (European Payments Council) SCT Inst Rulebook</strong>, updated annually. Core scheme parameters:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">⏱</div><h4>10-Second End-to-End Maximum</h4><p>From the moment the originating PSP submits the pacs.008 to the CSM, to the moment the beneficiary PSP confirms acceptance, the entire processing chain must complete within <strong>10 seconds</strong>. This is not 10 seconds for the CSM alone — it is the total end-to-end envelope including routing, beneficiary PSP validation, and confirmation.</p></div>
+      <div class="info-card"><div class="ic-icon">🕐</div><h4>24/7/365 Availability</h4><p>SCT Inst operates <strong>every day of the year</strong> with no scheduled downtime — including weekends, public holidays, and year-end. This is a fundamental departure from batch ACH systems which operate only on business days within defined windows. PSPs offering SCT Inst must maintain continuous operational availability.</p></div>
+      <div class="info-card"><div class="ic-icon">💶</div><h4>€100,000 Per-Transaction Limit</h4><p>The scheme maximum is <strong>€100,000 per individual SCT Inst transaction</strong>. This was raised from the original €25,000 limit in <strong>2019</strong> to broaden the range of use cases (including B2B and high-value consumer payments). Individual PSPs may set lower limits for their customers but may not exceed the scheme maximum.</p></div>
+      <div class="info-card"><div class="ic-icon">🌍</div><h4>Mandatory Participation (EU)</h4><p>From <strong>9 January 2025</strong>, EU PSPs that offer SCT must also offer inbound SCT Inst receipt. From <strong>9 October 2025</strong>, outbound SCT Inst sending is also mandatory for EU PSPs. Non-EU SEPA country PSPs (e.g., UK, Switzerland) have later deadlines: inbound January 2027, outbound October 2027.</p></div>
+    </div>
+
+    <h3>The 25-Second Exception Window</h3>
+    <p>The SCT Inst scheme recognises that under exceptional conditions — network congestion, beneficiary PSP system degradation, complex sanctions screening — a response within 10 seconds may not always be achievable. The scheme provides a precisely defined exception handling mechanism:</p>
+    <div class="highlight-box">
+      <strong>How the 25-Second Window Works:</strong><br/><br/>
+      <strong>0–10 seconds:</strong> Normal processing window. The beneficiary PSP is expected to validate the incoming pacs.008, check the beneficiary account, run fraud/sanctions screening, and return a pacs.002 ACCP (accepted) or RJCT (rejected) to the CSM within this window.<br/><br/>
+      <strong>10–25 seconds (exception window):</strong> If the beneficiary PSP cannot respond within 10 seconds, it has an additional <strong>15-second window</strong> in which it must either (a) send pacs.002 ACCP to confirm acceptance, or (b) send pacs.002 RJCT to decline. This gives a total maximum processing time of <strong>25 seconds</strong> from submission.<br/><br/>
+      <strong>After 25 seconds:</strong> If no response has been received from the beneficiary PSP within 25 seconds, the CSM generates an automatic <strong>timeout return</strong> — the transaction is treated as failed. The originating PSP's account is not debited, and the originator is notified of the timeout failure via pacs.002 RJCT (or equivalent negative confirmation). The originator customer is refunded immediately.
+    </div>
+    <p>The 25-second maximum is therefore not a target — it is the absolute outer boundary. PSPs are expected to respond well within 10 seconds under normal conditions. Persistent exceedance of the 10-second target can trigger scheme non-compliance procedures.</p>
+
+    <h3>SCT Inst Infrastructure — TIPS and RT1</h3>
+    <p>PSPs can access SCT Inst processing through two competing Clearing and Settlement Mechanisms (CSMs):</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>TIPS — TARGET Instant Payment Settlement</strong><br/><br/>
+        TIPS is operated by the <strong>ECB</strong> as part of the T2 consolidated platform (Eurosystem). It went live in November 2018.<br/><br/>
+        <strong>Settlement model:</strong> True gross RTGS — each SCT Inst transaction is settled <em>individually</em> in central bank money in real time. There is no deferred net settlement; each transaction either settles gross or is rejected.<br/><br/>
+        <strong>Account structure:</strong> PSPs must open a <strong>TIPS-DCA (Dedicated Cash Account)</strong> on the T2 platform and pre-fund it with central bank money. The TIPS-DCA is the settlement account for instant payments. PSPs can transfer liquidity between their MCA and their TIPS-DCA intraday.<br/><br/>
+        <strong>Reachability:</strong> TIPS is open to all PSPs connected to T2. PSPs not directly connected can participate as "instructing parties" through a directly connected PSP.
+      </div>
+      <div class="highlight-box purple">
+        <strong>RT1 — EBA CLEARING Real-Time 1</strong><br/><br/>
+        RT1 is operated by <strong>EBA CLEARING</strong> — the same organisation that operates STEP2. It went live in November 2017, making it the first pan-European instant payment infrastructure.<br/><br/>
+        <strong>Settlement model:</strong> Near-real-time DNS — transactions are processed in real time (sub-second routing and confirmation) but net positions are settled periodically, approximately every <strong>10 minutes</strong>, via T2. This makes RT1 technically a DNS system with very short settlement cycles rather than true RTGS.<br/><br/>
+        <strong>Account structure:</strong> PSPs require either a <strong>RT1 TIPS-DCA</strong> (for settlement via T2) or access to the <strong>RT1 liquidity pool</strong> (a pre-funded pool maintained by RT1 participants for collateral purposes).<br/><br/>
+        <strong>Interoperability:</strong> A reachability agreement between TIPS and RT1 means that a payment originating from a TIPS-connected PSP can reach a beneficiary at an RT1-connected PSP, and vice versa — providing near-universal reachability across SEPA.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.5  TIPS vs RT1 — Comparison
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.5</span> TIPS vs RT1 — Detailed Comparison</h2>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Feature</th><th>TIPS</th><th>RT1</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Operator</strong></td><td><strong>ECB</strong> (European Central Bank / Eurosystem)</td><td><strong>EBA CLEARING</strong> (private cooperative)</td></tr>
+        <tr><td><strong>Launch Date</strong></td><td>November 2018</td><td>November 2017</td></tr>
+        <tr><td><strong>Settlement Model</strong></td><td><strong>Gross RTGS</strong> — every SCT Inst settles individually and immediately in central bank money</td><td><strong>Near-real-time DNS</strong> — transactions processed in real time but net positions settled every ~10 minutes via T2</td></tr>
+        <tr><td><strong>Settlement Asset</strong></td><td><strong>Central bank money</strong> (risk-free) — each transaction settles directly across TIPS-DCAs on the T2 platform</td><td>Transactions backed by RT1 liquidity pool (commercial money); net positions settled in <strong>central bank money</strong> via T2 at each cycle</td></tr>
+        <tr><td><strong>Settlement Account</strong></td><td><strong>TIPS-DCA</strong> (Dedicated Cash Account on T2 platform) — requires pre-funding</td><td><strong>RT1 TIPS-DCA</strong> or <strong>RT1 liquidity pool</strong></td></tr>
+        <tr><td><strong>Liquidity Mechanism</strong></td><td>TIPS-DCA pre-funded; intraday liquidity transfers from MCA to TIPS-DCA via T2</td><td>RT1 liquidity pool maintained by participants; regular settlement cycles replenish/drain the pool</td></tr>
+        <tr><td><strong>Availability</strong></td><td>24/7/365 — no scheduled downtime</td><td>24/7/365 — no scheduled downtime</td></tr>
+        <tr><td><strong>Risk Profile</strong></td><td>Lowest possible settlement risk — gross real-time central bank money settlement eliminates net exposure entirely</td><td>Small intraday net exposure between settlement cycles (~10 minutes); mitigated by liquidity pool collateral</td></tr>
+        <tr><td><strong>Pricing Model</strong></td><td>ECB charges a cost-recovery fee per transaction (designed to be competitive with commercial CSMs)</td><td>EBA CLEARING commercial pricing; competitive with TIPS</td></tr>
+        <tr><td><strong>Interoperability</strong></td><td colspan="2" style="text-align:center;"><strong>TIPS ↔ RT1 reachability agreement in place</strong> — payments can flow between TIPS-connected and RT1-connected PSPs. Beneficiary reachability is near-universal across SEPA for PSPs on either platform.</td></tr>
+        <tr><td><strong>Integration Path</strong></td><td>Requires T2 connectivity (SWIFT or SIA/Colt network); TIPS-DCA on T2 platform</td><td>Existing STEP2/EBA CLEARING connectivity can be leveraged; lower migration cost for EBA CLEARING participants</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="highlight-box gold">
+      <strong>Why Both Infrastructures Co-Exist:</strong> The ECB launched TIPS partly to ensure that instant payment infrastructure remains accessible as a public good and is not controlled solely by a private entity. EBA CLEARING's RT1 was already live when TIPS launched. Rather than competing destructively, the two systems have established interoperability, with PSPs choosing based on their existing infrastructure, liquidity management preferences, and cost analysis. The majority of Eurozone PSPs participate in both or one, with near-universal reachability as the result.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.6  ISO 20022 Message Suite for SEPA
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.6</span> ISO 20022 Message Suite for SEPA</h2>
+
+    <h3>Message Namespaces — PAIN, PACS, CAMT</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📤</div><h4>PAIN — PAyment INitiation</h4><p>Used in the <strong>customer-to-bank (C2B)</strong> space. The customer sends payment instructions to their PSP (pain.001, pain.008) and receives status reports (pain.002). PAIN messages are never used in the interbank space — they stop at the first PSP.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>PACS — PAyment Clearing &amp; Settlement</h4><p>Used exclusively in the <strong>interbank (FI-to-FI)</strong> space. Carry actual fund movement instructions between PSPs via STEP2/TIPS/RT1. Core messages: pacs.008 (SCT), pacs.003 (SDD), pacs.004 (Return), pacs.002 (Status), pacs.007 (Reversal), pacs.010 (Settlement Instruction).</p></div>
+      <div class="info-card"><div class="ic-icon">💼</div><h4>CAMT — CAsh ManagemenT</h4><p>Used in <strong>both C2B and interbank</strong> spaces. In C2B: account reporting (camt.052, camt.053, camt.054). In interbank: payment cancellation/recall (camt.056) and investigation resolution (camt.029). Customer-side cancellation requests use camt.055.</p></div>
+    </div>
+
+    <h3>Complete SEPA ISO 20022 Message Reference</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Message ID</th><th>Name</th><th>Space</th><th>Use in SEPA</th></tr></thead>
+      <tbody>
+        <tr><td><strong>pain.001</strong></td><td>Customer Credit Transfer Initiation</td><td>C2B</td><td>SCT initiation by PSP's customer — customer sends single or batch payment instruction to their bank. Contains Creditor IBAN, amount, remittance information.</td></tr>
+        <tr><td><strong>pain.002</strong></td><td>Customer Payment Status Report</td><td>C2B</td><td>Status feedback from PSP to initiating customer — confirms receipt, acceptance, rejection, or completion of pain.001 or pain.008 instruction. Also used to notify of SCT Inst outcome (ACCP/RJCT).</td></tr>
+        <tr><td><strong>pain.007</strong></td><td>Customer Payment Reversal</td><td>C2B</td><td>Customer requests reversal of a previously initiated credit transfer. Sent to originating PSP. PSP determines if reversal is still possible (pre-settlement) and initiates pacs.007 at interbank level if so.</td></tr>
+        <tr><td><strong>pain.008</strong></td><td>Customer Direct Debit Initiation</td><td>C2B</td><td>SDD initiation by creditor — creditor submits single or batch direct debit collection requests to their bank (ODFI/Creditor PSP). Contains mandate reference, UMR, CI, debtor IBAN, collection amount and date.</td></tr>
+        <tr><td><strong>pacs.002</strong></td><td>FI to FI Payment Status Report</td><td>Interbank</td><td>Interbank payment status — used by STEP2/TIPS/RT1 to confirm acceptance (ACCP), rejection (RJCT), or pending status of pacs.008 or pacs.003 instructions. In SCT Inst: beneficiary PSP sends ACCP or RJCT to CSM within 10-second window.</td></tr>
+        <tr><td><strong>pacs.003</strong></td><td>FI to FI Customer Direct Debit</td><td>Interbank</td><td>SDD interbank collection instruction — carries direct debit from Creditor PSP via STEP2 to Debtor PSP (RDFI). Contains mandate reference, CI, UMR, collection amount. Used for both SDD Core and SDD B2B.</td></tr>
+        <tr><td><strong>pacs.004</strong></td><td>Payment Return</td><td>Interbank</td><td>Used by Beneficiary/Debtor PSP to return previously settled funds — either as a post-settlement return (account closed, wrong beneficiary) or as a positive response to a camt.056 recall request. References original transaction's End-to-End ID.</td></tr>
+        <tr><td><strong>pacs.007</strong></td><td>Payment Reversal</td><td>Interbank</td><td>Same-day reversal of a previously settled SCT or SDD — faster track for duplicate or erroneous payments identified same day as settlement. Originating PSP sends to STEP2 for routing to Beneficiary PSP. More expedient than camt.056 recall.</td></tr>
+        <tr><td><strong>pacs.008</strong></td><td>FI to FI Customer Credit Transfer</td><td>Interbank</td><td>The core SCT and SCT Inst interbank instruction. Carries fund transfer details between PSPs via STEP2 (SCT) or TIPS/RT1 (SCT Inst). Contains debtor/creditor IBANs, BICs, amount, purpose, remittance information, and (for SCT Inst) settlement priority indicator.</td></tr>
+        <tr><td><strong>pacs.010</strong></td><td>FI to FI Financial Institution Credit Transfer</td><td>Interbank</td><td>Ancillary System Settlement Instruction — used by STEP2 to submit net settlement files to T2 at the end of each clearing cycle. T2 uses this to debit/credit participant MCAs for SCT and SDD net positions.</td></tr>
+        <tr><td><strong>camt.029</strong></td><td>Resolution of Investigation</td><td>Both</td><td>Negative response to a recall (camt.056) or investigation request. Sent by Beneficiary PSP to Originating PSP when the recall is refused — e.g., beneficiary has already used the funds and will not return them, or funds cannot be identified. Creditor must pursue civil recovery after receiving camt.029.</td></tr>
+        <tr><td><strong>camt.052</strong></td><td>Bank to Customer Account Report</td><td>C2B</td><td>Intraday account balance and transaction report — sent by PSP to customer on request or schedule. Used for intraday liquidity monitoring and real-time reconciliation.</td></tr>
+        <tr><td><strong>camt.053</strong></td><td>Bank to Customer Statement</td><td>C2B</td><td>End-of-day account statement — comprehensive daily statement of all credits and debits. Standard format for automated reconciliation by corporate treasuries and ERP systems.</td></tr>
+        <tr><td><strong>camt.054</strong></td><td>Bank to Customer Debit Credit Notification</td><td>C2B</td><td>Real-time or near-real-time notification of individual debits or credits to a customer's account. Used by PSPs to notify customers of SCT Inst receipts instantly.</td></tr>
+        <tr><td><strong>camt.055</strong></td><td>Customer Payment Cancellation Request</td><td>C2B</td><td>Customer-to-bank cancellation request — customer asks their PSP to cancel a payment (C2B equivalent of camt.056). PSP determines if cancellation is still possible and acts accordingly at interbank level.</td></tr>
+        <tr><td><strong>camt.056</strong></td><td>FI to FI Payment Cancellation Request</td><td>Interbank</td><td>Interbank recall request — Originating PSP requests the Beneficiary PSP to cancel and return a previously settled payment. Valid recall reasons: DUPL (duplicate), FRAD (fraud), TECH (technical problem), CUST (at customer's request). 13-month maximum window.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.7  STEP2 Interoperability with National ACHs
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.7</span> STEP2 Interoperability with National ACHs</h2>
+
+    <h3>The PE-ACH Concept</h3>
+    <p>STEP2 was designed as the <strong>PE-ACH (Pan-European ACH)</strong> — the spine connecting national payment islands across Europe into a single interoperable clearing zone. Prior to SEPA, each country had its own domestic ACH (automated clearing house) and cross-border payments required correspondent banking chains or direct bilateral bank agreements. STEP2's PE-ACH model replaced this fragmented landscape with a single multilateral infrastructure.</p>
+    <p>However, national ACH systems continue to operate alongside STEP2 — processing domestic transactions more cost-efficiently and in some cases providing additional services (e.g., local instant payment rails, domestic return procedures, national scheme overlays). Interoperability between STEP2 and national ACHs is achieved through <strong>bilateral exchange agreements</strong> that allow PSPs connected to a national ACH to exchange SEPA payments with STEP2 participants without requiring direct STEP2 membership.</p>
+
+    <h3>Key Interoperability Relationships</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>National ACH</th><th>Country</th><th>Operator</th><th>STEP2 Relationship</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CORE</strong></td><td>France</td><td>STET (Société d'Edition de Systèmes de Télécommunications)</td><td>Bilateral exchange agreement with STEP2 — French PSPs connected via CORE can reach STEP2 participants for SCT and SDD without direct STEP2 membership. CORE processes domestic French transactions and routes cross-SEPA items via STEP2.</td></tr>
+        <tr><td><strong>Equens</strong></td><td>Netherlands, Germany, Italy</td><td>Equens SE (now part of Worldline)</td><td>Long-standing bilateral agreement with STEP2. Equens was one of the original pan-European ACH operators. Dutch and German PSPs using Equens can exchange SEPA payments with STEP2 participants via the interoperability gateway.</td></tr>
+        <tr><td><strong>IBERPAY</strong></td><td>Spain</td><td>IBERPAY (Sociedad Española de Sistemas de Pago)</td><td>Spanish national ACH with STEP2 interoperability. IBERPAY also operates Spain's Bizum instant payment overlay. Spanish PSPs route cross-SEPA items via the IBERPAY–STEP2 interoperability bridge.</td></tr>
+        <tr><td><strong>SIA / Nexi</strong></td><td>Italy</td><td>SIA (now Nexi)</td><td>Italian ACH infrastructure with STEP2 bilateral agreement. Italian PSPs can access STEP2 reachability via SIA/Nexi connectivity for domestic and cross-border SEPA processing.</td></tr>
+        <tr><td><strong>Interbank</strong></td><td>Belgium</td><td>CEC / Isabel Group</td><td>Belgian interbank infrastructure connected to STEP2 PE-ACH spine for cross-border SEPA routing.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>How Interoperability Works Technically</h3>
+    <p>An interoperability gateway sits between the national ACH and STEP2. When a PSP connected to a national ACH initiates a SEPA payment to a beneficiary whose PSP is a direct STEP2 participant, the national ACH routes the pacs.008 instruction through the interoperability gateway to STEP2. STEP2 then routes onward to the beneficiary PSP in the normal way. The interoperability gateway performs format translation if required (ensuring ISO 20022 compliance) and handles settlement reconciliation between the two systems.</p>
+    <div class="highlight-box">
+      <strong>PE-ACH Vision:</strong> The long-term vision for SEPA is a fully integrated payment area where any PSP in any SEPA country can reach any other PSP through a seamless interoperability layer — regardless of which ACH or CSM each is directly connected to. STEP2 as the pan-European spine, connected bilaterally to national ACHs, and with TIPS and RT1 providing instant payment reachability, realises this vision to a substantial degree. The remaining gaps (PSPs only connected to national ACHs without STEP2 interoperability agreements) are progressively being closed as SEPA payment volumes and the mandatory SCT Inst requirements drive universal reachability.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       7.8  Recall Rules — SEPA
+  ═══════════════════════════════════════════════════ -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">7.8</span> Recall Rules — SEPA</h2>
+
+    <h3>Two Recall Tracks</h3>
+    <p>SEPA provides two distinct mechanisms for recalling a settled payment, chosen based on the urgency and timing of the discovery:</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Feature</th><th>Same-Day Recall (Reversal)</th><th>Standard Recall</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Message Used</strong></td><td><strong>pacs.007</strong> — Payment Reversal</td><td><strong>camt.056</strong> — FI to FI Payment Cancellation Request</td></tr>
+        <tr><td><strong>Timing</strong></td><td>Must be initiated on the <strong>same business day</strong> as settlement</td><td>Up to <strong>13 months</strong> after the original settlement date</td></tr>
+        <tr><td><strong>Route</strong></td><td>Via STEP2 clearing infrastructure — same-day cycle</td><td>Via STEP2 (or bilaterally between PSPs in some cases)</td></tr>
+        <tr><td><strong>Speed</strong></td><td>Faster — processed within the same-day clearing cycle</td><td>Standard — Beneficiary PSP has up to 15 business days to respond</td></tr>
+        <tr><td><strong>Valid Reasons</strong></td><td>Duplicate payment (DUPL), Technical error (TECH)</td><td>DUPL, FRAD (fraud), TECH, CUST (customer request)</td></tr>
+        <tr><td><strong>Response if Accepted</strong></td><td>Funds returned via pacs.007 reversal flow</td><td>Beneficiary PSP returns funds via <strong>pacs.004</strong> Payment Return</td></tr>
+        <tr><td><strong>Response if Refused</strong></td><td>Beneficiary PSP notifies refusal (pacs.002 or bilateral communication)</td><td>Beneficiary PSP sends <strong>camt.029</strong> Resolution of Investigation (negative)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Recall Reason Codes</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Code</th><th>Name</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DUPL</strong></td><td>Duplicate Payment</td><td>The same payment was submitted and settled twice — either by system error or human error at the originating PSP</td><td>Most common recall reason. Standard recall (camt.056) or same-day reversal (pacs.007). Beneficiary PSP typically cooperative as beneficiary received funds in error.</td></tr>
+        <tr><td><strong>FRAD</strong></td><td>Fraudulent Credit Transfer</td><td>The originating PSP has reason to believe the payment was initiated fraudulently — e.g., the customer's credentials were compromised, or the payment was made under APP fraud manipulation</td><td>Recall window: up to 13 months. Most contested recall type — beneficiary may have already spent funds. Law enforcement referral common. Beneficiary PSP may freeze beneficiary account pending investigation.</td></tr>
+        <tr><td><strong>TECH</strong></td><td>Technical Problem</td><td>The payment was sent due to a technical failure — e.g., a system bug caused wrong amount, wrong beneficiary, or wrong currency to be sent</td><td>Straightforward from beneficiary PSP's perspective — clear technical error. Usually resolved within the 15-business-day window.</td></tr>
+        <tr><td><strong>CUST</strong></td><td>Customer Request</td><td>The originating customer has asked their PSP to recall the payment — e.g., goods not delivered, wrong payee, payment made in error</td><td>Only valid for standard recall (camt.056). Beneficiary PSP will check if beneficiary consents. If beneficiary disputes, PSP cannot force return — must advise customer to pursue civil route.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>End-to-End Recall Flow — Standard Recall</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Originating PSP Identifies Issue</h4><p>PSP A (or its customer via camt.055) identifies that a settled payment must be recalled. PSP A checks: is the recall within 13 months? Is the reason code valid (DUPL, FRAD, TECH, CUST)? PSP A prepares the camt.056 FI to FI Payment Cancellation Request referencing the original pacs.008 Transaction ID and End-to-End ID.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>camt.056 Sent to Beneficiary PSP (via STEP2 or bilateral)</h4><p>PSP A sends camt.056 to PSP B. STEP2 routes the message or it is sent via bilateral SWIFT/SIC connectivity depending on the infrastructure arrangement. PSP B receives and acknowledges the recall request.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>PSP B Contacts Beneficiary Customer (15 Business Days)</h4><p>PSP B has up to <strong>15 business days</strong> to respond. PSP B will: (a) check if the recall reason is valid; (b) contact the beneficiary customer to request consent to return the funds; (c) assess any legal holds or fraud investigations that may apply.</p></div></div>
+      <div class="flow-step"><div class="step-num">4a</div><div class="step-body"><h4>Accepted — PSP B Returns via pacs.004</h4><p>If the beneficiary agrees (or if FRAD/DUPL is clear-cut), PSP B debits the beneficiary's account and sends a <strong>pacs.004 Payment Return</strong> to PSP A via STEP2. The pacs.004 references the original transaction. PSP A credits its customer's account upon receipt.</p></div></div>
+      <div class="flow-step"><div class="step-num">4b</div><div class="step-body"><h4>Refused — PSP B Sends camt.029 Negative Response</h4><p>If PSP B cannot or will not return the funds (beneficiary refuses, funds dissipated, legal dispute), PSP B sends a <strong>camt.029 Resolution of Investigation</strong> with a negative resolution. PSP A must inform its customer that the recall has been refused. The customer must now pursue <strong>civil recovery</strong> — legal action against the beneficiary — outside the SEPA scheme framework.</p></div></div>
+    </div>
+
+    <div class="highlight-box gold">
+      <strong>Recall Limitations — What the Scheme Cannot Do:</strong> SEPA recall procedures are voluntary cooperation mechanisms. PSP B <em>cannot</em> be forced by the scheme to return funds if the beneficiary refuses. The scheme provides the messaging infrastructure and a defined process, but does not give PSP A any legal right to compel the return of funds. This is the fundamental limitation of push payment recovery. For fraud cases, PSPs increasingly share intelligence via fraud databases and law enforcement channels, but the primary recovery route after a refused recall is civil litigation, which may be impractical for smaller amounts. This is the principal reason why APP fraud remains a major challenge: instant, irrevocable payments combined with voluntary recall mechanisms place the burden of recovery on victims.
+    </div>
   </div>
 
   <div class="module-nav">
     <a href="module6.html"><span>← Previous</span><strong>SEPA Services &amp; T2</strong></a>
     <a href="module8.html" class="next"><span>Next Module →</span><strong>Fedwire System in USA</strong></a>
   </div>
+
 </div></section>
 <footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
 <script src="main.js"></script>
-</body></html>
+</body>
+</html>
