@@ -5,191 +5,351 @@
 <link rel="stylesheet" href="styles.css"/></head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">05</div><div class="module-tag">Module 5</div><h1>SWIFT MT and ISO 20022 Messaging for Payments</h1><p>Deep dive into SWIFT MT message types, ISO 20022 identifier format, MX messages (pacs/camt/pain), MT vs MX party comparison, CBPR+ hybrid addressing, and SWIFT GPI.</p><div class="module-tags"><span>SWIFT MT</span><span>ISO 20022</span><span>pacs.008</span><span>CBPR+</span><span>GPI</span><span>MT103</span><span>Hybrid Address</span></div></div></div>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">05</div><div class="module-tag">Module 5</div><h1>SWIFT MT and ISO 20022 Messaging for Payments</h1><p>Deep dive into SWIFT network structure, MT message categories, ISO 20022 identifier format, MX messages (pacs/camt/pain), MT vs MX party comparison, CBPR+ hybrid addressing, SWIFT GPI, R-transactions, and exception &amp; investigation messages.</p><div class="module-tags"><span>SWIFT MT</span><span>ISO 20022</span><span>pacs.008</span><span>CBPR+</span><span>GPI</span><span>MT103</span><span>Hybrid Address</span><span>R-Transactions</span><span>camt.056</span></div></div></div>
 <section class="section"><div class="container">
 
+  <!-- 5.1 SWIFT Network Overview -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">5.1</span> Overview of SWIFT</h2>
-    <p>SWIFT (<strong>Society for Worldwide Interbank Financial Telecommunication</strong>) is a member-owned cooperative founded in 1973, headquartered in La Hulpe, Belgium. It operates the world's leading secure financial messaging network used by over <strong>11,000 financial institutions in 200+ countries</strong>. SWIFT does NOT move money — it carries <strong>messages</strong> (instructions) between financial institutions. The actual movement of funds happens through correspondent banking relationships and settlement systems.</p>
-    <div class="highlight-box"><strong>Important:</strong> SWIFT is a messaging network only. When Bank A sends a SWIFT MT103 to Bank B, it is instructing Bank B to pay. The actual debit/credit happens through the nostro/vostro relationship between the two banks.</div>
+    <h2><span class="t-num">5.1</span> SWIFT Network Overview</h2>
+    <p><strong>SWIFT</strong> (Society for Worldwide Interbank Financial Telecommunication) is a member-owned cooperative founded in 1973 and headquartered in La Hulpe, Belgium. It operates the world's leading secure financial messaging network, connecting over <strong>11,000 financial institutions in more than 200 countries and territories</strong>. SWIFT does <em>not</em> move money — it carries <strong>messages</strong> (instructions) between financial institutions. The actual movement of funds happens through correspondent banking relationships and local settlement systems (RTGS, ACH, etc.).</p>
+
+    <div class="highlight-box"><strong>Key Principle:</strong> SWIFT is a messaging network only. When Bank A sends a SWIFT MT 103 to Bank B, it is instructing Bank B to pay the beneficiary. The actual debit/credit happens via the nostro/vostro relationship and settlement through a clearing system — not through SWIFT itself.</div>
+
+    <h3>SWIFT for Corporates</h3>
+    <p>Traditionally SWIFT was a bank-only network. Today, large corporates can connect directly to SWIFT via several service models, bypassing proprietary bank channels and enabling multi-bank treasury management from a single connection:</p>
+
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">📡</div><h4>SWIFTNet</h4><p>The secure IP-based network over which all SWIFT messages travel. Uses PKI encryption and digital signatures.</p></div>
-      <div class="info-card"><div class="ic-icon">🏦</div><h4>Alliance Platforms</h4><p>Alliance Lite2, Alliance Access, Alliance Messaging Hub — software for connecting to SWIFTNet.</p></div>
-      <div class="info-card"><div class="ic-icon">🔍</div><h4>SWIFT GPI</h4><p>Global Payments Innovation — real-time tracking, same-day settlement, fee transparency for cross-border payments.</p></div>
-      <div class="info-card"><div class="ic-icon">✅</div><h4>Universal Confirmation</h4><p>Mandatory confirmation of credit to beneficiary account for all GPI payments, enabling end-to-end tracking.</p></div>
-      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Payment Controls</h4><p>Real-time fraud and sanctions screening on SWIFT messages before they are delivered.</p></div>
-      <div class="info-card"><div class="ic-icon">⚙️</div><h4>Transaction Manager</h4><p>Orchestration layer that manages end-to-end payment lifecycle, exception handling, and status tracking.</p></div>
+      <div class="info-card"><div class="ic-icon">🔒</div><h4>MA-CUG</h4><p><strong>Member-Administered Closed User Group.</strong> A bank sets up a restricted group on SWIFTNet and invites its corporate clients to join. The bank administers membership. The corporate can only communicate with the banks in that group — it is the most restricted (and cheapest) model, suitable for corporates that bank with a small number of institutions.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>SCORE</h4><p><strong>Standardised CORporate Environment.</strong> An open, industry-wide connectivity model where any SWIFT-connected corporate can communicate with any SWIFT-connected bank, using standardised message formats. SCORE enables true multi-bank connectivity without separate bilateral agreements for each bank relationship.</p></div>
+      <div class="info-card"><div class="ic-icon">📁</div><h4>FileAct</h4><p><strong>Bulk file transfer service.</strong> FileAct allows large files (e.g., bulk payment batches, account statements, salary runs) to be transferred securely over SWIFTNet. Supports structured (ISO 20022 XML) and unstructured file formats. Used for high-volume, lower-urgency payment initiation (pain.001 batches) and large MT 101 files from corporates.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>InterAct</h4><p><strong>Real-time interactive messaging.</strong> InterAct supports store-and-forward and real-time request/response messaging patterns over SWIFTNet. Used for individual payment instructions (MT 103, pacs.008), account queries, and status requests. InterAct is the channel for time-critical, transactional messages.</p></div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📡</div><h4>SWIFTNet</h4><p>The secure IP-based network over which all SWIFT messages travel. Uses PKI encryption and digital signatures to ensure message integrity and non-repudiation. All traffic is encrypted end-to-end.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Alliance Platforms</h4><p>Alliance Lite2, Alliance Access, Alliance Messaging Hub (AMH) — SWIFT's software products for connecting institutions to SWIFTNet. Alliance Lite2 is the cloud-based entry-level offering; AMH is the enterprise-grade message management platform.</p></div>
+      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Customer Security Programme (CSP)</h4><p>Mandatory security framework for all SWIFT-connected institutions, launched after the 2016 Bangladesh Bank heist. Defines mandatory and advisory security controls — including MFA, network segregation, and anomaly detection — enforced via the Customer Security Controls Framework (CSCF).</p></div>
     </div>
   </div>
 
+  <!-- 5.2 SWIFT MT Message Categories -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">5.2</span> SWIFT MT Payment Message Processing</h2>
-    <p>SWIFT <strong>MT (Message Type)</strong> messages are structured financial messages using SWIFT's proprietary format. Each message type has a 3-digit code. Key categories relevant to payments:</p>
+    <h2><span class="t-num">5.2</span> SWIFT MT Message Categories</h2>
+    <p>SWIFT <strong>MT (Message Type)</strong> messages are structured financial messages using SWIFT's proprietary text-based format. Each message has a 3-digit type number. Messages are grouped into <strong>categories</strong> (1xx, 2xx, 9xx, etc.) by business function. The most important categories for payments professionals are 1xx (customer payments), 2xx (financial institution transfers), and 9xx (cash management and statements).</p>
 
-    <h3>MT 1XX — Customer Payments &amp; Cheques</h3>
-    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Use</th></tr></thead><tbody>
-      <tr><td><strong>MT 101</strong></td><td>Request for Transfer</td><td>Corporate-to-bank: request to execute multiple credit transfers (bulk payment instruction)</td></tr>
-      <tr><td><strong>MT 103</strong></td><td>Single Customer Credit Transfer</td><td>Bank-to-bank: transfer funds on behalf of a customer. Most commonly used cross-border payment message.</td></tr>
-      <tr><td><strong>MT 103 STP</strong></td><td>Single Customer Credit Transfer (STP)</td><td>Straight-Through Processing variant — no manual intervention required, all fields populated for auto-processing</td></tr>
-      <tr><td><strong>MT 104</strong></td><td>Direct Debit / Request for Debit Transfer</td><td>Multiple direct debit instructions in one message</td></tr>
-      <tr><td><strong>MT 107</strong></td><td>General Direct Debit Message</td><td>General purpose direct debit</td></tr>
+    <h3>Category 1xx — Customer Payments and Cheques</h3>
+    <p>Category 1 messages carry <strong>customer (non-bank) payment instructions</strong> — the originator or beneficiary is a corporate or individual, not a financial institution.</p>
+    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Key Use</th></tr></thead><tbody>
+      <tr><td><strong>MT 101</strong></td><td>Request for Transfer</td><td>Corporate-to-bank: a corporate instructs its bank to execute multiple credit transfers on its behalf. Supports multiple payment instructions in a single message (bulk initiation). The ISO 20022 equivalent is pain.001.</td></tr>
+      <tr><td><strong>MT 103</strong></td><td>Single Customer Credit Transfer</td><td>Bank-to-bank: transfer funds on behalf of a customer. The most widely used cross-border payment message on SWIFT. Each MT 103 carries a single payment instruction. The ISO 20022 equivalent is pacs.008.</td></tr>
+      <tr><td><strong>MT 103 STP</strong></td><td>Single Customer Credit Transfer (STP)</td><td>Straight-Through Processing variant of the MT 103. All mandatory fields are fully populated for automated processing with no manual intervention. Tag :23B: must be CRED; specific field constraints apply to prevent breaks in the STP chain.</td></tr>
+      <tr><td><strong>MT 110</strong></td><td>Advice of Cheque</td><td>Sent by a bank to advise its correspondent of a cheque it has issued. Provides details of the cheque so the correspondent can expect presentment.</td></tr>
+      <tr><td><strong>MT 111</strong></td><td>Request for Stop Payment of a Cheque</td><td>Instructions to stop payment on a specific cheque. Sent urgently when fraud or loss is suspected.</td></tr>
+      <tr><td><strong>MT 112</strong></td><td>Status of a Request for Stop Payment</td><td>Response to an MT 111, confirming whether the stop payment was actioned and whether the cheque had already been paid.</td></tr>
+      <tr><td><strong>MT 104</strong></td><td>Direct Debit / Request for Debit Transfer</td><td>Multiple direct debit instructions in a single message. Used for recurring collections (e.g., insurance premiums, utilities). Less common in cross-border context.</td></tr>
     </tbody></table></div>
 
-    <h3>MT 2XX — Financial Institution Transfers</h3>
-    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Use</th></tr></thead><tbody>
-      <tr><td><strong>MT 200</strong></td><td>FI Transfer for Own Account</td><td>Bank moves its own funds between its accounts at different banks</td></tr>
-      <tr><td><strong>MT 202</strong></td><td>General Financial Institution Transfer</td><td>Bank-to-bank transfer (interbank). Used for cover payments and correspondent transfers</td></tr>
-      <tr><td><strong>MT 202 COV</strong></td><td>Cover Payment</td><td>Used alongside MT 103 to provide cover funds through correspondent chain. Introduced post-FATF to improve transparency</td></tr>
-      <tr><td><strong>MT 205</strong></td><td>Financial Institution Transfer Execution</td><td>Third bank in chain executes the transfer on behalf of the ordering bank</td></tr>
+    <h3>Category 2xx — Financial Institution Transfers</h3>
+    <p>Category 2 messages carry <strong>interbank fund transfers</strong> — the payer and payee are both financial institutions. These messages move liquidity between banks and provide cover for customer payment chains.</p>
+    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Key Use</th></tr></thead><tbody>
+      <tr><td><strong>MT 200</strong></td><td>Financial Institution Transfer for Own Account</td><td>A bank transfers its own funds between two of its accounts held at different correspondent banks. No third-party beneficiary — purely a treasury/liquidity management movement.</td></tr>
+      <tr><td><strong>MT 201</strong></td><td>Multiple Financial Institution Transfers for Own Account</td><td>Multiple MT 200-type instructions consolidated into a single message for efficiency.</td></tr>
+      <tr><td><strong>MT 202</strong></td><td>General Financial Institution Transfer</td><td>Bank-to-bank transfer where the beneficiary is a financial institution. Used for interbank settlements, nostro funding, and as the cover payment mechanism (pre-FATF). Does not contain underlying customer details.</td></tr>
+      <tr><td><strong>MT 202 COV</strong></td><td>Cover Payment</td><td>The transparency-enhanced variant of MT 202, introduced in 2009 following FATF Recommendation 16 requirements. Used when an MT 103 is sent directly to the beneficiary bank while funds travel through correspondents. The MT 202 COV carries underlying customer details (originator and beneficiary) in its mandatory <strong>Sequence B</strong> — ensuring the entire chain has access to the underlying transaction information for AML/sanctions screening. Banks must not use a plain MT 202 where an MT 202 COV is required.</td></tr>
+      <tr><td><strong>MT 203</strong></td><td>Multiple General Financial Institution Transfers</td><td>Multiple MT 202 instructions in a single message to different beneficiary institutions.</td></tr>
+      <tr><td><strong>MT 205</strong></td><td>Financial Institution Transfer Execution</td><td>Used when a third bank in the correspondent chain executes the transfer on behalf of the ordering bank. Carries the original MT 202 instructions forward in the chain.</td></tr>
     </tbody></table></div>
 
-    <h3>MT 9XX — Cash Management &amp; Customer Statements</h3>
-    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Use</th></tr></thead><tbody>
-      <tr><td><strong>MT 900</strong></td><td>Confirmation of Debit</td><td>Confirms a debit to a correspondent's account</td></tr>
-      <tr><td><strong>MT 910</strong></td><td>Confirmation of Credit</td><td>Confirms a credit to a correspondent's account</td></tr>
-      <tr><td><strong>MT 940</strong></td><td>Customer Statement Message</td><td>End-of-day statement of account</td></tr>
-      <tr><td><strong>MT 942</strong></td><td>Interim Transaction Report</td><td>Intraday account statement — used for nostro reconciliation during the day</td></tr>
-      <tr><td><strong>MT 950</strong></td><td>Statement Message</td><td>Account statement with opening/closing balances</td></tr>
+    <div class="highlight-box gold"><strong>MT 202 COV — Mandatory Sequence B:</strong> When banks use a serial payment structure (MT 103 sent directly to beneficiary bank via one or more correspondents that also receive separate MT 202 cover payments), each cover payment MUST use MT 202 COV and populate Sequence B with: :50a (Ordering Customer), :52a (Ordering Institution), :56a (Intermediary Institution, if applicable), :57a (Account With Institution), and :59a (Beneficiary Customer). This ensures every correspondent in the cover chain can screen the underlying customer details against sanctions lists.</div>
+
+    <h3>Category 9xx — Cash Management and Customer Statements</h3>
+    <p>Category 9 messages support <strong>account reporting, reconciliation, and cash management</strong>. Banks send these to their corporate and correspondent banking clients to report on account activity.</p>
+    <div class="table-wrap"><table><thead><tr><th>MT Type</th><th>Name</th><th>Key Use</th></tr></thead><tbody>
+      <tr><td><strong>MT 900</strong></td><td>Confirmation of Debit</td><td>Sent by a bank to a correspondent to confirm a debit made to the correspondent's account. Used in nostro reconciliation — the respondent bank uses MT 900s to reconcile its nostro mirror ledger.</td></tr>
+      <tr><td><strong>MT 910</strong></td><td>Confirmation of Credit</td><td>Confirms a credit to a correspondent's account. The credit-side equivalent of MT 900. Essential for same-day nostro reconciliation and intraday liquidity management.</td></tr>
+      <tr><td><strong>MT 920</strong></td><td>Request Message</td><td>Sent to a bank to request an MT 940, MT 941, or MT 942 statement. Allows on-demand account reporting rather than waiting for end-of-day delivery.</td></tr>
+      <tr><td><strong>MT 940</strong></td><td>Customer Statement Message</td><td>End-of-day account statement for a nostro/vostro account, sent by the account-holding bank to the account owner. Contains all transactions during the day plus opening and closing balances. ISO 20022 equivalent: camt.053.</td></tr>
+      <tr><td><strong>MT 942</strong></td><td>Interim Transaction Report</td><td>Intraday account statement — sent during the business day to report transactions posted since the last statement (opening or previous MT 942). Critical for intraday liquidity management and nostro reconciliation. ISO 20022 equivalent: camt.052.</td></tr>
+      <tr><td><strong>MT 950</strong></td><td>Statement Message</td><td>Similar to MT 940 but used for non-nostro accounts. Provides opening balance, transactions, and closing balance. May also be used for end-of-day customer account statements.</td></tr>
     </tbody></table></div>
   </div>
 
+  <!-- 5.3 MT 103 Field-by-Field Breakdown -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">5.3</span> ISO 20022 — The New Global Standard</h2>
-    <h3>Introduction to ISO 20022</h3>
-    <p><strong>ISO 20022</strong> is an international standard for financial messaging developed by ISO (International Organisation for Standardisation). Unlike SWIFT MT messages which are text-based with fixed fields, ISO 20022 uses <strong>XML (eXtensible Markup Language)</strong> — a structured, data-rich format that can carry far more information in a standardised, machine-readable way. ISO 20022 messages carry structured data (names, addresses, LEIs, purpose codes) rather than free-text, enabling much better straight-through processing, fraud detection, and regulatory compliance.</p>
+    <h2><span class="t-num">5.3</span> MT 103 Field-by-Field Breakdown</h2>
+    <p>The <strong>MT 103 Single Customer Credit Transfer</strong> is the workhorse of cross-border payments — it is the message sent bank-to-bank when transferring funds on behalf of a customer. Understanding every field is essential for payment operations, compliance, and the MT-to-MX migration.</p>
 
-    <h3>ISO 20022 Identifier Format — The Syntax Structure</h3>
-    <p>Every ISO 20022 message has a unique identifier following this format: <code>xxxx.nnn.aaa.bb</code></p>
+    <div class="highlight-box green"><strong>Format Notation:</strong> SWIFT uses a shorthand for field lengths. <code>16x</code> = up to 16 characters (alphanumeric). <code>4!a</code> = exactly 4 alphabetic characters. <code>3n</code> = up to 3 numeric digits. Exclamation mark (!) means exact — the field must be exactly that length.</div>
+
+    <div class="table-wrap"><table><thead><tr><th>Field Tag</th><th>Field Name</th><th>M/O</th><th>Format</th><th>Description and Rules</th></tr></thead><tbody>
+      <tr><td><strong>:20:</strong></td><td>Sender's Reference</td><td>Mandatory</td><td>16x</td><td>Unique reference number assigned by the sending bank to identify the transaction. Must be unique per sender. Cannot start or end with a slash (/). Used for investigations and reconciliation. Maps to MX /GrpHdr/MsgId or /CdtTrfTxInf/PmtId/InstrId.</td></tr>
+      <tr><td><strong>:13C:</strong></td><td>Time Indication</td><td>Optional</td><td>/8c/4!n1!x4!n</td><td>Optionally specifies a time reference — e.g., settlement time or receipt time. Rarely used in standard cross-border payments. Format: /CLSTIME/HHMMoffset.</td></tr>
+      <tr><td><strong>:23B:</strong></td><td>Bank Operation Code</td><td>Mandatory</td><td>4!a</td><td>Specifies the type of operation. Permitted values: <strong>CRED</strong> (credit transfer — the standard value), <strong>SPAY</strong> (SWIFT Pay — STP compliant credit transfer), <strong>SSTD</strong> (SWIFT Standard — non-STP), <strong>SPRI</strong> (SWIFT Priority). For MT 103 STP the code must be CRED.</td></tr>
+      <tr><td><strong>:23E:</strong></td><td>Instruction Code</td><td>Optional</td><td>4!a[/30x]</td><td>Additional handling instructions. Common codes: CHQB (pay by cheque), HOLD (hold at beneficiary bank for collection), INTC (intra-company payment), REPA (related to a repo), SDVA (same-day value). Repeatable up to 3 times.</td></tr>
+      <tr><td><strong>:26T:</strong></td><td>Transaction Type Code</td><td>Optional</td><td>3!c</td><td>Identifies the type of underlying transaction for regulatory or statistical purposes. Country-specific codes. Examples: 001 (goods trade), 002 (services), 150 (financial investment).</td></tr>
+      <tr><td><strong>:32A:</strong></td><td>Value Date / Currency / Interbank Settled Amount</td><td>Mandatory</td><td>6!n3!a15d</td><td>The three components on one line: (1) <strong>Value Date</strong> — date on which funds are to be credited at the beneficiary bank (YYMMDD). (2) <strong>Currency</strong> — ISO 4217 3-letter code (e.g., USD, EUR, GBP). (3) <strong>Amount</strong> — the interbank settled amount (the amount the intermediary banks pass between themselves). A comma is used as the decimal separator.</td></tr>
+      <tr><td><strong>:33B:</strong></td><td>Currency / Instructed Amount</td><td>Optional</td><td>3!a15d</td><td>The original currency and amount as instructed by the ordering customer — used when the instructed currency differs from the settlement currency (i.e., when FX conversion has occurred in the chain). If present, this reflects the amount before any conversion. Maps to MX /InstdAmt.</td></tr>
+      <tr><td><strong>:36:</strong></td><td>Exchange Rate</td><td>Optional</td><td>12d</td><td>The exchange rate applied when converting between the instructed amount (:33B:) and the settled amount (:32A:). Only present when :33B: is present and a conversion occurred.</td></tr>
+      <tr><td><strong>:50K / 50F / 50A</strong></td><td>Ordering Customer</td><td>Mandatory</td><td>Various</td><td>The originator of the payment — the person or company on whose behalf the sending bank is making the transfer. Three format options: <strong>:50K:</strong> — account number + name/address (up to 4×35 chars); <strong>:50F:</strong> — structured format with party identifier, name, and structured address sub-fields; <strong>:50A:</strong> — BIC of the ordering customer (for institutional clients). At minimum, the name of the ordering customer must be present. Maps to MX /Dbtr + /DbtrAcct.</td></tr>
+      <tr><td><strong>:52A / 52D</strong></td><td>Ordering Institution</td><td>Optional</td><td>BIC / 4×35x</td><td>The financial institution acting on behalf of the ordering customer — typically the ordering customer's own bank. Only required when the ordering institution is different from the sender of the MT 103. <strong>:52A:</strong> — identified by BIC; <strong>:52D:</strong> — identified by name and address. Maps to MX /DbtrAgt.</td></tr>
+      <tr><td><strong>:53A / 53B / 53D</strong></td><td>Sender's Correspondent</td><td>Optional</td><td>Various</td><td>The institution through which the sender of the MT 103 will reimburse the receiver. This is the account-holding bank for the sender's nostro account used to fund the payment. <strong>:53A:</strong> BIC; <strong>:53B:</strong> location (branch/city); <strong>:53D:</strong> name/address. Maps to MX /PrvsInstgAgt (Previous Instructing Agent). Critical for understanding the reimbursement chain.</td></tr>
+      <tr><td><strong>:54A / 54B / 54D</strong></td><td>Receiver's Correspondent</td><td>Optional</td><td>Various</td><td>The institution through which the receiver of the MT 103 will be reimbursed — the account-holding bank for the receiver's nostro. <strong>:54A:</strong> BIC; <strong>:54B:</strong> location; <strong>:54D:</strong> name/address. Maps to MX /IntrmyAgt (Intermediary Agent). Used when the receiver does not maintain a nostro with the sender directly.</td></tr>
+      <tr><td><strong>:55A / 55B / 55D</strong></td><td>Third Reimbursement Institution</td><td>Optional</td><td>Various</td><td>A third institution involved in reimbursing the receiver's correspondent (in a four-bank chain). Rarely used in practice but present in complex multi-correspondent chains. Maps to MX /IntrmyAgt2 or equivalent third-party reimbursement agent element.</td></tr>
+      <tr><td><strong>:56A / 56C / 56D</strong></td><td>Intermediary Institution</td><td>Optional</td><td>Various</td><td>An institution in the payment chain between the receiver of the MT 103 and the account-with institution (beneficiary's bank). The MT 103 receiver passes the payment to this institution, which then forwards to field :57: / beneficiary bank. <strong>:56A:</strong> BIC; <strong>:56C:</strong> account number; <strong>:56D:</strong> name/address. Maps to MX /IntrmyAgt.</td></tr>
+      <tr><td><strong>:57A / 57B / 57C / 57D</strong></td><td>Account With Institution</td><td>Optional</td><td>Various</td><td>The financial institution at which the beneficiary customer maintains their account — the beneficiary's bank. <strong>:57A:</strong> BIC (most common); <strong>:57B:</strong> location; <strong>:57C:</strong> account number of the beneficiary's bank at an intermediary; <strong>:57D:</strong> name/address. Maps to MX /CdtrAgt (Creditor Agent). Absence of this field implies the receiver of the MT 103 is itself the beneficiary's bank.</td></tr>
+      <tr><td><strong>:59 / 59A / 59F</strong></td><td>Beneficiary Customer</td><td>Mandatory</td><td>Various</td><td>The ultimate recipient of the funds. <strong>:59:</strong> — account number + name/address (up to 4×35 chars, free text); <strong>:59A:</strong> — BIC of the beneficiary (institutional beneficiary); <strong>:59F:</strong> — structured format using sub-fields for party identifier (account/IBAN), name, and structured address components (town, country). :59F: is strongly preferred for STP and ISO 20022 migration readiness. Maps to MX /Cdtr + /CdtrAcct.</td></tr>
+      <tr><td><strong>:70:</strong></td><td>Remittance Information</td><td>Optional</td><td>4×35x</td><td>Free-text remittance information to help the beneficiary identify the purpose of the payment — invoice references, purchase order numbers, description. Maximum 4 lines of 35 characters each (140 characters total). SWIFT code words in this field: /INV/ (invoice), /IPI/ (international payment instruction reference), /ROC/ (ordering customer's reference), /ULTD/ (ultimate debtor), /ULTC/ (ultimate creditor). Maps to MX /RmtInf.</td></tr>
+      <tr><td><strong>:71A:</strong></td><td>Details of Charges</td><td>Mandatory</td><td>3!a</td><td>Defines who bears the transaction charges throughout the payment chain. Three options: <strong>OUR</strong> — all charges (including correspondent and beneficiary bank charges) are borne by the ordering customer; the beneficiary receives the full instructed amount. <strong>SHA</strong> (shared) — sender's bank charges paid by the ordering customer; all other charges paid by the beneficiary. SHA is the most common value in cross-border payments. <strong>BEN</strong> — all charges borne by the beneficiary; the beneficiary receives the amount less all charges. Maps to MX /ChrgBr with values DEBT (OUR), SHAR (SHA), CRED (BEN).</td></tr>
+      <tr><td><strong>:71F:</strong></td><td>Sender's Charges</td><td>Optional</td><td>3!a15d</td><td>The currency and amount of charges deducted by the sender. Populated when :71A: is SHA or BEN so that downstream banks understand what has already been deducted. Repeatable for multiple charge items.</td></tr>
+      <tr><td><strong>:71G:</strong></td><td>Receiver's Charges</td><td>Optional</td><td>3!a15d</td><td>The currency and amount of charges to be collected by the receiver. Present only when :71A: is OUR, indicating the receiver will collect these charges and must be reimbursed for them.</td></tr>
+      <tr><td><strong>:72:</strong></td><td>Sender to Receiver Information</td><td>Optional</td><td>6×35x</td><td>Free-text field for bank-to-bank instructions not covered by other fields. Up to 6 lines of 35 characters (210 characters). Common structured code words: /ACC/ (account with instruction), /BNF/ (beneficiary), /INS/ (instructing institution — used to carry the instructing party BIC when no dedicated field exists in MT), /INT/ (intermediary), /REC/ (regulatory). In the MT-to-MX migration, /INS/ in :72: maps to MX /PrvsInstgAgt. Maps partly to MX /InstrForCdtrAgt and /InstrForNxtAgt.</td></tr>
+      <tr><td><strong>:77B:</strong></td><td>Regulatory Reporting</td><td>Optional</td><td>3×35x</td><td>Used to carry regulatory reporting codes required by the laws of specific countries (e.g., purpose codes for India's RBI reporting, CIPS codes for China, balance-of-payments codes). Format: /BENEFRES/ or /ORDERRES/ followed by the 2-letter country code and the regulatory code. Up to 3 lines of 35 characters. Maps to MX /RgltryRptg.</td></tr>
+    </tbody></table></div>
+
+    <h3>MT 103 — Typical Example (Annotated)</h3>
     <div class="code-block">
-<span class="label">Format:</span>  xxxx . nnn . aaa . bb
-<span class="label">Example:</span> pacs . 008 . 001 . 08
-    </div>
-    <div class="table-wrap"><table><thead><tr><th>Component</th><th>Length &amp; Type</th><th>Meaning</th><th>Description</th></tr></thead><tbody>
-      <tr><td><strong>xxxx</strong></td><td>4 alphabetic (4!a)</td><td>Business Process</td><td>Categorizes the process the message relates to (e.g., pacs = Payment Clearing And Settlement)</td></tr>
-      <tr><td><strong>nnn</strong></td><td>3 alphanumeric (3!c)</td><td>Message Functionality</td><td>Defines the functionality (e.g., 008 = FItoFICustomerCreditTransfer)</td></tr>
-      <tr><td><strong>aaa</strong></td><td>3 numeric (3!n)</td><td>Variant</td><td>Identifies specific market practices (e.g., 001 = variant 001)</td></tr>
-      <tr><td><strong>bb</strong></td><td>2 numeric (2!n)</td><td>Version</td><td>Version number incremented with each update (e.g., 08 = version 8)</td></tr>
+<span class="comment">// MT 103: USD payment from UK corporate to German beneficiary via US correspondent</span>
+{1:F01BARCGB22AXXX0000000000}
+{2:I103DEUTDEFFXXXXN}
+{3:{108:BARCGB22FOCU0001}}
+{4:
+<span class="label">:20:</span>BARCGB22-2024-00001       <span class="comment">← Sender's Reference</span>
+<span class="label">:23B:</span>CRED                      <span class="comment">← Bank Operation Code: Credit Transfer</span>
+<span class="label">:32A:</span>241115USD100000,00         <span class="comment">← Value 15-Nov-2024, USD 100,000.00</span>
+<span class="label">:33B:</span>GBP79250,00                <span class="comment">← Instructed amount in GBP (original currency)</span>
+<span class="label">:50K:</span>/GB29BOFS12345678901234    <span class="comment">← Ordering Customer account (IBAN)</span>
+ACME CORPORATION LIMITED
+1 LONDON BRIDGE STREET
+LONDON SE1 9GF GB
+<span class="label">:52A:</span>BARCGB22               <span class="comment">← Ordering Institution (Barclays, sender = debtor agent)</span>
+<span class="label">:53A:</span>BOFAUS3N               <span class="comment">← Sender's Correspondent (Barclays nostro at BofA New York)</span>
+<span class="label">:57A:</span>DEUTDEDB               <span class="comment">← Account With Institution (Deutsche Bank Frankfurt)</span>
+<span class="label">:59F:</span>/DE89370400440532013000   <span class="comment">← Beneficiary IBAN</span>
+1/MULLER GmbH
+3/HAUPTSTRASSE 1
+3/BERLIN
+4/DE
+<span class="label">:70:</span>/INV/INV-2024-0099         <span class="comment">← Remittance Info: invoice reference</span>
+<span class="label">:71A:</span>SHA                        <span class="comment">← Charges: shared (SHA)</span>
+<span class="label">:72:</span>/ACC/PLEASE CREDIT PROMPTLY<span class="comment">← Sender to Receiver Info</span>
+-}</div>
+  </div>
+
+  <!-- 5.4 ISO 20022 Message Format -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">5.4</span> ISO 20022 Message Format</h2>
+    <p><strong>ISO 20022</strong> is an international standard for financial messaging developed by ISO (International Organisation for Standardisation). Unlike SWIFT MT messages which use a proprietary text-based format, ISO 20022 uses <strong>XML (eXtensible Markup Language)</strong> — a structured, data-rich, machine-readable format. ISO 20022 messages carry structured data (legal names, structured addresses, LEIs, purpose codes) rather than free text, enabling far better straight-through processing, fraud detection, and regulatory compliance.</p>
+
+    <h3>ISO 20022 Identifier Format</h3>
+    <p>Every ISO 20022 message has a unique identifier following a strict 4-part format:</p>
+    <div class="code-block">
+<span class="label">Format:</span>   xxxx  .  nnn  .  aaa  .  bb
+<span class="label">Example:</span>  pacs  .  008  .  001  .  08
+           ↑        ↑       ↑       ↑
+        Family  Msg-Type  Variant  Version</div>
+
+    <div class="table-wrap"><table><thead><tr><th>Component</th><th>Length</th><th>Name</th><th>Description</th><th>Example</th></tr></thead><tbody>
+      <tr><td><strong>xxxx</strong></td><td>4 alphabetic (4!a)</td><td>Message Family / Business Process</td><td>A 4-letter code identifying the broad business area or process the message belongs to. Each family covers a specific domain of financial activity.</td><td><code>pacs</code>, <code>pain</code>, <code>camt</code>, <code>fxtr</code></td></tr>
+      <tr><td><strong>nnn</strong></td><td>3 alphanumeric (3!c)</td><td>Message Functionality (Type)</td><td>A 3-character code (usually numeric) identifying the specific message type within the family. Each number represents a distinct message with a defined business purpose.</td><td><code>008</code> = FI-to-FI Customer Credit Transfer</td></tr>
+      <tr><td><strong>aaa</strong></td><td>3 numeric (3!n)</td><td>Variant</td><td>Identifies a specific market practice variant of the message. The base standard always uses <strong>001</strong>. Some jurisdictions define additional variants (e.g., 002, 003) for local requirements.</td><td><code>001</code> (always 001 for standard CBPR+ messages)</td></tr>
+      <tr><td><strong>bb</strong></td><td>2 numeric (2!n)</td><td>Version</td><td>Version number, incremented each time the message schema is updated. Higher version = more recent. CBPR+ mandates a minimum version for cross-border use.</td><td><code>08</code> = Version 8 of pacs.008.001</td></tr>
     </tbody></table></div>
-    <div class="highlight-box green"><strong>Example: pacs.008.001.08</strong> — pacs = Payment Clearing &amp; Settlement | 008 = FI to FI Customer Credit Transfer | 001 = Variant 001 | 08 = Version 8</div>
+
+    <div class="highlight-box green"><strong>Reading pacs.008.001.08:</strong> pacs = Payment Clearing &amp; Settlement | 008 = FI to FI Customer Credit Transfer | 001 = Standard Variant | 08 = Version 8. This is the ISO 20022 equivalent of the MT 103 and is the primary message used in CBPR+ cross-border payments today.</div>
 
     <h3>Key ISO 20022 Message Families</h3>
-    <div class="table-wrap"><table><thead><tr><th>Family</th><th>Full Name</th><th>Space</th><th>Key Messages</th></tr></thead><tbody>
-      <tr><td><strong>pain</strong></td><td>PAyment INitiation</td><td>Customer-to-Bank (C2B)</td><td>pain.001 (Credit Transfer Initiation), pain.002 (Payment Status Report), pain.008 (Direct Debit Initiation)</td></tr>
-      <tr><td><strong>pacs</strong></td><td>PAyment Clearing &amp; Settlement</td><td>Interbank only</td><td>pacs.008 (FI Credit Transfer), pacs.004 (Return), pacs.002 (Status), pacs.009 (FI Direct Debit), pacs.028 (Status Request)</td></tr>
-      <tr><td><strong>camt</strong></td><td>CAsh ManagemenT</td><td>Both C2B &amp; Interbank</td><td>camt.052 (Intraday Report), camt.053 (End-of-Day Statement), camt.054 (Debit/Credit Notification), camt.055 (Cancel Request), camt.056 (Recall), camt.029 (Negative Response)</td></tr>
-    </tbody></table></div>
-  </div>
-
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">5.4</span> ISO 20022 Mandatory vs Optional Fields</h2>
-    <p>In XML/ISO 20022 messages, the cardinality (how many times an element must appear) is defined by <strong>Min</strong> and <strong>Max</strong> values in the XSD (XML Schema Definition):</p>
-    <div class="table-wrap"><table><thead><tr><th>Min</th><th>Max</th><th>Meaning</th><th>Example</th></tr></thead><tbody>
-      <tr><td>0</td><td>1</td><td>Optional — may appear once</td><td>Intermediary Agent (optional in pacs.008)</td></tr>
-      <tr><td>0</td><td>*</td><td>Optional — unlimited repetitions</td><td>Charges Information (zero or more)</td></tr>
-      <tr><td>1</td><td>1</td><td>Mandatory — must appear exactly once</td><td>Group Header in pacs.008</td></tr>
-      <tr><td>1</td><td>*</td><td>Mandatory — one or more repetitions</td><td>Credit Transfer Transaction Information</td></tr>
-    </tbody></table></div>
-    <div class="highlight-box gold"><strong>Important:</strong> Cardinality alone doesn't tell the full story. You must consider: (1) the full XML hierarchy — if a parent element is optional (Min=0), all its children are also effectively optional even if they show Min=1; (2) Choice elements (XOR) — only one of the children under a choice element can be selected; (3) CBPR+ business rules — additional rules beyond XSD, e.g., "If AnyBIC is absent then Name is mandatory."</div>
-    <h3>Hierarchical Structure Example (pacs.008)</h3>
-    <div class="code-block">
-<span class="comment">// Path: /Document/FIToFICstmrCdtTrf/GrpHdr/SttlmInf/SttlmAcct/Id/Othr/Id</span>
-<span class="comment">// Even though SttlmAcct/Id/Othr/Id has Min=1, Max=1 (mandatory at its own level),</span>
-<span class="comment">// the PARENT SttlmAcct has Min=0 (optional). So SttlmAcct/Id/Othr/Id</span>
-<span class="comment">// is effectively OPTIONAL in the full message context.</span>
-
-Group Header          <span class="label">Min=1, Max=1</span>  ← Mandatory
-  Settlement Info     <span class="label">Min=1, Max=1</span>  ← Mandatory
-    Settlement Method <span class="label">Min=1, Max=1</span>  ← Mandatory
-    Settlement Acct   <span class="label">Min=0, Max=1</span>  ← Optional ← KEY
-      Id              <span class="label">Min=1, Max=1</span>  ← Mandatory IF parent present
-        Othr          <span class="label">Min=1, Max=1</span>  ← Mandatory IF parent present
-          Id          <span class="label">Min=1, Max=1</span>  ← Mandatory IF parent present
+    <p>ISO 20022 messages are organised into <strong>message families</strong> (business domains). The four families most relevant to payments are:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">💳</div><h4>pain — PAyment INitiation</h4><p>Customer-to-bank (C2B) payment initiation messages. A corporate or retail customer uses pain messages to instruct their bank to make payments. The bank then uses pacs messages for the interbank leg.</p></div>
+      <div class="info-card"><div class="ic-icon">⚙️</div><h4>pacs — PAyment Clearing &amp; Settlement</h4><p>Interbank payment clearing and settlement messages. Used exclusively between financial institutions. The core messages for cross-border payments (pacs.008) and returns (pacs.004) live here.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>camt — CAsh ManagemenT</h4><p>Account reporting, statement, and investigation messages. Used both C2B (account statements to corporates) and interbank (investigations, recalls, responses). Covers the camt.05x statement family and the camt.02x/056/087 investigation family.</p></div>
+      <div class="info-card"><div class="ic-icon">💱</div><h4>fxtr — FX TRade</h4><p>Foreign exchange trade confirmation and settlement messages. Used to confirm FX deals and manage the settlement of FX transactions between financial institutions.</p></div>
     </div>
-    <h3>Choice Elements</h3>
-    <p>A <strong>choice element</strong> (indicated by a specific symbol in MyStandards) means exactly one of its children must be selected — they are mutually exclusive. For example, in pacs.004 Return Chain, the Creditor element is a choice between <strong>Party</strong> or <strong>Agent</strong>. You must choose one. If Party is selected, the Agent sub-elements (including FinancialInstitutionIdentification) will not be present even though they are marked Min=1 at their own level.</p>
-  </div>
 
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">5.5</span> MT vs MX — Agent and Parties Comparison</h2>
-    <p>One of the most important conceptual shifts in the ISO 20022 migration is the terminology change: in MT messages, the terminology is <strong>Institution/Bank</strong> (for financial institutions) and <strong>Customer</strong> (for individuals/companies). In MX messages, financial institutions are called <strong>Agents</strong> and individuals/companies are called <strong>Parties</strong>.</p>
-    <div class="table-wrap"><table><thead><tr><th>MX Tag (Parties &amp; Agents)</th><th>MT Field (Institution &amp; Customer)</th><th>Remarks</th></tr></thead><tbody>
-      <tr><td><strong>Ultimate Debtor</strong></td><td>:70: /ULTD/ (Remittance Info)</td><td>No dedicated field in MT — /ULTD/ keyword used in field 70</td></tr>
-      <tr><td><strong>Instructing Party</strong></td><td>:50a: Instructing Party</td><td>In MT, not forwarded further to next party in chain</td></tr>
-      <tr><td><strong>Debtor</strong></td><td>:50a: Ordering Customer</td><td>Direct mapping</td></tr>
-      <tr><td><strong>Debtor Agent</strong></td><td>:52a: Ordering Institution</td><td>Direct mapping</td></tr>
-      <tr><td><strong>Instructing Agent</strong></td><td>(Header Field): Sender</td><td>No dedicated tag in MX body — derived from header</td></tr>
-      <tr><td><strong>Instructed Agent</strong></td><td>(Header Field): Receiver</td><td>No dedicated tag in MX body — derived from header</td></tr>
-      <tr><td><strong>Intermediary Agent 1/2/3</strong></td><td>:56a: Intermediary Institution</td><td>MX supports up to 3 intermediary agents with dedicated tags</td></tr>
-      <tr><td><strong>Previous Instructing Agent 1/2/3</strong></td><td>:72: /INS/ (Sender to Receiver Info)</td><td>No dedicated field in MT — /INS/ keyword used</td></tr>
-      <tr><td><strong>Creditor Agent</strong></td><td>:57a: Account with Institution</td><td>Direct mapping</td></tr>
-      <tr><td><strong>Creditor</strong></td><td>:59a: Beneficiary Customer</td><td>Direct mapping</td></tr>
-      <tr><td><strong>Ultimate Creditor</strong></td><td>:70: /ULTC/ (Remittance Info)</td><td>No dedicated field in MT — /ULTC/ keyword used in field 70</td></tr>
+    <h3>Key ISO 20022 Messages — Reference Table</h3>
+    <div class="table-wrap"><table><thead><tr><th>Message ID</th><th>Name</th><th>MT Equivalent</th><th>Direction</th><th>Description</th></tr></thead><tbody>
+      <tr><td><strong>pain.001.001.xx</strong></td><td>CustomerCreditTransferInitiation</td><td>MT 101</td><td>C2B (Corporate → Bank)</td><td>Corporate instructs bank to execute one or more credit transfers. The bank debits the corporate's account and initiates interbank settlement using pacs.008.</td></tr>
+      <tr><td><strong>pain.002.001.xx</strong></td><td>CustomerPaymentStatusReport</td><td>MT 199 (informal)</td><td>B2C (Bank → Corporate)</td><td>Bank reports the status of a pain.001 payment instruction back to the corporate — accepted (ACTC), rejected (RJCT), or pending (PDNG).</td></tr>
+      <tr><td><strong>pain.007.001.xx</strong></td><td>CustomerPaymentReversal</td><td>—</td><td>C2B</td><td>Corporate requests cancellation/reversal of a previously submitted pain.001 that has not yet been executed. No direct MT equivalent.</td></tr>
+      <tr><td><strong>pain.008.001.xx</strong></td><td>CustomerDirectDebitInitiation</td><td>MT 104</td><td>C2B</td><td>Corporate initiates direct debit collection instructions — instructing its bank to collect funds from one or more debtors' accounts.</td></tr>
+      <tr><td><strong>pacs.008.001.xx</strong></td><td>FIToFICustomerCreditTransfer</td><td>MT 103</td><td>Interbank</td><td>The primary cross-border payment message. Carries a single customer credit transfer instruction between financial institutions. Contains full debtor, creditor, agent, and remittance information.</td></tr>
+      <tr><td><strong>pacs.009.001.xx</strong></td><td>FinancialInstitutionCreditTransfer</td><td>MT 202 / MT 202 COV</td><td>Interbank</td><td>Interbank credit transfer where both originator and beneficiary are financial institutions. Used for nostro funding, cover payments, and treasury transfers. When used as a cover, the underlying customer details are carried in the CoverDetails block.</td></tr>
+      <tr><td><strong>pacs.002.001.xx</strong></td><td>FIToFIPaymentStatusReport</td><td>MT 199 / MT 299 (informal)</td><td>Interbank</td><td>Reports the status of a pacs.008 or pacs.009 — accepted (ACCP), rejected (RJCT), settled (ACSC). Used for both R-transaction rejects and positive acceptance confirmations.</td></tr>
+      <tr><td><strong>pacs.004.001.xx</strong></td><td>PaymentReturn</td><td>MT 103 return (no standard MT)</td><td>Interbank</td><td>Returns a previously settled payment — initiated by the creditor bank when a payment cannot be applied (account closed, wrong account, deceased beneficiary). Carries original transaction details and a return reason code.</td></tr>
+      <tr><td><strong>pacs.007.001.xx</strong></td><td>FIToFIPaymentReversal</td><td>—</td><td>Interbank</td><td>Reversal of an erroneous payment, initiated by the sending bank on the same day (or within the permitted reversal window). No direct MT equivalent.</td></tr>
+      <tr><td><strong>camt.052.001.xx</strong></td><td>BankToCustomerAccountReport</td><td>MT 942</td><td>Interbank / B2C</td><td>Intraday account report. Provides transaction-level information on entries posted to an account during the business day. Used for real-time nostro reconciliation.</td></tr>
+      <tr><td><strong>camt.053.001.xx</strong></td><td>BankToCustomerStatement</td><td>MT 940 / MT 950</td><td>Interbank / B2C</td><td>End-of-day account statement. Complete record of all transactions and balances for a given business day. The ISO 20022 equivalent of the MT 940 nostro statement.</td></tr>
+      <tr><td><strong>camt.054.001.xx</strong></td><td>BankToCustomerDebitCreditNotification</td><td>MT 900 / MT 910</td><td>Interbank / B2C</td><td>Real-time debit or credit notification for individual transactions. The ISO 20022 equivalent of the MT 900 (debit confirmation) and MT 910 (credit confirmation).</td></tr>
     </tbody></table></div>
 
-    <h3>Transaction Views — From Different Perspectives</h3>
-    <p>The same payment chain looks different depending on which institution is the "sender" of the pacs.008/MT103. From the <strong>Debtor Bank's view</strong> (view 01): the Debtor Bank is the Instructing Agent (header sender). From a <strong>Correspondent's view</strong> (view 02): the correspondent is both Instructed Agent (receiver) and Instructing Agent (new sender) — it adds a Settlement Method tag (dedicated in MX, no equivalent in MT). From an <strong>Intermediary's view</strong> (view 03): the Previous Instructing Agent tag is populated in MX (dedicated tag) — in MT, the /INS/ keyword in field 72 is used instead.</p>
+    <h3>ISO 20022 Cardinality — Mandatory vs Optional</h3>
+    <p>In XML/ISO 20022 messages, how many times an element must or may appear is defined by <strong>Min</strong> and <strong>Max</strong> values in the XSD (XML Schema Definition):</p>
+    <div class="table-wrap"><table><thead><tr><th>Min</th><th>Max</th><th>Meaning</th><th>Example</th></tr></thead><tbody>
+      <tr><td>0</td><td>1</td><td>Optional — may appear at most once</td><td>IntermediaryAgent1 in pacs.008 (optional intermediary)</td></tr>
+      <tr><td>0</td><td>*</td><td>Optional — may appear zero or more times</td><td>ChargesInformation (zero or more charge items)</td></tr>
+      <tr><td>1</td><td>1</td><td>Mandatory — must appear exactly once</td><td>GroupHeader in pacs.008</td></tr>
+      <tr><td>1</td><td>*</td><td>Mandatory — one or more repetitions</td><td>CreditTransferTransactionInformation (at least one payment)</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box gold"><strong>Important — Context Dependency:</strong> Cardinality must be read in context. If a parent element is optional (Min=0), all its children are also effectively optional in the full message — even if they show Min=1 at their own level. Always trace the full XPath hierarchy. Also note <strong>Choice elements</strong> (XOR constraints): exactly one child of a choice group must be present. For example, the Creditor identification is a choice between IBAN or Other account identification — only one may be populated.</div>
   </div>
 
+  <!-- 5.5 MT vs MX Party Mapping -->
   <div class="topic-section fade-in">
-    <h2><span class="t-num">5.6</span> CBPR+ Hybrid Address Implementation</h2>
-    <p>ISO 20022 CBPR+ (Cross-Border Payments and Reporting Plus) is the SWIFT standard for ISO 20022 cross-border payments. One key topic is how <strong>postal addresses</strong> are handled in MX messages.</p>
-    <div class="table-wrap"><table><thead><tr><th>Address Type</th><th>XML Element</th><th>Rules (Pre-SR2025)</th><th>Rules (From SR2025 / Nov 2025)</th></tr></thead><tbody>
-      <tr><td><strong>Unstructured</strong></td><td>&lt;AdrLine&gt;</td><td>Max 2 lines, 70 chars each</td><td>Max 3 lines, 35 chars each — then DISCONTINUED from Nov 2026</td></tr>
-      <tr><td><strong>Structured</strong></td><td>&lt;StrtNm&gt;, &lt;TwnNm&gt;, &lt;Ctry&gt; etc.</td><td>Country &lt;Ctry&gt; + TownName &lt;TwnNm&gt; mandatory</td><td>Same — Country + TownName mandatory</td></tr>
-      <tr><td><strong>Hybrid</strong></td><td>Mix of both</td><td>NOT permitted (before SR2025)</td><td>PERMITTED from Nov 2025 — structured Country+Town + unstructured AdrLine (max 2 lines, 70 chars)</td></tr>
+    <h2><span class="t-num">5.5</span> MT vs MX Party Mapping</h2>
+    <p>One of the most important conceptual shifts in the ISO 20022 migration is the terminology change: MT messages use the terms <strong>Institution/Bank</strong> (for financial institutions) and <strong>Customer</strong> (for individuals/companies). MX messages call financial institutions <strong>Agents</strong> and individuals/companies <strong>Parties</strong>. The mapping below shows how every MT 103 field corresponds to an ISO 20022 pacs.008 element.</p>
+
+    <div class="table-wrap"><table><thead><tr><th>MT Field Tag</th><th>MT Field Name</th><th>MX XPath Element</th><th>MX Name</th><th>Notes</th></tr></thead><tbody>
+      <tr><td><strong>:20:</strong></td><td>Sender's Reference (Transaction Reference)</td><td>/GrpHdr/MsgId or /PmtId/InstrId</td><td>Message ID / Instruction ID</td><td>MT :20: maps to the instruction-level reference in MX. The GrpHdr/MsgId is the overall message envelope reference.</td></tr>
+      <tr><td><strong>:32A:</strong></td><td>Value Date / Currency / Amount</td><td>/IntrBkSttlmAmt &amp; /IntrBkSttlmDt</td><td>Interbank Settlement Amount &amp; Date</td><td>In MX these are separate XML elements with explicit data types (amount with currency attribute; date in ISO 8601 YYYY-MM-DD format).</td></tr>
+      <tr><td><strong>:50K / :50F / :50A:</strong></td><td>Ordering Customer</td><td>/Dbtr + /DbtrAcct</td><td>Debtor + Debtor Account</td><td>The Debtor element holds name and address; the DbtrAcct element holds the account identifier (IBAN or other). In MT, both are combined in one field.</td></tr>
+      <tr><td><strong>:52A / :52D:</strong></td><td>Ordering Institution</td><td>/DbtrAgt</td><td>Debtor Agent</td><td>The financial institution of the debtor (ordering customer's bank). In MX, identified by BIC in /DbtrAgt/FinInstnId/BICFI.</td></tr>
+      <tr><td><strong>:53A / :53B / :53D:</strong></td><td>Sender's Correspondent</td><td>/PrvsInstgAgt1</td><td>Previous Instructing Agent 1</td><td>In MT, :53: is the reimbursement agent for the sender. In MX, this is the PreviousInstructingAgent — the party that was previously instructing (i.e., the sender's nostro-holding correspondent). MX supports up to 3 PreviousInstructingAgents.</td></tr>
+      <tr><td><strong>:54A / :54B / :54D:</strong></td><td>Receiver's Correspondent</td><td>/IntrmyAgt1</td><td>Intermediary Agent 1</td><td>The bank through which the receiver is reimbursed. Maps to the first intermediary agent in MX. MX supports up to 3 intermediary agents (IntrmyAgt1, IntrmyAgt2, IntrmyAgt3).</td></tr>
+      <tr><td><strong>:55A / :55B / :55D:</strong></td><td>Third Reimbursement Institution</td><td>/IntrmyAgt2 or /IntrmyAgt3</td><td>Intermediary Agent 2 / 3</td><td>The third reimbursement institution in MT maps to IntrmyAgt2 or IntrmyAgt3 in MX depending on the chain structure.</td></tr>
+      <tr><td><strong>:56A / :56C / :56D:</strong></td><td>Intermediary Institution</td><td>/IntrmyAgt1</td><td>Intermediary Agent 1</td><td>Note: both MT :54: and MT :56: can map to /IntrmyAgt1 depending on chain structure. The precise mapping depends on whether the MT 103 uses serial or cover payment routing.</td></tr>
+      <tr><td><strong>:57A / :57B / :57C / :57D:</strong></td><td>Account With Institution</td><td>/CdtrAgt</td><td>Creditor Agent</td><td>The beneficiary's bank. Direct mapping. In MX, identified by BIC in /CdtrAgt/FinInstnId/BICFI. If :57: is absent in MT 103, the receiver itself is the creditor agent.</td></tr>
+      <tr><td><strong>:59 / :59A / :59F:</strong></td><td>Beneficiary Customer</td><td>/Cdtr + /CdtrAcct</td><td>Creditor + Creditor Account</td><td>The Creditor holds name and structured address (MX supports fully structured postal addresses — Street, Town, Country, PostalCode — impossible in free-text MT :59:). The CdtrAcct holds the IBAN or account identifier.</td></tr>
+      <tr><td><strong>:70:</strong></td><td>Remittance Information</td><td>/RmtInf/Ustrd or /RmtInf/Strd</td><td>Remittance Information (Unstructured / Structured)</td><td>MX offers two sub-options: Ustrd (unstructured, free text) and Strd (fully structured, with invoice number, creditor reference, etc.). MT :70: is always unstructured. The MX structured remittance (Strd) has no MT equivalent.</td></tr>
+      <tr><td><strong>:71A:</strong></td><td>Details of Charges</td><td>/ChrgBr</td><td>Charge Bearer</td><td>MT values OUR/SHA/BEN map to MX values DEBT/SHAR/CRED respectively. MX also supports SLEV (service level) charge bearer instruction.</td></tr>
+      <tr><td><strong>:72:</strong></td><td>Sender to Receiver Information</td><td>/InstrForCdtrAgt &amp; /InstrForNxtAgt</td><td>Instructions for Creditor Agent / Next Agent</td><td>The /INS/ code word in MT :72: maps to /PrvsInstgAgt. The /ACC/ and /INT/ code words map to /InstrForCdtrAgt or /InstrForNxtAgt.</td></tr>
+      <tr><td><strong>:77B:</strong></td><td>Regulatory Reporting</td><td>/RgltryRptg</td><td>Regulatory Reporting</td><td>MX provides a structured regulatory reporting block with country, authority, and code elements — far richer than the free-text :77B: in MT.</td></tr>
     </tbody></table></div>
-    <h3>Sample Hybrid Address (SR2025 onwards)</h3>
+
+    <h3>New MX Elements with No MT Equivalent</h3>
+    <p>ISO 20022 introduces several party roles that have no dedicated field in MT messages. These represent a significant data enrichment over MT:</p>
+    <div class="table-wrap"><table><thead><tr><th>MX XPath Element</th><th>MX Name</th><th>MT Workaround</th><th>Description</th></tr></thead><tbody>
+      <tr><td><strong>/UltmtDbtr</strong></td><td>Ultimate Debtor</td><td>:70: /ULTD/ keyword</td><td>The original party that owes the debt — the entity on whose behalf the Debtor is making the payment. Example: a subsidiary paying on behalf of its parent company. The parent is the Ultimate Debtor. In MT 103, this could only be conveyed using the /ULTD/ code word in field :70:, consuming valuable remittance space.</td></tr>
+      <tr><td><strong>/UltmtCdtr</strong></td><td>Ultimate Creditor</td><td>:70: /ULTC/ keyword</td><td>The ultimate beneficiary of the funds — the party the payment is ultimately for, even if the Creditor (account holder) is an intermediary. Example: payment to a law firm's client account where the ultimate creditor is the client. In MT, conveyed by /ULTC/ in :70:.</td></tr>
+      <tr><td><strong>/InstrPty</strong></td><td>Instructing Party</td><td>:50a: partial overlap</td><td>The party that instructs the Debtor's bank — typically a payment service provider or agent acting on behalf of the Debtor. No clean MT equivalent.</td></tr>
+      <tr><td><strong>/PmtTpInf/LclInstrm</strong></td><td>Local Instrument</td><td>:23E: partial</td><td>Identifies the specific local clearing instrument to be used (e.g., SEPA CT, CHAPS, TARGET2). Structured code with scheme name and proprietary code. Richer than MT :23E: instruction codes.</td></tr>
+      <tr><td><strong>/RmtInf/Strd</strong></td><td>Structured Remittance</td><td>No MT equivalent</td><td>Fully structured remittance data including creditor reference number, invoicing party details, and tax remittance — enabling automated reconciliation at the beneficiary. MT :70: is always unstructured free text.</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <!-- 5.6 CBPR+ and SWIFT GPI -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">5.6</span> CBPR+ and SWIFT GPI</h2>
+
+    <h3>CBPR+ — Cross-Border Payments and Reporting Plus</h3>
+    <p><strong>CBPR+</strong> is SWIFT's usage guideline for ISO 20022 in cross-border payments. ISO 20022 is a global standard, but it is highly flexible — different communities can use the same messages in different ways. CBPR+ defines the specific rules, field constraints, business validations, and address requirements that SWIFT member banks must follow when exchanging cross-border ISO 20022 messages on SWIFTNet. Think of CBPR+ as the "rulebook on top of the standard."</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📋</div><h4>Usage Guidelines</h4><p>CBPR+ publishes detailed usage guidelines for each supported message (pacs.008, pacs.009, pacs.004, camt.056, etc.) that define: which fields are mandatory/optional within the CBPR+ community; which code values are permitted; character set restrictions; and cross-field business rules that go beyond the XSD schema.</p></div>
+      <div class="info-card"><div class="ic-icon">🔗</div><h4>MyStandards</h4><p>SWIFT's MyStandards portal is the authoritative source for CBPR+ rules. Banks use MyStandards to check field-by-field usage rules, validate messages against CBPR+ business rules, and generate test cases. It is the primary reference for payment engineers building ISO 20022 processing engines.</p></div>
+      <div class="info-card"><div class="ic-icon">📅</div><h4>Standards Release (SR)</h4><p>SWIFT publishes an annual Standards Release (SR) each November. SR introduces new message versions, updated business rules, and new features. SR2025 (November 2025) marked the end of the MT/MX coexistence period and brought the hybrid address changes.</p></div>
+    </div>
+
+    <h3>Hybrid Address — SR2025</h3>
+    <p>A key CBPR+ topic is the handling of <strong>postal addresses</strong> in MX messages. ISO 20022 supports structured addresses (individual XML elements for street, town, country) and unstructured addresses (free-text AdrLine elements). CBPR+ rules evolved significantly across Standards Releases:</p>
+    <div class="table-wrap"><table><thead><tr><th>Address Type</th><th>XML Elements Used</th><th>Rules (Pre-SR2025)</th><th>Rules (SR2025 — Nov 2025 onwards)</th></tr></thead><tbody>
+      <tr><td><strong>Unstructured</strong></td><td>&lt;AdrLine&gt; only</td><td>Max 2 lines × 70 chars. Country and Town NOT required.</td><td>Max 3 lines × 35 chars. Still permitted until Nov 2026, then discontinued.</td></tr>
+      <tr><td><strong>Structured</strong></td><td>&lt;StrtNm&gt;, &lt;TwnNm&gt;, &lt;Ctry&gt;, &lt;PstlCd&gt;, etc.</td><td>Country (&lt;Ctry&gt;) and Town Name (&lt;TwnNm&gt;) mandatory when structured used.</td><td>Same — Country and TownName mandatory.</td></tr>
+      <tr><td><strong>Hybrid</strong></td><td>Mix: &lt;Ctry&gt; + &lt;TwnNm&gt; + &lt;AdrLine&gt;</td><td>NOT permitted before SR2025.</td><td>PERMITTED from Nov 2025. Must include structured Country + TownName, plus unstructured AdrLine (max 2 lines × 70 chars).</td></tr>
+    </tbody></table></div>
+
     <div class="code-block">
+<span class="comment">// Sample Hybrid Address — valid from SR2025 (November 2025)</span>
 <span class="xml-tag">&lt;PstlAdr&gt;</span>
   <span class="xml-tag">&lt;PstlCd&gt;</span><span class="xml-val">112233</span><span class="xml-tag">&lt;/PstlCd&gt;</span>
-  <span class="xml-tag">&lt;Ctry&gt;</span><span class="xml-val">SG</span><span class="xml-tag">&lt;/Ctry&gt;</span>          <span class="comment">← Mandatory in Hybrid</span>
-  <span class="xml-tag">&lt;TwnNm&gt;</span><span class="xml-val">Singapore</span><span class="xml-tag">&lt;/TwnNm&gt;</span>  <span class="comment">← Mandatory in Hybrid</span>
+  <span class="xml-tag">&lt;TwnNm&gt;</span><span class="xml-val">Singapore</span><span class="xml-tag">&lt;/TwnNm&gt;</span>     <span class="comment">← Mandatory in Hybrid</span>
+  <span class="xml-tag">&lt;Ctry&gt;</span><span class="xml-val">SG</span><span class="xml-tag">&lt;/Ctry&gt;</span>               <span class="comment">← Mandatory in Hybrid</span>
   <span class="xml-tag">&lt;AdrLine&gt;</span><span class="xml-val">Block 999, LK Street</span><span class="xml-tag">&lt;/AdrLine&gt;</span>  <span class="comment">← Unstructured line 1</span>
   <span class="xml-tag">&lt;AdrLine&gt;</span><span class="xml-val">Floor 3</span><span class="xml-tag">&lt;/AdrLine&gt;</span>              <span class="comment">← Unstructured line 2</span>
-<span class="xml-tag">&lt;/PstlAdr&gt;</span>
-    </div>
-    <div class="highlight-box purple"><strong>SR2025 Timeline:</strong> Nov 2025 — Hybrid addressing goes live. Unstructured-only (AdrLine only, no Ctry/TwnNm) is still permitted until Nov 2026. After Nov 2026, pure unstructured address is no longer permitted in CBPR+ messages.</div>
-  </div>
+<span class="xml-tag">&lt;/PstlAdr&gt;</span></div>
 
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">5.7</span> R-Transactions — Rejects, Returns, Reversals, Recalls</h2>
-    <div class="table-wrap"><table><thead><tr><th>R-Transaction</th><th>Message</th><th>Initiated by</th><th>Timing</th><th>Description</th></tr></thead><tbody>
-      <tr><td><strong>Reject</strong></td><td>pacs.002 (RJCT)</td><td>Any bank in chain</td><td>Before settlement</td><td>Payment refused due to validation failure (wrong IBAN format, sanctions hit, duplicate). Reason code mandatory.</td></tr>
-      <tr><td><strong>Return</strong></td><td>pacs.004</td><td>Beneficiary bank</td><td>After settlement</td><td>Payment settled but cannot be applied (account closed, wrong beneficiary). Funds returned via pacs.004.</td></tr>
-      <tr><td><strong>Recall</strong></td><td>camt.056</td><td>Originating bank</td><td>After settlement</td><td>Originator requests cancellation (fraud, duplicate, wrong amount). Beneficiary bank responds positively (pacs.004) or negatively (camt.029).</td></tr>
-      <tr><td><strong>Reversal</strong></td><td>pacs.007</td><td>Originating bank</td><td>After settlement</td><td>Used in direct debit context to reverse a collected debit within permitted window.</td></tr>
-      <tr><td><strong>Refusal</strong></td><td>pacs.002 / camt.029</td><td>Beneficiary bank</td><td>Response to recall</td><td>Beneficiary bank refuses the recall request (customer disputes, funds already disbursed).</td></tr>
-    </tbody></table></div>
-  </div>
+    <div class="highlight-box purple"><strong>SR2025 Address Timeline:</strong> Nov 2025 — Hybrid addressing goes live; pure unstructured (AdrLine only, no Ctry/TwnNm) still permitted. Nov 2026 — Unstructured-only addresses discontinued in CBPR+; Hybrid or fully Structured are the only permitted formats. Banks that migrate legacy address data to Hybrid first, then Structured, have until Nov 2026 to complete the transition.</div>
 
-  <div class="topic-section fade-in">
-    <h2><span class="t-num">5.8</span> SWIFT GPI &amp; Overview of SWIFT Payment Processing Components</h2>
-    <p><strong>SWIFT GPI (Global Payments Innovation)</strong> launched in 2017 transformed cross-border payments by introducing: end-to-end tracking via a unique transaction reference (UETR — Unique End-to-end Transaction Reference), same-day use of funds in the beneficiary's time zone, transparency of fees deducted by each bank in the chain, and unambiguous credit confirmation to the beneficiary account.</p>
+    <h3>SWIFT GPI — Global Payments Innovation</h3>
+    <p><strong>SWIFT GPI</strong>, launched in 2017, transformed cross-border payments by introducing end-to-end tracking, same-day settlement, fee transparency, and universal confirmation. GPI is now mandatory for all SWIFT member banks making cross-border payments.</p>
+
+    <h4>UETR — Unique End-to-End Transaction Reference</h4>
+    <p>The cornerstone of GPI is the <strong>UETR</strong> (Unique End-to-End Transaction Reference). The UETR is a UUID (Universally Unique Identifier) in the format <code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> (36 characters, 32 hex digits + 4 hyphens). The UETR is:</p>
+    <ul style="margin: 0.5em 0 0 1.5em;">
+      <li>Generated by the <strong>first bank</strong> in the payment chain (the debtor's bank) when it creates the payment instruction</li>
+      <li><strong>Immutable</strong> — it must be passed unchanged through every hop in the payment chain</li>
+      <li>Carried in MT 103 field <strong>:121:</strong> (in the User Header, block 3) and in ISO 20022 pacs.008 element <strong>/UETRId</strong></li>
+      <li>Used as the key to query the GPI Tracker for real-time payment status</li>
+    </ul>
+
+    <div class="code-block">
+<span class="comment">// UETR in MT 103 User Header (Block 3)</span>
+{3:{108:BARCGB22REF0001}<span class="label">{121:eb6305c9-1bed-462e-9797-a52a6b9a2f35}</span>}
+
+<span class="comment">// UETR in ISO 20022 pacs.008</span>
+<span class="xml-tag">&lt;GrpHdr&gt;</span>
+  <span class="xml-tag">&lt;MsgId&gt;</span><span class="xml-val">BARCGB22-2024-00001</span><span class="xml-tag">&lt;/MsgId&gt;</span>
+  <span class="xml-tag">&lt;CreDtTm&gt;</span><span class="xml-val">2024-11-15T09:30:00Z</span><span class="xml-tag">&lt;/CreDtTm&gt;</span>
+<span class="xml-tag">&lt;/GrpHdr&gt;</span>
+<span class="xml-tag">&lt;CdtTrfTxInf&gt;</span>
+  <span class="xml-tag">&lt;PmtId&gt;</span>
+    <span class="xml-tag">&lt;InstrId&gt;</span><span class="xml-val">BARCGB22-2024-00001-001</span><span class="xml-tag">&lt;/InstrId&gt;</span>
+    <span class="xml-tag">&lt;EndToEndId&gt;</span><span class="xml-val">ACME-INV2024-0099</span><span class="xml-tag">&lt;/EndToEndId&gt;</span>
+    <span class="xml-tag">&lt;UETR&gt;</span><span class="xml-val">eb6305c9-1bed-462e-9797-a52a6b9a2f35</span><span class="xml-tag">&lt;/UETR&gt;</span>  <span class="comment">← immutable across all hops</span>
+  <span class="xml-tag">&lt;/PmtId&gt;</span>
+<span class="xml-tag">&lt;/CdtTrfTxInf&gt;</span></div>
+
+    <h4>GPI Components and SLAs</h4>
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">📍</div><h4>GPI Tracker</h4><p>A central cloud-based system where all banks update payment status. Corporates and banks can track payments in real time using the UETR.</p></div>
-      <div class="info-card"><div class="ic-icon">✅</div><h4>Universal Confirmation</h4><p>Mandatory for all GPI banks — must confirm credit to beneficiary account with timestamp, amount credited, and exchange rate applied.</p></div>
-      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Payment Controls</h4><p>Real-time sanctions and fraud screening applied at SWIFT infrastructure level before message delivery — adds an extra layer of security.</p></div>
-      <div class="info-card"><div class="ic-icon">⚙️</div><h4>Transaction Manager</h4><p>Orchestrates the full payment lifecycle. Manages exceptions, retries, and end-to-end payment status. Key for ISO 20022 migration management.</p></div>
+      <div class="info-card"><div class="ic-icon">📍</div><h4>GPI Tracker (g4C)</h4><p>The SWIFT GPI Tracker (gpi for Corporates — g4C) is a central cloud-based database where every bank in a payment chain updates the payment status in real time. Status codes: ACSP (accepted and processing), ACCC (confirmed credited to beneficiary account). Banks can query the tracker using the UETR. Corporates access the tracker through their banks' portals.</p></div>
+      <div class="info-card"><div class="ic-icon">✅</div><h4>Universal Confirmation</h4><p>Every GPI bank that credits the beneficiary account MUST send a confirmation back to the originating bank via the GPI Tracker. The confirmation must include: the exact amount credited, the currency, the credit timestamp, and the exchange rate applied (if any). This enables the ordering bank and corporate to confirm that funds reached the beneficiary account.</p></div>
+      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Payment Controls</h4><p>Real-time fraud and sanctions screening applied at the SWIFT infrastructure level before message delivery. Payment Controls can block or flag suspicious messages before they reach the recipient bank — adding an additional screening layer on top of the receiving bank's own controls.</p></div>
+      <div class="info-card"><div class="ic-icon">⚙️</div><h4>Transaction Manager</h4><p>SWIFT's Transaction Manager is an orchestration layer that manages the full payment lifecycle end-to-end. It stores the payment instruction, tracks status updates, manages exceptions and repair, and will eventually become the central hub for all SWIFT cross-border payment flows — moving from a store-and-forward model to a platform model.</p></div>
     </div>
 
-    <h3>Overview of Guidelines and Specifications</h3>
-    <div class="table-wrap"><table><thead><tr><th>Specification</th><th>Full Name</th><th>Scope</th></tr></thead><tbody>
-      <tr><td><strong>CBPR+</strong></td><td>Cross-Border Payments and Reporting Plus</td><td>SWIFT usage guidelines for ISO 20022 cross-border payments. Defines CBPR+ subset of ISO 20022 fields, business rules, and address requirements.</td></tr>
-      <tr><td><strong>HVPS+</strong></td><td>High Value Payments Plus</td><td>Usage guidelines for domestic high-value payment systems (RTGS) migrating to ISO 20022. Each RTGS (CHAPS, T2, Fedwire etc.) has its own HVPS+ compliant rulebook.</td></tr>
-      <tr><td><strong>CGI-MP</strong></td><td>Common Global Implementation — Market Practice</td><td>Standards for corporate-to-bank (C2B) ISO 20022 messages (pain.001, pain.002, camt.052, camt.053, camt.054). Ensures consistency across banks for corporates.</td></tr>
+    <div class="highlight-box green"><strong>GPI SLA:</strong> SWIFT GPI mandates that banks credit the beneficiary account or pass the payment to the next bank on the <strong>same day</strong> (in the beneficiary's time zone) in most cases. Banks that breach GPI SLAs are reported in the GPI performance dashboards visible to all GPI member banks. This creates commercial pressure to maintain high performance standards.</div>
+  </div>
+
+  <!-- 5.7 R-Transactions -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">5.7</span> R-Transactions</h2>
+    <p><strong>R-transactions</strong> are payment-related messages that move funds in the opposite direction to (or cancel) the original payment. "R" stands for Reject, Return, Recall, Reversal, Refusal, or Revocation — each representing a distinct scenario with specific messages, timing rules, and initiating parties.</p>
+
+    <div class="table-wrap"><table><thead><tr><th>R-Type</th><th>ISO 20022 Message</th><th>MT Equivalent</th><th>Initiated By</th><th>Timing</th><th>Reason</th><th>Description</th></tr></thead><tbody>
+      <tr><td><strong>Reject</strong></td><td>pacs.002 (status: RJCT)</td><td>MT 199 (informal)</td><td>Any bank in the chain</td><td>Before interbank settlement</td><td>Schema error, missing mandatory field, sanctions hit, duplicate UETR, routing error</td><td>The payment instruction is refused before settlement occurs — no funds move. The rejecting bank sends a pacs.002 with reason code RJCT back to the sending bank. Common reason codes: AC01 (incorrect account number), AM04 (insufficient funds), DUPL (duplicate), NARR (narrative reason). Funds are never at risk as settlement has not occurred.</td></tr>
+      <tr><td><strong>Return</strong></td><td>pacs.004</td><td>No standard MT equivalent</td><td>Creditor bank (beneficiary's bank)</td><td>After interbank settlement; typically within 5 banking days (or system-specific limit)</td><td>Account closed (AC04), wrong account (BE04), beneficiary deceased (MD07), unable to apply (CUST), account blocked (AC06)</td><td>The payment has settled successfully but the creditor bank cannot apply the funds to the beneficiary's account. The creditor bank initiates a return by sending a pacs.004 that carries the original payment details, the return reason code, and the amount being returned. The return effectively creates a new, reverse payment back through the chain.</td></tr>
+      <tr><td><strong>Recall</strong></td><td>camt.056 (request) → pacs.004 (if accepted) or camt.029 (if refused)</td><td>No standard MT equivalent; MT 199 used informally</td><td>Originating bank (debtor's bank)</td><td>After settlement; time limit varies by system (SEPA: 10 business days; CBPR+: no fixed limit but prompt action required)</td><td>Fraud (FRAD), duplicate payment (DUPL), wrong beneficiary (CUST), wrong amount (AM09)</td><td>The originating bank wants the payment back after it has already settled. It sends a camt.056 (FIToFIPaymentCancellationRequest) to the creditor bank, citing the reason. The creditor bank investigates and either: (1) accepts and returns funds via pacs.004; or (2) refuses and sends camt.029 with a negative resolution. The creditor bank must obtain beneficiary consent before returning recalled funds.</td></tr>
+      <tr><td><strong>Reversal</strong></td><td>pacs.007</td><td>No standard MT equivalent</td><td>Originating bank (sender of original payment)</td><td>Same day or within the permitted reversal window (direct debit specific); before end-of-cycle in some ACH systems</td><td>Erroneous payment sent by the originating bank (incorrect amount, wrong beneficiary) — distinguished from Recall in that the error is by the originating bank itself</td><td>Used primarily in direct debit contexts: the originating (collecting) bank reverses a collected direct debit within the permitted window (e.g., within 5 business days in SEPA Direct Debit). In credit transfer contexts, pacs.007 may be used on the same day as the original payment. The pacs.007 references the original pacs.008/pacs.009 and carries the reversal reason.</td></tr>
+      <tr><td><strong>Refusal</strong></td><td>camt.029 (negative resolution)</td><td>No standard MT equivalent</td><td>Creditor bank (in response to a recall request)</td><td>In response to camt.056 recall request</td><td>Creditor bank refuses to return: payment is legitimate (AC03), funds already disbursed (CUST), creditor disputes the recall (LEGL)</td><td>When the creditor bank refuses a camt.056 recall request, it sends back a camt.029 (ResolutionOfInvestigation) with a negative resolution code. This terminates the recall process. The originating bank must then pursue recovery through other channels (legal action, direct contact with beneficiary). The camt.029 provides a formal audit trail for the refusal.</td></tr>
+      <tr><td><strong>Revocation</strong></td><td>pain.007</td><td>No standard MT equivalent</td><td>Originator (corporate, via their bank) or bank itself</td><td>Before the payment instruction has been submitted to the interbank clearing system — in the initiation phase</td><td>Payment not yet sent; cancellation before execution</td><td>A cancellation of a payment initiation instruction that has been submitted (pain.001) but not yet executed and forwarded into the interbank clearing. Revocation is the earliest possible point in the payment lifecycle to cancel. If the payment has already been submitted to clearing, a Recall (camt.056) is required instead. Maps conceptually to "cancellation of instruction" before it becomes irrevocable.</td></tr>
     </tbody></table></div>
 
-    <h3>Migration Impacts</h3>
-    <p>The migration from SWIFT MT to ISO 20022 MX is the largest transformation in financial messaging in 50 years. Key impacts include: (1) <strong>Data richness</strong> — MX messages carry structured name/address data instead of free text; (2) <strong>System changes</strong> — banks must upgrade payment engines, transformation layers, and AML systems; (3) <strong>Coexistence</strong> — SWIFT ran a coexistence period (2023–2025) where both MT and MX were accepted; (4) <strong>Mandatory cutover</strong> — from November 2025, MT messages for cross-border payments are no longer accepted on SWIFT for most message types; (5) <strong>Data truncation risk</strong> — if a bank translates MX to MT (for legacy systems), the richer MX data gets truncated, losing beneficiary address details.</p>
+    <h3>R-Transaction Decision Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><span class="step-num">1</span><div><strong>Payment submitted to clearing</strong> — pacs.008 or pain.001 sent</div></div>
+      <div class="flow-step"><span class="step-num">2</span><div><strong>Pre-settlement?</strong> If yes → Reject (pacs.002 RJCT) or Revocation (pain.007 if still in initiation) is possible. No funds at risk.</div></div>
+      <div class="flow-step"><span class="step-num">3</span><div><strong>Post-settlement — can it be applied?</strong> If creditor bank cannot apply: Return (pacs.004). Funds move back through the chain.</div></div>
+      <div class="flow-step"><span class="step-num">4</span><div><strong>Post-settlement — originator wants it back?</strong> Recall request: camt.056. Creditor bank investigates.</div></div>
+      <div class="flow-step"><span class="step-num">5</span><div><strong>Recall accepted?</strong> If yes: pacs.004 return initiated. If no: camt.029 Refusal sent. Originator must pursue other recovery.</div></div>
+    </div>
+  </div>
 
-    <h3>Euro Liquidity Bridge — A Real-World Migration Example</h3>
-    <p>The <strong>Bank of England's Euro Liquidity Bridge</strong> illustrates the real-world complexity of ISO 20022 migration. CHAPS Direct Participants use euro cash sent via TARGET2 as collateral to raise intraday sterling liquidity in RTGS. When TARGET2 migrated to ISO 20022 on 20 March 2023, the Bank of England's legacy RTGS could not process the new ISO 20022 format messages from DNB (De Nederlandsche Bank). The Bank ran the bridge manually (as a last-resort service, once per day, on request) until its new RTGS core ledger launched (Summer 2024 — Transition State 3). After TS3, the bridge returned to straight-through processing but accepts <strong>only MX format messages</strong>.</p>
-    <div class="highlight-box"><strong>Key Requirement:</strong> In the interim period, DPs must contact PSC before funding the Bank's euro collateral account at DNB. Both MT and MX were accepted for funding during transition. After TS3, only MX is accepted. BIC for Bank's euro cash collateral account: <strong>FLORNL2ACAC</strong>.</div>
+  <!-- 5.8 Exception & Investigation Messages -->
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">5.8</span> Exception and Investigation Messages</h2>
+    <p>Beyond R-transactions, the ISO 20022 camt family includes a set of <strong>exception and investigation messages</strong> used when there are problems with a payment that require clarification, correction, or resolution between banks. These messages are critical for payment operations teams handling non-straight-through items.</p>
+
+    <div class="table-wrap"><table><thead><tr><th>Message ID</th><th>Message Name</th><th>MT Equivalent</th><th>Purpose &amp; When to Use</th></tr></thead><tbody>
+      <tr><td><strong>camt.026</strong></td><td>UnableToApply</td><td>MT 110/196 (informal)</td><td>Sent by the <strong>creditor bank</strong> to the previous agent in the chain when it has received the funds but cannot apply them to a beneficiary account due to <strong>missing or incorrect data</strong> in the payment instruction. Examples: beneficiary account number is missing, name does not match the account, payment purpose code is mandatory for the destination country and was not provided. The camt.026 asks the previous bank to provide the missing information. It does NOT return the funds — it holds them pending resolution. Common reason codes: MM20 (missing creditor name), MM21 (missing creditor address), MM22 (wrong account number).</td></tr>
+      <tr><td><strong>camt.027</strong></td><td>ClaimNonReceipt</td><td>MT 110/196 (informal)</td><td>Sent by a <strong>bank that expects to receive a payment</strong> but has not received it within the expected timeframe. The claimant bank sends camt.027 to the previous agent in the chain, stating the expected payment details and requesting investigation. Triggers: a bank has not received expected funds by value date; a beneficiary customer has complained that they have not received a payment. The investigated bank must respond promptly — either confirming the payment was sent (with proof) or initiating a recall/investigation.</td></tr>
+      <tr><td><strong>camt.028</strong></td><td>AdditionalPaymentInformation</td><td>MT 196 response (informal)</td><td>The response message to a <strong>camt.026 (Unable to Apply)</strong>. Sent by the bank that received the camt.026 inquiry, providing the additional or corrected payment information that will enable the creditor bank to apply the funds. May contain: corrected beneficiary name, correct account number, additional address details, purpose code, or regulatory information. Once the creditor bank receives camt.028 with sufficient data, it can apply the payment and close the investigation.</td></tr>
+      <tr><td><strong>camt.029</strong></td><td>ResolutionOfInvestigation</td><td>MT 196 resolution (informal)</td><td>The generic investigation resolution message. Sent in response to: (1) a <strong>camt.056 recall request</strong> — either positive (funds will be returned via pacs.004) or negative (Refusal); (2) a <strong>camt.027 claim non-receipt</strong> — confirming receipt status; (3) other investigation messages. For a positive resolution of a recall, camt.029 precedes or accompanies the pacs.004 return. For a negative resolution (Refusal), camt.029 carries reason codes explaining why the recall was refused (e.g., LEGL — legal reasons, CUST — customer dispute, AC03 — incorrect beneficiary account).</td></tr>
+      <tr><td><strong>camt.087</strong></td><td>RequestToModifyPayment</td><td>MT 195 (informal)</td><td>Sent by the <strong>originating bank or any bank in the chain</strong> to request a <strong>modification to an in-flight payment</strong> that has already been submitted but may not yet have reached the creditor bank. Examples: changing the beneficiary account number, updating the beneficiary name, adding a missing purpose code, correcting the beneficiary address. The receiving bank may accept and action the modification, or reject it if the payment has already been processed. camt.087 is used when a full recall and re-send would be disproportionate for a minor data correction.</td></tr>
+    </tbody></table></div>
+
+    <h3>Investigation Message Workflow</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><span class="step-num">1</span><div><strong>Problem identified</strong> — creditor bank receives payment but cannot apply (missing data) → sends <strong>camt.026</strong> to previous agent</div></div>
+      <div class="flow-step"><span class="step-num">2</span><div><strong>Previous agent receives camt.026</strong> — investigates, gathers missing data → responds with <strong>camt.028</strong> (Additional Payment Information)</div></div>
+      <div class="flow-step"><span class="step-num">3</span><div><strong>If data received</strong> — creditor bank applies funds; investigation closed. If data still insufficient → creditor bank returns funds via <strong>pacs.004</strong></div></div>
+      <div class="flow-step"><span class="step-num">4</span><div><strong>Non-receipt suspected</strong> — bank sends <strong>camt.027</strong> (Claim Non-Receipt). Investigated bank responds via <strong>camt.029</strong> with resolution (payment found, or recall initiated)</div></div>
+      <div class="flow-step"><span class="step-num">5</span><div><strong>Amendment needed in-flight</strong> — send <strong>camt.087</strong> (Request to Modify Payment) to the next bank holding the payment</div></div>
+    </div>
+
+    <div class="highlight-box"><strong>GPI and Investigations:</strong> SWIFT GPI has dramatically reduced the volume of investigation messages. With end-to-end tracking via the UETR, banks and corporates can see in real time where a payment is. Most "where is my payment?" queries that previously generated camt.027 (Claim Non-Receipt) messages can now be resolved by checking the GPI Tracker directly. However, exceptions relating to data quality (camt.026/028) and recalls (camt.056/029) remain common and are part of every payment operations team's daily workflow.</div>
   </div>
 
   <div class="module-nav">
-    <a href="module4.html"><span>← Previous</span><strong>RTGS, Low Value &amp; Hybrid Systems</strong></a>
-    <a href="module6.html" class="next"><span>Next Module →</span><strong>SEPA Services &amp; T2</strong></a>
+    <a href="module4.html"><span>&#8592; Previous</span><strong>RTGS, Low Value &amp; Hybrid Systems</strong></a>
+    <a href="module6.html" class="next"><span>Next Module &#8594;</span><strong>SEPA Services &amp; T2</strong></a>
   </div>
 </div></section>
 <footer class="footer"><div class="footer-inner"><div class="footer-brand"><span class="logo-icon">⬡</span>PaymentsAcademy</div><p>Professional training in global payment systems &amp; settlement infrastructure.</p></div></footer>
