@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="styles.css"/></head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">08</div><div class="module-tag">Module 8</div><h1>Fedwire System in USA</h1><p>US regulatory structure, Federal Reserve payment oversight, Fedwire Funds Service RTGS, Fedwire Securities book-entry settlement, and Fedwire's role supporting SWIFT GPI cross-border USD payments.</p><div class="module-tags"><span>Fedwire</span><span>Federal Reserve</span><span>RTGS</span><span>OCC</span><span>FDIC</span><span>CFPB</span><span>FinCEN</span><span>GPI</span><span>ISO 20022</span></div></div></div>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">08</div><div class="module-tag">Module 8</div><h1>Fedwire System in USA</h1><p>US regulatory structure, Federal Reserve payment oversight, Fedwire Funds Service RTGS, Fedwire Securities book-entry settlement, daylight overdrafts, business function codes, ISO 20022 migration, UETR-to-IMAD linkage, and Fedwire's role supporting SWIFT GPI cross-border USD payments.</p><div class="module-tags"><span>Fedwire</span><span>Federal Reserve</span><span>RTGS</span><span>OCC</span><span>FDIC</span><span>CFPB</span><span>FinCEN</span><span>GPI</span><span>ISO 20022</span><span>Daylight Overdraft</span><span>IMAD</span><span>UETR</span></div></div></div>
 <section class="section"><div class="container">
 
   <div class="topic-section fade-in">
@@ -123,7 +123,182 @@ OMAD: 20240315B6B7HU4R000012345   Output Message Accountability Data</div>
   </div>
 
   <div class="topic-section fade-in">
-    <h2><span class="t-num">8.5</span> Fedwire Support to SWIFT GPI</h2>
+    <h2><span class="t-num">8.5</span> Daylight Overdraft / Intraday Credit</h2>
+    <p>The Federal Reserve allows banks to overdraft their Federal Reserve master accounts during the business day — a facility known as <strong>daylight overdrafts</strong> (also called intraday credit). This is an essential feature of the Fedwire system: without it, banks would need to pre-fund the full $4+ trillion in daily Fedwire value at the start of each day, which would be operationally impossible and would require an enormous amount of high-quality liquid assets to be held idle.</p>
+    <div class="highlight-box"><strong>Why Daylight Overdrafts Are Essential:</strong> On a typical day, Fedwire processes approximately $4 trillion in payments. If every bank had to pre-fund 100% of its outgoing payments before sending, the system would require over $4 trillion in reserves sitting idle every morning — an impossible capital constraint. Daylight overdrafts allow banks to send payments using incoming funds that have not yet arrived, trusting that the intraday flow of receipts will cover the position by end of day.</div>
+    <h3>Net Debit Cap — Maximum Intraday Overdraft</h3>
+    <p>Each bank's maximum intraday overdraft is called its <strong>Net Debit Cap</strong>. The cap is a capital-based measure calculated as a multiplier applied to the bank's capital measure (a combination of adjusted capital and risk-weighted assets). There are four tiers of net debit cap:</p>
+    <div class="table-wrap"><table><thead><tr><th>Cap Category</th><th>Multiplier</th><th>Eligibility</th><th>Notes</th></tr></thead><tbody>
+      <tr><td><strong>Exempt</strong></td><td>Zero — no overdraft allowed</td><td>Institutions that never overdraft or choose not to</td><td>Institution voluntarily restricts itself; no fee exposure</td></tr>
+      <tr><td><strong>De Minimis</strong></td><td>Small dollar cap (~$10M)</td><td>Institutions with minimal daylight overdraft needs</td><td>Streamlined approval process; no formal self-assessment required</td></tr>
+      <tr><td><strong>Self-Assessed</strong></td><td>Up to 20% of capital measure</td><td>Institutions that complete Federal Reserve self-assessment</td><td>Most common tier; requires board-approved funds management policy and self-assessment of creditworthiness, intraday liquidity management, and operational controls</td></tr>
+      <tr><td><strong>Board-Approved (Maximum)</strong></td><td>Up to 40% of capital measure</td><td>Institutions with Fed Board approval based on examination</td><td>Highest cap; requires Federal Reserve Board approval and demonstrates strongest operational and financial standing</td></tr>
+    </tbody></table></div>
+    <h3>Daylight Overdraft Fees</h3>
+    <p>The Federal Reserve charges a fee on daylight overdraft usage to create incentives for prudent intraday liquidity management. The fee is calculated on the <strong>average daylight overdraft position</strong> throughout the day:</p>
+    <ul>
+      <li><strong>Fee rate:</strong> 50 basis points (0.50%) per annum, applied to average intraday overdraft usage</li>
+      <li><strong>Daily equivalent:</strong> The annualised rate divided by 360 days, applied to each day's average overdraft position</li>
+      <li><strong>Example:</strong> A bank with an average intraday overdraft of $1 billion would pay approximately $13,889 per day (0.50% × $1B ÷ 360)</li>
+      <li><strong>Minimum charge:</strong> $25 per day if any overdraft usage occurs</li>
+    </ul>
+    <h3>Collateral-Based (Free) Daylight Overdrafts</h3>
+    <p>Banks can eliminate daylight overdraft fees entirely by pledging eligible collateral to the Federal Reserve:</p>
+    <ul>
+      <li>Banks pledge securities (typically US Treasuries, agency securities, or other eligible collateral) to the Federal Reserve under a collateral pledge agreement</li>
+      <li>The pledged collateral creates a collateral-based overdraft capacity equal to the market value of collateral pledged (subject to haircuts)</li>
+      <li>Intraday overdrafts within the collateral value are <strong>fee-free</strong> — the Federal Reserve treats collateralised intraday credit as essentially risk-free to the Fed</li>
+      <li>Banks with large intraday liquidity needs typically pledge collateral rather than incur fees; collateral pledging is administratively simpler for consistent large users</li>
+      <li>Collateral is returned at end of day once the overdraft is covered by end-of-day flows</li>
+    </ul>
+    <div class="highlight-box green"><strong>Collateral vs. Fee-Based:</strong> A bank choosing between fee-based and collateral-based overdrafts makes an economic decision: is the cost of tying up collateral (opportunity cost) higher or lower than the 50bp fee? For banks with large securities portfolios and significant intraday funding needs, collateral pledging is almost always cheaper. For banks with occasional small overdrafts, paying the fee is simpler administratively.</div>
+    <h3>Peak Overdraft Timing and Statistics</h3>
+    <p>Daylight overdrafts follow a predictable intraday pattern driven by payment timing conventions in the US financial system:</p>
+    <div class="table-wrap"><table><thead><tr><th>Time (ET)</th><th>Overdraft Pattern</th><th>Driver</th></tr></thead><tbody>
+      <tr><td><strong>9:00 AM – 12:00 PM</strong></td><td>Moderate and rising</td><td>Early payments sent for FX settlement, Treasury operations, opening correspondent payments</td></tr>
+      <tr><td><strong>12:00 PM – 2:00 PM</strong></td><td>Peak building</td><td>Securities settlement activity, corporate payment concentration, CHIPS intraday netting flows</td></tr>
+      <tr><td><strong>2:00 PM – 4:00 PM</strong></td><td>Peak overdraft period</td><td>Largest concentration of large-value Fedwire payments; Fed funds market activity; Fedwire Securities DvP settlement</td></tr>
+      <tr><td><strong>4:00 PM – 6:00 PM</strong></td><td>Declining rapidly</td><td>Inbound payments cover outgoing positions; CHIPS end-of-day Fedwire top-ups settle; accounts return to positive</td></tr>
+    </tbody></table></div>
+    <p>System-wide daylight overdraft statistics (approximate Federal Reserve published data): peak aggregate daylight overdraft across all institutions typically reaches <strong>$150–200 billion</strong> during the 2–4 PM window on active trading days. Average daylight overdraft across the full day is considerably lower, approximately <strong>$50–80 billion</strong> system-wide. The majority of daylight overdraft usage is collateral-based and therefore fee-free — estimated 80%+ of aggregate overdraft usage is covered by pledged collateral.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.6</span> Fedwire Business Function Codes</h2>
+    <p>Every Fedwire Funds Service payment must carry a <strong>Business Function Code</strong> (carried in tag {3600} in the current proprietary format, or as the equivalent field in the ISO 20022 message). The business function code identifies the type and purpose of the payment and determines what other data fields are required or optional in the message. Fedwire's processing rules, reporting, and statistics are all categorised by business function code.</p>
+    <div class="table-wrap"><table><thead><tr><th>Code</th><th>Full Name</th><th>Description</th><th>Typical Use Case</th><th>Beneficiary Account Required?</th></tr></thead><tbody>
+      <tr><td><strong>CTR</strong></td><td>Customer Transfer</td><td>A payment made on behalf of a bank's customer to a beneficiary at another bank. The classic "wire transfer" — customer sends money to a third-party beneficiary.</td><td>Corporate vendor payment; individual wire to purchase real estate; settlement of a trade between two companies.</td><td>Yes — beneficiary account number and name required in {4200}</td></tr>
+      <tr><td><strong>BTR</strong></td><td>Bank Transfer</td><td>An interbank or treasury payment between two banks acting for their own accounts. No individual customer beneficiary — funds move from one bank to another bank directly.</td><td>Bank funding its nostro account at a correspondent; interbank repo settlement; Fed funds purchased/sold; capital contributions between affiliates.</td><td>No — bank-to-bank; no beneficiary account field required</td></tr>
+      <tr><td><strong>CTP</strong></td><td>Customer Transfer Plus</td><td>Same as CTR but with additional structured remittance data (invoice references, structured addenda). Used when the beneficiary needs detailed payment information for automated reconciliation.</td><td>Large corporate paying multiple invoices to a supplier with detailed remittance; international USD payment with structured reference data for the beneficiary's ERP system.</td><td>Yes — plus addenda remittance data in {6000} tags</td></tr>
+      <tr><td><strong>BTP</strong></td><td>Bank Transfer Plus</td><td>Same as BTR (interbank) but with additional structured data attached. Used when correspondent banking flows require richer reference data for reconciliation.</td><td>Correspondent bank settlement with detailed transaction-level reconciliation data; nostro management with line-item references.</td><td>No (bank-to-bank) — plus structured addenda</td></tr>
+      <tr><td><strong>DRB</strong></td><td>Drawdown Request — Debit</td><td>A message from a bank (the drawdown requestor) asking another bank to send funds via Fedwire to a third party or to the requestor. The receiving bank is being instructed to initiate a Fedwire debit from a specified account. Sometimes called a "reverse wire" — the initiating bank pulls rather than pushes.</td><td>Cash concentration: a corporate treasury instructs its primary bank to pull funds from subsidiary accounts at other banks into a central account. Used in sweep and notional pooling arrangements.</td><td>Varies — specifies account to be debited</td></tr>
+      <tr><td><strong>DRC</strong></td><td>Drawdown Request — Credit</td><td>Similar to DRB but structured as a credit drawdown — the requestor asks the other bank to send a credit payment. Used in certain automated treasury management arrangements.</td><td>Specific treasury management and cash pooling structures where a central treasury system triggers outbound Fedwire credits from sub-accounts.</td><td>Specified in drawdown instruction</td></tr>
+      <tr><td><strong>SVC</strong></td><td>Service Message</td><td>Not a funds transfer — a system-level or operational message exchanged between a bank and the Federal Reserve. Used for account inquiries, administrative messages, and operational communications on the Fedwire network.</td><td>Bank requesting status of a previously sent payment; administrative inquiries about Fedwire account balance or message tracing. Does not move funds.</td><td>N/A — no funds movement</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box"><strong>CTR vs CTP in Practice:</strong> Most straightforward customer wire transfers use CTR. CTP (Customer Transfer Plus) is used when the payment instruction carries additional addenda data — typically for large corporate-to-corporate payments where the beneficiary needs machine-readable remittance information (invoice numbers, purchase order references, deduction codes) to automatically post against receivables in their ERP system. CTP usage has grown as ERP integration and STP requirements have increased.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.7</span> Fedwire ISO 20022 Migration</h2>
+    <p>The Federal Reserve announced a comprehensive migration of the Fedwire Funds Service to <strong>ISO 20022 messaging standards</strong>, coordinated with The Clearing House's parallel migration of CHIPS. This is one of the most significant infrastructure changes in US payment history — modernising the messaging backbone of the largest value payment systems in the world's reserve currency.</p>
+    <h3>Migration Scope and Message Types</h3>
+    <p>Fedwire's ISO 20022 migration is based on the <strong>payment message standard</strong> (pacs — Payments Clearing and Settlement) family, with Fedwire-specific extensions to accommodate US market requirements:</p>
+    <div class="table-wrap"><table><thead><tr><th>ISO 20022 Message</th><th>Full Name</th><th>Replaces</th><th>Use on Fedwire</th></tr></thead><tbody>
+      <tr><td><strong>pacs.008</strong></td><td>FIToFICustomerCreditTransfer</td><td>CTR / CTP (Business Function Codes)</td><td>Customer credit transfers — Bank A sends customer payment to Bank B. Carries full beneficiary, debtor, and structured remittance data in ISO 20022 format.</td></tr>
+      <tr><td><strong>pacs.009</strong></td><td>FinancialInstitutionCreditTransfer</td><td>BTR / BTP (Business Function Codes)</td><td>Interbank/treasury transfers between financial institutions. Used for correspondent banking, bank-to-bank liquidity movements, Fed funds transactions.</td></tr>
+      <tr><td><strong>pacs.028</strong></td><td>FIToFIPaymentStatusRequest</td><td>SVC (status inquiry)</td><td>Payment status requests — replaces the proprietary SVC service message for status inquiries and payment tracing on Fedwire.</td></tr>
+    </tbody></table></div>
+    <h3>Fedwire-Specific ISO 20022 Extensions</h3>
+    <p>The Federal Reserve has published Fedwire-specific extensions to the base ISO 20022 message specifications. These extensions accommodate features that are unique to Fedwire and have no direct ISO 20022 standard equivalent:</p>
+    <ul>
+      <li><strong>IMAD/OMAD fields:</strong> Fedwire's Input and Output Message Accountability Data identifiers are retained as Fedwire-specific supplementary data fields within the ISO 20022 message envelope — they are too important for audit and reconciliation to eliminate</li>
+      <li><strong>Fedwire Business Function Code equivalents:</strong> ISO 20022 purpose codes map to Fedwire business function codes; the Fed has published a mapping table</li>
+      <li><strong>Fedwire-specific validation rules:</strong> ABA routing numbers, Federal Reserve processing conventions, and US-specific data fields are accommodated in the Fedwire ISO 20022 implementation guide</li>
+    </ul>
+    <h3>Coordinated Migration with CHIPS</h3>
+    <p>The Federal Reserve and The Clearing House are migrating Fedwire and CHIPS to ISO 20022 on a <strong>coordinated timeline</strong>. This coordination is essential because many large-value USD payments flow through both systems on the same day — a payment may enter via CHIPS (netting) and be finally settled via Fedwire. If both systems are not on ISO 20022 simultaneously, banks would need to translate messages at each system handoff point, adding complexity and cost. The coordinated approach means:</p>
+    <ul>
+      <li>Banks need to update their payment systems once for both Fedwire and CHIPS ISO 20022</li>
+      <li>CHIPS UID-to-BIC/LEI mapping and Fedwire ABA-to-BIC mapping are being standardised together</li>
+      <li>Industry testing and parallel run periods are aligned across both operators</li>
+    </ul>
+    <h3>Impact on Banks and Financial Institutions</h3>
+    <p>The Fedwire ISO 20022 migration requires significant system changes across every participant bank:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">💻</div><h4>Payment System Updates</h4><p>Core banking and payment processing systems must be updated to generate pacs.008/pacs.009 format messages outbound and parse ISO 20022 inbound messages. This affects payment engines, SWIFT interfaces, and Fedwire connectivity layers.</p></div>
+      <div class="info-card"><div class="ic-icon">🔍</div><h4>AML/Sanctions Screening</h4><p>AML and sanctions screening systems must be updated to handle ISO 20022's richer, structured data fields. ISO 20022 carries structured name/address data (vs. free-text in proprietary format) which improves screening accuracy but requires updated screening logic and field mapping.</p></div>
+      <div class="info-card"><div class="ic-icon">📊</div><h4>Reconciliation Systems</h4><p>Back-office reconciliation must be updated to match IMAD/OMAD references within ISO 20022 envelopes, map ISO 20022 purpose codes to internal payment categories, and handle the richer remittance data that ISO 20022 carries.</p></div>
+      <div class="info-card"><div class="ic-icon">📋</div><h4>Regulatory Reporting</h4><p>Regulatory reporting systems (including BSA/AML reports, large value transaction reports, and FRBNY statistical reports) must be updated to extract data from ISO 20022 message fields rather than proprietary Fedwire tag fields.</p></div>
+    </div>
+    <div class="highlight-box purple"><strong>SWIFT Coexistence Note:</strong> Unlike the SWIFT CBPR+ (Cross-Border Payments and Reporting Plus) ISO 20022 migration where a coexistence period allows MT and MX messages simultaneously, Fedwire ISO 20022 migration is a domestic US system. Fedwire is not SWIFT-based for domestic flows — domestic Fedwire participants connect directly via FedLine (the Federal Reserve's connectivity platform). There is no SWIFT MT-to-MX coexistence issue for Fedwire itself. The SWIFT coexistence complexity applies only to the international SWIFT messaging layer that feeds instructions into US correspondent banks, which then submit to Fedwire.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.8</span> UETR-to-IMAD Linkage</h2>
+    <p>One of the most technically complex challenges in modern cross-border USD payments is maintaining end-to-end payment tracking when a GPI payment (identified by a UETR — Unique End-to-End Transaction Reference) passes through Fedwire (identified by IMAD/OMAD). These are two entirely different reference number systems, and bridging them is essential for SWIFT GPI's payment tracking promise to function for USD payments settled via Fedwire.</p>
+    <h3>The Two Reference Systems</h3>
+    <div class="two-col">
+      <div>
+        <h4>Fedwire IMAD / OMAD</h4>
+        <p>Fedwire uses <strong>Input Message Accountability Data (IMAD)</strong> and <strong>Output Message Accountability Data (OMAD)</strong> as its primary payment references. These are assigned by the Federal Reserve at the time of processing.</p>
+        <div class="code-block">IMAD Format:
+YYYYMMDDBBBBBBBBSSSSSSSS
+
+Where:
+YYYYMMDD = Processing date (8 digits)
+BBBBBBBB = Sending bank ABA routing number
+            (9 digits, but 8 used in IMAD)
+SSSSSSSS = Sequence number assigned by Fed
+            (8 digits, zero-padded)
+
+Example IMAD:
+20240315021000021000012345
+
+OMAD Format: Similar structure, assigned
+by Fed to the receiving side of the same
+payment for the receiving bank's records.</div>
+      </div>
+      <div>
+        <h4>SWIFT GPI UETR</h4>
+        <p>SWIFT GPI uses a <strong>UETR (Unique End-to-End Transaction Reference)</strong> — a UUID (Universally Unique Identifier, Version 4) that is a 128-bit random number formatted as a 36-character string. The UETR is assigned at the point of payment initiation by the first GPI member bank and must be preserved unchanged through every correspondent bank and settlement system in the payment chain.</p>
+        <div class="code-block">UETR Format (UUID v4):
+xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+
+Where x = random hexadecimal digit
+      4 = fixed version indicator
+      y = 8, 9, a, or b (variant indicator)
+
+Example UETR:
+e2a7e0df-3b91-4b5c-a4d8-2c1f9b3e5a7d
+
+Used in:
+- SWIFT MT 103 field :121:
+- ISO 20022 pacs.008 UETR element
+- SWIFT GPI Tracker database key</div>
+      </div>
+    </div>
+    <h3>The Linkage Challenge</h3>
+    <p>When a cross-border payment arrives at a US correspondent bank via SWIFT (carrying a UETR), and the correspondent bank then submits that payment to Fedwire (which assigns an IMAD), the two reference systems must be linked. The SWIFT GPI Tracker needs to know that UETR "e2a7e0df-..." corresponds to IMAD "20240315021000021000012345" so that the GPI tracker can be updated to show that Fedwire settlement has occurred.</p>
+    <h3>Technical Solution — UETR Embedding and Internal Mapping</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Extract UETR from Incoming SWIFT MT 103</h4><p>The US correspondent bank's payment processing system receives the inbound SWIFT MT 103 (or pacs.008 in ISO 20022). The UETR is extracted from field :121: (in MT 103) or the UETR element in pacs.008. The UETR is stored in the correspondent bank's internal payment record along with all other payment details.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Include UETR in Fedwire Payment Reference</h4><p>When the US correspondent bank submits the Fedwire payment instruction, the UETR is included in the Fedwire message. In the current proprietary format, the UETR can be embedded in Fedwire's Tag {9}: (Fedwire's remittance/reference data field), or in the payment details/reference fields available in the Fedwire message. In the ISO 20022 Fedwire format, the UETR maps to the end-to-end identification element in pacs.008.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Fedwire Processes and Assigns IMAD/OMAD</h4><p>The Federal Reserve processes the Fedwire payment and assigns a unique IMAD (sent to the originating bank's Fedwire acknowledgement) and OMAD (delivered to the receiving bank). These are stored in the bank's Fedwire transaction records. At this moment, the UETR and the IMAD/OMAD co-exist in the correspondent bank's internal systems but are separate references.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Build UETR ↔ IMAD/OMAD Mapping Table</h4><p>The US correspondent bank's payment operations system creates an internal mapping record linking the UETR to the IMAD and OMAD. This mapping table is the critical bridge between the GPI world (UETR) and the Fedwire world (IMAD/OMAD). Compliance, reconciliation, and investigations teams use this table when responding to payment status queries — a customer asking "where is my wire?" triggers a lookup: UETR → IMAD → Fedwire status.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Update SWIFT GPI Tracker with Fedwire Confirmation</h4><p>The US correspondent bank updates the SWIFT GPI Tracker using the UETR as the key, confirming: (a) the payment has been settled via Fedwire; (b) the settlement date and time; (c) the IMAD and/or OMAD as supplementary reference data (so the beneficiary bank can trace through Fedwire if needed); (d) any fee deducted; (e) the status code (ACCC — "Accepted Credit to Customer Account" or equivalent GPI status). This closes the loop on the GPI tracking chain.</p></div></div>
+    </div>
+    <div class="highlight-box gold"><strong>Practical Impact:</strong> Large US correspondent banks (JPMorgan, Citibank, Bank of America, Wells Fargo) handle hundreds of thousands of these UETR-IMAD linkages daily. They maintain sophisticated internal payment reference databases that hold the UETR-to-IMAD mapping alongside FX rates applied, fees charged, processing timestamps, and compliance screening outcomes. When a foreign bank or corporate client queries GPI Tracker for payment status, the entire chain of events — from SWIFT receipt to Fedwire settlement — is visible because of this linkage.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.9</span> Federal Funds Market and Fedwire</h2>
+    <p>The <strong>Federal Funds Market</strong> is the overnight lending market for US dollar reserve balances held at the Federal Reserve. When a bank has excess reserves at the Fed (more than required/desired for operational needs), it can lend those reserves overnight to another bank that has a shortfall. These transactions are executed and settled via Fedwire — making Fedwire the essential settlement rail for the Fed Funds market and a critical channel through which monetary policy is transmitted to the US financial system.</p>
+    <h3>How the Federal Funds Market Works</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Banks Identify Reserve Positions</h4><p>Late in the business day (typically after 3:00 PM ET), banks calculate their end-of-day reserve position. Banks with surplus reserves (excess above their target operating balance) look to lend. Banks with shortfalls (below their required/desired balance) look to borrow. Fed Funds brokers (e.g., Tradition, Garban) facilitate matching between lenders and borrowers.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Loan Agreement at the Fed Funds Rate</h4><p>Lender and borrower agree on an amount and rate. The rate agreed is the <strong>Fed Funds Rate (FFR)</strong> — the rate targeted by FOMC policy. Transactions are typically overnight (term until next business day) though term Fed Funds (multi-day) also exist. Loans are unsecured — there is no collateral; lending banks rely on the creditworthiness of the borrowing bank.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Fedwire Settles the Reserve Transfer</h4><p>To execute the Fed Funds loan, the lending bank sends a Fedwire BTR (Bank Transfer) to the borrowing bank — debiting its own Fed master account and crediting the borrower's Fed master account. The Fedwire transfer is the actual movement of reserve balances. This is why Fedwire's late operating hours (until 6:30 PM ET) are critical — they accommodate end-of-day Fed Funds settlement activity.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Repayment the Following Morning</h4><p>The next business day, the borrowing bank sends a Fedwire BTR back to the lender for the principal plus one day's interest at the agreed Fed Funds Rate. This repayment is one of the first transactions each morning, contributing to early-day Fedwire volume.</p></div></div>
+    </div>
+    <h3>Monetary Policy Rates and the Fed Funds Market</h3>
+    <div class="table-wrap"><table><thead><tr><th>Rate / Facility</th><th>Role</th><th>Relationship to FFR</th></tr></thead><tbody>
+      <tr><td><strong>FOMC Target Range</strong></td><td>Federal Open Market Committee sets a target range for the overnight Fed Funds Rate (e.g., 5.25%–5.50%)</td><td>The policy target; actual FFR trades within this range</td></tr>
+      <tr><td><strong>IORB (Interest on Reserve Balances)</strong></td><td>Interest paid by the Fed on all reserve balances held by banks in their Fed master accounts</td><td>Acts as the effective floor — no bank will lend reserves at less than IORB since they earn IORB for free by holding at the Fed</td></tr>
+      <tr><td><strong>ON RRP (Overnight Reverse Repo)</strong></td><td>Fed offers to borrow money overnight from money market funds and other eligible counterparties at the RRP rate</td><td>Provides a secondary floor — money market funds move into RRP if FFR falls near the RRP rate; keeps FFR from falling below the lower bound</td></tr>
+      <tr><td><strong>Discount Rate</strong></td><td>Rate at which the Fed lends directly to banks via the Discount Window (primary credit facility)</td><td>Set above the FOMC target range; acts as a ceiling — banks borrow from the Fed as a last resort if Fed Funds rate spikes above the discount rate</td></tr>
+    </tbody></table></div>
+    <h3>Fed Funds Market Statistics and Fedwire Volume</h3>
+    <p>The Federal Funds market, while large in notional terms, has declined significantly in volume since the Federal Reserve began paying IOER/IORB in 2008 (which reduced the incentive to lend excess reserves at market rates):</p>
+    <ul>
+      <li><strong>Daily Fed Funds volume:</strong> Approximately $80–120 billion per day in Fed Funds transactions via Fedwire (including overnight Fed Funds and term Fed Funds)</li>
+      <li><strong>Primary participants:</strong> Large commercial banks (net borrowers or lenders depending on intraday flows), Federal Home Loan Banks (historically large lenders of excess reserves into Fed Funds market), money center banks, foreign bank branches</li>
+      <li><strong>EFFR (Effective Fed Funds Rate):</strong> The volume-weighted median of overnight Fed Funds transactions, published daily by the New York Fed — this is the benchmark rate that monetary policy targets</li>
+    </ul>
+    <div class="highlight-box"><strong>Fedwire's Role in Monetary Policy Transmission:</strong> By providing the settlement rails for Fed Funds transactions, Fedwire is a direct mechanism through which the Federal Reserve's monetary policy decisions are transmitted to the financial system. When the Fed adjusts its FOMC target range or IORB rate, the effects ripple through the Fed Funds market — and the trades that reflect those effects settle via Fedwire BTR transactions every business day.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">8.10</span> Fedwire Support to SWIFT GPI</h2>
     <p><strong>SWIFT GPI (Global Payments Innovation)</strong> has transformed cross-border correspondent banking by providing end-to-end payment tracking, speed commitments, and transparency on fees and FX rates. For USD cross-border payments, Fedwire plays an essential role as the domestic USD settlement backbone that ultimately settles the US-side leg of international dollar transactions.</p>
     <h3>SWIFT GPI Overview</h3>
     <p>SWIFT GPI introduced several key elements for cross-border payments:</p>

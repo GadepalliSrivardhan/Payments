@@ -14,7 +14,7 @@
     <div class="module-tag">Module 2</div>
     <h1>Risks in Payment Systems</h1>
     <p>Understanding various risks that exist in payment and settlement systems, and the techniques used by central banks, clearing houses and financial institutions to mitigate them.</p>
-    <div class="module-tags"><span>Settlement Risk</span><span>Credit Risk</span><span>Liquidity Risk</span><span>Systemic Risk</span><span>Herstatt Risk</span><span>Risk Mitigation</span></div>
+    <div class="module-tags"><span>Settlement Risk</span><span>Credit Risk</span><span>Liquidity Risk</span><span>Systemic Risk</span><span>Herstatt Risk</span><span>Risk Mitigation</span><span>Operational Risk</span><span>Legal Risk</span><span>DvP Models</span><span>Concentration Risk</span></div>
   </div>
 </div>
 
@@ -43,10 +43,115 @@
     <p><strong>Systemic risk</strong> is the risk that the failure of one participant in a payment system — or the failure of the system itself — triggers a chain reaction of failures across the broader financial system. Payment systems are tightly interconnected: Bank A's receipt depends on Bank B's payment, which depends on Bank C's receipt, and so on. This interdependency means that a single default can propagate rapidly. The 2008 financial crisis illustrated how interconnected financial institutions can amplify shocks. Systemically important payment systems (SIPS) are subject to heightened regulatory oversight precisely to prevent this scenario.</p>
 
     <h3>5. Operational Risk</h3>
-    <p><strong>Operational risk</strong> is the risk of loss resulting from inadequate or failed internal processes, people, systems, or external events. In payment systems this includes: IT system outages, cyber attacks (DDoS, ransomware, SWIFT-targeted attacks), human errors in payment processing, fraud (internal or external), natural disasters affecting data centres, and third-party vendor failures. The 2016 Bangladesh Bank heist — where attackers stole $81m via fraudulent SWIFT messages — is a prominent example of operational/cyber risk in payments.</p>
+    <p><strong>Operational risk</strong> is the risk of loss resulting from inadequate or failed internal processes, people, systems, or external events. In payment systems this manifests across several distinct sub-categories, each with its own threat model and mitigation framework.</p>
+
+    <h4>(a) IT / Technology Risk</h4>
+    <p>Technology is the backbone of every payment system, and technology failures are among the most common sources of payment disruption. Key categories of IT risk include:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">💻</div><h4>System Outages</h4><p>Planned or unplanned outages of core payment systems can prevent payment processing for hours. A major UK CHAPS outage in 2014 required the Bank of England to extend operating hours to allow delayed payments to settle. Banks face regulatory penalties and reputational damage from significant outages affecting customers.</p></div>
+      <div class="info-card"><div class="ic-icon">🏚️</div><h4>Legacy Systems</h4><p>Many banks still run payment processing on mainframe systems from the 1980s and 1990s. These systems are difficult to maintain (scarce skills), expensive to operate, and create fragility — a single undocumented component failure can bring down an entire payment processing stack. Legacy systems are also incompatible with modern ISO 20022 messaging without expensive translation layers.</p></div>
+      <div class="info-card"><div class="ic-icon">⚠️</div><h4>Single Points of Failure</h4><p>If a payment system has a single, non-redundant critical component — a single network connection, a single database server, a single payment gateway — that component's failure takes down the entire system. Identifying and eliminating single points of failure (SPOFs) is a key objective of technology resilience programmes. Regulators require financial market infrastructures (FMIs) to demonstrate they have no unmitigated SPOFs.</p></div>
+      <div class="info-card"><div class="ic-icon">🔁</div><h4>RTGS Redundancy Requirements</h4><p>RTGS systems, as systemically important market infrastructures, face the strictest redundancy requirements. The CPMI-IOSCO PFMI Principle 17 (Operational Risk) requires SIFMUs to: maintain a secondary processing site geographically separated from the primary; achieve full system recovery within 2 hours of a disruptive event; have the secondary site capable of processing all transactions from the moment of cutover. For CHAPS and Fedwire, both primary and secondary sites are fully active and capable of assuming the entire load within minutes.</p></div>
+    </div>
+
+    <h4>(b) Cyber Risk</h4>
+    <p>Cyber attacks on payment infrastructure represent a growing and evolving threat. The financial sector is the primary target for sophisticated state-sponsored and criminal cyber actors.</p>
+    <div class="highlight-box gold">
+      <strong>The 2016 Bangladesh Bank Heist — A Defining Cyber Event</strong><br/><br/>
+      In February 2016, attackers — later attributed to the North Korean Lazarus Group — compromised the Bangladesh Bank's SWIFT messaging infrastructure. The attackers installed malware that allowed them to submit fraudulent MT 103 payment messages through the SWIFT network. They submitted 35 payment instructions totalling nearly $1 billion to be transferred from Bangladesh Bank's account at the Federal Reserve Bank of New York to accounts in the Philippines and Sri Lanka.<br/><br/>
+      The Federal Reserve processed 5 of the 35 instructions before the fraud was detected, releasing <strong>$81 million</strong> to accounts in the Philippines. The remainder were blocked due to a spelling error in one instruction ("Fandation" instead of "Foundation") which triggered a manual review at Deutsche Bank. The $81 million was largely laundered through Manila casinos and never recovered. The attack exposed severe weaknesses in the SWIFT security environment at smaller central banks — many had minimal access controls, no hardware security modules, and inadequate monitoring of outgoing SWIFT messages.
+    </div>
+    <p>In response to this and related attacks, SWIFT launched the <strong>Customer Security Programme (CSP)</strong> in 2017, which defines mandatory and advisory security controls for all SWIFT-connected institutions:</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>Mandatory CSP Controls</strong><br/><br/>
+        All SWIFT-connected institutions must comply with mandatory controls (designated with a "M" in the CSCF — Customer Security Controls Framework):
+        <ul style="margin: 0.5em 0 0 1em; padding: 0;">
+          <li>Restrict internet access on SWIFT systems</li>
+          <li>Separate SWIFT infrastructure from general IT environment</li>
+          <li>Prevent compromise of credentials (MFA for all operator accounts)</li>
+          <li>Manage identities and segregate privileges</li>
+          <li>Detect anomalous activity in SWIFT systems</li>
+          <li>Plan for incident response and information sharing</li>
+          <li>Physically secure SWIFT environment</li>
+        </ul>
+        Failure to attest compliance or evidence of non-compliance can result in a SWIFT member being reported to their regulator.
+      </div>
+      <div class="highlight-box purple">
+        <strong>Advisory CSP Controls</strong><br/><br/>
+        Advisory controls (designated "A") represent best practice. While not mandated, regulators and SWIFT strongly encourage adoption:
+        <ul style="margin: 0.5em 0 0 1em; padding: 0;">
+          <li>Transaction business controls (payment velocity limits, unusual beneficiary alerts)</li>
+          <li>Software integrity checks (cryptographic verification of SWIFT software)</li>
+          <li>Vulnerability scanning and penetration testing</li>
+          <li>Staff awareness and training on social engineering</li>
+          <li>Cyber incident response exercises</li>
+        </ul>
+        Advisory controls address the broader security posture beyond the SWIFT environment itself.
+      </div>
+    </div>
+    <p><strong>DDoS Attacks on Payment Systems:</strong> Distributed Denial of Service (DDoS) attacks aim to overwhelm payment system infrastructure with traffic, making it unavailable to legitimate users. Financial sector DDoS attacks surged after 2012 when the "Izz ad-Din al-Qassam Cyber Fighters" group targeted US bank websites. More sophisticated attacks target core banking APIs and payment gateways rather than just public-facing websites. Modern mitigation includes cloud-based DDoS scrubbing services (Cloudflare, Akamai), traffic analysis to distinguish legitimate from attack traffic, and automatic rate limiting and geographic filtering.</p>
+
+    <h4>(c) Fraud Risk</h4>
+    <p>Fraud in payment systems takes many forms, ranging from insider attacks by bank employees to sophisticated external social engineering campaigns:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🕵️</div><h4>Internal Fraud (Rogue Trader / Employee)</h4><p>Internal fraud involves employees misusing their access to payment systems. Examples include: a payments operations employee manually creating or amending payment instructions to redirect funds; a systems administrator modifying payment processing software; or a back-office employee creating fictitious beneficiaries. Controls: strict segregation of duties (no single person can both create and approve a payment), dual-control for high-value payments, comprehensive audit logging, periodic access reviews, and behavioural analytics to detect unusual activity patterns.</p></div>
+      <div class="info-card"><div class="ic-icon">📧</div><h4>BEC — Business Email Compromise</h4><p>Business Email Compromise is one of the highest-value fraud typologies targeting payment systems. The attacker gains access to (or spoofs) a business email account — typically a CEO, CFO, or supplier — and instructs the victim organisation to make an urgent payment to a fraudulent account. BEC accounted for over $2.9 billion in losses in the US in 2023 alone (FBI IC3). BEC exploits social engineering rather than technical vulnerabilities. Mitigation: callback verification procedures for any change in payment details; out-of-band verification (phone call to known number) for large or unusual payments; positive confirmation of new beneficiaries.</p></div>
+      <div class="info-card"><div class="ic-icon">🔀</div><h4>Authorised Push Payment (APP) Fraud</h4><p>In APP fraud, the victim is manipulated into authorising a payment themselves — believing they are sending money to a legitimate recipient (bank, government, contractor) but actually sending to a fraudster's account. Unlike BEC where the instruction is fraudulent at the corporate level, APP fraud involves the genuine account holder making the payment. APP fraud has surged with the growth of instant payment systems (Faster Payments in the UK, Zelle in the US) because payments cannot be recalled once sent. UK regulators introduced mandatory APP fraud reimbursement rules in 2023 under the Payment Systems Regulator.</p></div>
+    </div>
+
+    <h4>(d) Business Continuity Planning (BCP) and Disaster Recovery (DR)</h4>
+    <p>All systemically important payment systems and their participants must maintain robust BCP and DR capabilities to ensure continuity of payment services during disruptions — whether technical, cyber, physical, or pandemic-related.</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>RPO and RTO Requirements for SIFMUs</strong><br/><br/>
+        <strong>RPO (Recovery Point Objective)</strong> — the maximum acceptable amount of data loss measured in time. For an RTGS system, the RPO is near-zero: any data loss would mean settled transactions are lost, creating catastrophic reconciliation failures. SIFMU RPO is typically &lt;15 minutes, often &lt;5 minutes or zero (synchronous replication).<br/><br/>
+        <strong>RTO (Recovery Time Objective)</strong> — the maximum acceptable time to restore operations after a failure. CPMI-IOSCO Principle 17 requires SIFMUs to target full recovery within <strong>2 hours</strong> of a disruptive event. Many systems target sub-30-minute RTO with instantaneous failover (active-active architecture) for critical payment functions. For SWIFT, the target is 30-minute RTO for message processing services.
+      </div>
+      <div class="highlight-box purple">
+        <strong>Site Architecture Requirements</strong><br/><br/>
+        <strong>Hot Site (Active-Active):</strong> The secondary site runs all systems simultaneously alongside the primary. Failover is instantaneous — traffic can be redirected in seconds. No data loss. Required for tier-1 SIFMUs (RTGS operators, CLS, major CCPs).<br/><br/>
+        <strong>Warm Site:</strong> Systems are in a standby state, regularly updated with data from the primary. Failover takes minutes to hours. Suitable for less time-critical payment functions.<br/><br/>
+        <strong>Cold Site:</strong> Infrastructure is available but not running. Must be provisioned with hardware and software, then loaded with data backups. Failover takes hours to days. Not acceptable for systemically important systems; may be used for non-critical back-office functions.
+      </div>
+    </div>
+    <p><strong>Testing Obligations:</strong> Regulators require SIFMUs and major payment participants to test their BCP/DR capabilities regularly. CPMI-IOSCO Principle 17 requires: (1) full production failover tests at least annually; (2) component-level tests quarterly; (3) tabletop exercises (scenario walkthroughs) at least semi-annually; (4) participation in industry-wide resilience exercises (e.g., the UK's SIMEX exercises coordinated by the Bank of England, US FBIEOS exercises). Test results must be documented and reviewed by senior management and the board.</p>
 
     <h3>6. Legal Risk</h3>
-    <p><strong>Legal risk</strong> arises from legal or regulatory actions that may affect a payment system's ability to enforce its rules. Uncertainty about the finality of payments (is a settled payment truly irrevocable under local law?), enforceability of netting agreements across jurisdictions, or inadequate legal frameworks for electronic payments can all create legal risk. Most major payment systems have worked with legislators to establish clear statutory finality — ensuring that once a payment is settled, it cannot be reversed by a court order or insolvency proceeding.</p>
+    <p><strong>Legal risk</strong> arises from legal or regulatory actions that may affect a payment system's ability to enforce its rules. Uncertainty about the finality of payments, enforceability of netting agreements across jurisdictions, or inadequate legal frameworks for electronic payments can all create legal risk.</p>
+
+    <h4>The Zero-Hour Rule and Settlement Finality</h4>
+    <p>A central legal risk in payment systems is the <strong>zero-hour rule</strong> — a legal doctrine in some jurisdictions under which, when a company is declared insolvent, all transactions entered into from the very beginning (midnight) of the day of insolvency declaration are deemed void retroactively. This means that transactions settled through a payment system on the day of the insolvency could be unwound as if they never occurred — even if they had been processed and confirmed as final hours earlier. The zero-hour rule creates catastrophic uncertainty in payment systems: participants cannot rely on settled payments being truly irrevocable if the counterparty is later declared insolvent on that same day.</p>
+    <div class="highlight-box gold"><strong>Zero-Hour Rule — A Concrete Example:</strong> Bank A settles €500m of payments through the clearing system throughout Monday. At 11pm Monday evening, Bank A is declared insolvent. Under a zero-hour rule jurisdiction, ALL of Bank A's transactions since midnight Monday — including the €500m already settled — could be declared void. Every bank that received funds from Bank A during Monday would have to return them, potentially causing cascading defaults in the system.</div>
+
+    <h4>EU Settlement Finality Directive (98/26/EC)</h4>
+    <p>The European Union's <strong>Settlement Finality Directive (SFD)</strong>, adopted in 1998 and transposed into national law across all EU member states, was specifically designed to eliminate the zero-hour rule problem for designated payment and securities settlement systems. Key provisions:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🛡️</div><h4>Protection of Transfer Orders</h4><p>Transfer orders entered into a designated system before the moment of insolvency are legally binding and enforceable — even if the insolvent participant's general assets are frozen. The SFD establishes that the "moment of entry" of a transfer order into a system is the decisive point, and this moment must be defined in the system's rules. After entry, the order cannot be revoked by the insolvent party or its administrators.</p></div>
+      <div class="info-card"><div class="ic-icon">🔒</div><h4>Protection of Netting</h4><p>Netting arrangements in designated systems are protected from insolvency proceedings. An insolvency administrator cannot "cherry pick" — accepting net inflows while rejecting net outflows. The net position calculated by the system's netting algorithm is the only enforceable claim, preventing opportunistic litigation by insolvency practitioners.</p></div>
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>Designation Requirement</h4><p>SFD protections only apply to systems formally "designated" by a competent authority. Designation requires notification to the European Securities and Markets Authority (ESMA). The rules of the system must specify the finality moment clearly. Major European systems designated under SFD include TARGET2, EURO1, STEP2 (SEPA ACH), and multiple securities settlement systems.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>Cross-Border Insolvency</h4><p>The SFD also addresses cross-border insolvency: if a participant becomes insolvent under the laws of another EU member state, the settlement finality rules of the system's home jurisdiction prevail. This eliminates legal uncertainty in cross-border payment chains within the EU.</p></div>
+    </div>
+
+    <h4>UK Equivalent — Financial Markets and Insolvency (Settlement Finality) Regulations 1999 (as amended by FMIA 2011)</h4>
+    <p>The UK transposed the EU SFD through the <strong>Financial Markets and Insolvency (Settlement Finality) Regulations 1999</strong>. Following Brexit, the UK retained these regulations (amended by the <strong>Financial Services and Markets Act 2023</strong>). The UK framework mirrors the EU's approach: designated systems notify the Bank of England; transfer orders entering designated systems achieve finality; netting is protected. Designated UK systems include CHAPS, CREST (securities settlement), and Faster Payments. Post-Brexit, the UK and EU have maintained mutual recognition of settlement finality for cross-border payments through bilateral arrangements.</p>
+
+    <h4>US — UCC Article 4A (Funds Transfers)</h4>
+    <p><strong>Uniform Commercial Code Article 4A</strong>, adopted across all US states, is the primary legal framework governing electronic funds transfers in the United States. Article 4A was specifically designed to address the legal gaps in the existing commercial code for large-value, bank-to-bank electronic payments (as opposed to consumer payments, which are governed by Regulation E).</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>When Finality Occurs Under UCC 4A</strong><br/><br/>
+        Article 4A defines finality at the point of <strong>acceptance</strong> by the beneficiary's bank. A payment order is accepted when the beneficiary's bank: (1) pays the beneficiary; (2) notifies the beneficiary of receipt of the order; or (3) the funds become available to the beneficiary. Once accepted, the payment is final — the originating bank cannot recall it without the consent of the beneficiary's bank. Critically, Article 4A defines that settlement through a funds transfer system (like Fedwire) constitutes final payment — linking legal finality to the technical settlement event.
+      </div>
+      <div class="highlight-box purple">
+        <strong>Liability Framework Under UCC 4A</strong><br/><br/>
+        Article 4A establishes a clear liability framework: if a bank executes an unauthorized payment order (e.g., due to fraud or error), it bears the loss — not the customer — provided the customer has complied with reasonable security procedures. The standard is whether the bank used a "commercially reasonable" security procedure AND followed it. Banks and customers can agree on specific security procedures (e.g., dual approval, callbacks) and these agreements are enforceable. If a customer provides incorrect beneficiary information (wrong account number), the originating bank is not liable for payment to the wrong account — the sending customer bears the loss of providing incorrect details.
+      </div>
+    </div>
+
+    <h4>ISDA Netting Opinions</h4>
+    <p><strong>ISDA (International Swaps and Derivatives Association)</strong> legal opinions are formal analyses, prepared by leading law firms in each jurisdiction, that assess whether <strong>close-out netting</strong> under an ISDA Master Agreement is legally enforceable in that jurisdiction. Close-out netting allows a non-defaulting party, upon the other party's insolvency, to terminate all outstanding transactions and net the resulting values to a single net amount owed — rather than filing as an unsecured creditor for each transaction individually. This dramatically reduces credit exposure and regulatory capital requirements.</p>
+    <p>ISDA maintains opinions covering <strong>70+ jurisdictions</strong>. These opinions are critical for two reasons: (1) <strong>Regulatory capital relief</strong> — Basel III/CRR allows banks to calculate net rather than gross exposures for regulatory capital purposes only if close-out netting is legally enforceable in the relevant jurisdiction; (2) <strong>Actual loss mitigation</strong> — if netting is not enforceable, a receiver/administrator can accept net inflows while rejecting net outflows ("cherry picking"), dramatically increasing actual loss in default. Payment system operators and participants rely on ISDA-style opinions for payment netting arrangements as well as derivatives.</p>
 
     <h3>7. FX Settlement Risk (Herstatt Risk)</h3>
     <p><strong>FX settlement risk</strong>, famously called <strong>Herstatt Risk</strong>, is the specific risk in foreign exchange transactions that one party delivers its sold currency but fails to receive its purchased currency. This arises because the two legs of an FX trade settle in different countries, in different currencies, at different times. The risk window is the period between when the first currency is irrevocably delivered and when the second currency is received.</p>
@@ -68,8 +173,43 @@
     <h3>Payment vs Payment (PvP) — CLS Bank</h3>
     <p><strong>PvP</strong> is the specific mitigation for FX settlement risk. Both legs of an FX trade are settled simultaneously — neither party can receive their purchased currency without simultaneously delivering their sold currency. <strong>CLS Bank</strong> (Continuous Linked Settlement) implements PvP for FX trades, settling 18 major currencies and eliminating Herstatt risk for its members. CLS settles ~$6 trillion in FX value daily.</p>
 
-    <h3>Delivery vs Payment (DvP)</h3>
-    <p><strong>DvP</strong> is the equivalent mitigation for securities settlement — a security is transferred only if and when the corresponding payment is received, and vice versa. DvP eliminates the risk of delivering securities without receiving payment. The three DvP models (as defined by BIS) differ in the granularity of netting: Model 1 (gross/gross), Model 2 (gross/net), Model 3 (net/net).</p>
+    <h3>Delivery vs Payment (DvP) — All Three BIS Models</h3>
+    <p><strong>DvP</strong> is the mitigation for principal risk in securities settlement — a security is transferred if and only if the corresponding payment is received, and vice versa. DvP eliminates the risk of a seller delivering securities without receiving payment (or a buyer making payment without receiving securities). The Bank for International Settlements (BIS) identified <strong>three distinct DvP models</strong> based on whether securities and funds settle on a gross or net basis, and whether they settle simultaneously.</p>
+
+    <h4>DvP Model 1 — Gross Securities / Gross Funds (Real-Time Simultaneous)</h4>
+    <p>In Model 1, <strong>both</strong> the securities and the cash transfer gross — trade by trade — and the two legs settle simultaneously in real time. Neither the securities nor the cash move until both are confirmed available. This provides the highest level of risk elimination because principal risk is eliminated on a trade-by-trade basis throughout the day.</p>
+    <div class="highlight-box green">
+      <strong>Example — Fedwire Securities + Fedwire Funds Linkage:</strong><br/>
+      Bank A sells $100m of US Treasury bonds to Bank B. Bank A delivers the securities via Fedwire Securities; simultaneously, Bank B transfers $100m via Fedwire Funds. The Fedwire systems are linked: the securities transfer only completes if the cash transfer also completes, and vice versa. Settlement is simultaneous, gross, and final within the same operating day. Model 1 requires significant intraday liquidity because each trade must be funded individually, but provides complete elimination of principal risk.
+    </div>
+    <p><strong>Systems using Model 1:</strong> Fedwire Securities (US Treasuries and Agency securities), CREST (UK gilts and equities), Euroclear Bank (for Eurobonds via DVP1), DTC (equity settlement in the US using a Model 1 variant).</p>
+
+    <h4>DvP Model 2 — Gross Securities / Net Funds</h4>
+    <p>In Model 2, securities settle gross (trade by trade) in real time throughout the day, but the corresponding cash transfers are <strong>accumulated and netted</strong>, settling at the end of the day (or at defined intervals). This means that while securities change ownership continuously during the day, the cash settlement is deferred and netted.</p>
+    <div class="highlight-box">
+      <strong>Risk Profile of Model 2:</strong><br/>
+      Model 2 eliminates the risk of delivering securities without eventual payment (the securities only transfer if the buyer is expected to be solvent at end-of-day netting). However, there is an intraday cash credit risk: the buyer has received securities during the day but has not yet paid. If the buyer defaults between securities transfer and end-of-day cash settlement, the seller has lost the securities but received no cash. Model 2 reduces — but does not eliminate — principal risk compared to Model 1.
+    </div>
+    <p><strong>Systems using Model 2:</strong> The older Euroclear model for certain transaction types used this approach historically. Some central securities depositories in developing markets still use Model 2 where real-time cash settlement infrastructure is not yet available.</p>
+
+    <h4>DvP Model 3 — Net Securities / Net Funds</h4>
+    <p>In Model 3, <strong>both</strong> the securities and the cash are netted throughout the day, with both legs settling simultaneously on a net basis at end of day. This is the most liquidity-efficient model — netting dramatically reduces the gross amounts of both securities and cash that must move — but it carries the highest intraday risk. All trades executed during the day remain unsettled (and therefore at risk) until the end-of-day net settlement occurs.</p>
+    <div class="highlight-box gold">
+      <strong>Risk Profile of Model 3:</strong><br/>
+      If a participant defaults before end-of-day net settlement, all trades involving that participant for the entire day may be unwound (similar to DNS risk for cash). This can affect many counterparties simultaneously and create systemic disruption. Model 3 is the least safe from a risk perspective but the most efficient from a liquidity perspective. Its use has declined as regulators have pushed for Model 1 systems.
+    </div>
+    <p><strong>Systems that used Model 3:</strong> Older DNS-based equity settlement systems, some legacy European securities settlement platforms before modernisation. Modern systems have migrated toward Model 1 or hybrid approaches.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>DvP Model</th><th>Securities Settlement</th><th>Cash Settlement</th><th>Timing</th><th>Principal Risk</th><th>Liquidity Need</th><th>Example Systems</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Model 1 (Gross/Gross)</strong></td><td>Gross (per trade)</td><td>Gross (per trade)</td><td>Simultaneous, real-time</td><td>Eliminated</td><td>Very High</td><td>Fedwire Securities/Funds, CREST, DTCC (DTC)</td></tr>
+          <tr><td><strong>Model 2 (Gross/Net)</strong></td><td>Gross (real-time)</td><td>Net (end of day)</td><td>Securities intraday; cash EOD</td><td>Reduced (intraday cash credit risk)</td><td>Medium</td><td>Older Euroclear model, some developing market CSDs</td></tr>
+          <tr><td><strong>Model 3 (Net/Net)</strong></td><td>Net (end of day)</td><td>Net (end of day)</td><td>Simultaneous, end of day</td><td>High (intraday principal risk)</td><td>Low</td><td>Legacy DNS-based equity systems (now largely retired)</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <h3>Collateral and Prefunding</h3>
     <p>Participants may be required to provide <strong>collateral</strong> (eligible securities pledged to the clearing house) to cover potential exposures. In CHIPS, participants must <strong>prefund</strong> their opening position each day via Fedwire before the system opens. This ensures that every payment that enters the system is backed by real, already-transferred funds — eliminating credit risk entirely.</p>
@@ -87,12 +227,46 @@
           <tr><td>Credit Risk</td><td>RTGS, Collateral</td><td>Immediate settlement, margin requirements</td></tr>
           <tr><td>Liquidity Risk</td><td>Intraday credit, LSM</td><td>Central bank repos, queue offsetting</td></tr>
           <tr><td>FX Settlement Risk</td><td>PvP via CLS Bank</td><td>Simultaneous settlement of both FX legs</td></tr>
-          <tr><td>Securities Risk</td><td>DvP</td><td>Simultaneous delivery and payment</td></tr>
+          <tr><td>Securities Risk</td><td>DvP (Model 1 preferred)</td><td>Simultaneous gross delivery and payment</td></tr>
           <tr><td>Systemic Risk</td><td>CCP, Loss sharing</td><td>Default fund, capital buffers</td></tr>
-          <tr><td>Operational Risk</td><td>Business Continuity</td><td>Redundant systems, DR sites, cyber controls</td></tr>
+          <tr><td>Operational Risk (Tech)</td><td>Redundancy, BCP/DR</td><td>Hot sites, RTO &lt;2hrs, regular failover tests</td></tr>
+          <tr><td>Cyber Risk</td><td>SWIFT CSP, MFA, Monitoring</td><td>Mandatory CSP controls, anomaly detection</td></tr>
+          <tr><td>Legal Risk</td><td>Settlement Finality legislation</td><td>SFD (EU), UCC 4A (US), eliminate zero-hour rule</td></tr>
+          <tr><td>Concentration Risk</td><td>BCBS guidelines, diversification</td><td>Correspondent diversification, capital buffers</td></tr>
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">2.4</span> Concentration Risk in Correspondent Banking</h2>
+    <p><strong>Concentration risk</strong> in the context of payment systems refers to the risk that an excessive share of critical payment flows — particularly cross-border USD flows — is handled by a small number of large correspondent banks. If any one of these concentrated providers were to fail or significantly curtail services, the disruption to global payments would be disproportionate to the size of the bank itself.</p>
+
+    <h3>The Concentrated Nature of Correspondent Banking</h3>
+    <p>Despite thousands of banks participating in global cross-border payments, the actual processing of cross-border flows is highly concentrated. Research by the BIS and SWIFT consistently shows that the <strong>top 5 correspondent banks</strong> (typically Citi, JPMorgan, Deutsche Bank, HSBC, and Bank of America, depending on the currency corridor) handle more than <strong>50% of global cross-border USD payment flows</strong>. In some corridors and currencies, concentration is even higher — a single bank may dominate 30–40% of all USD correspondent flows for certain regions.</p>
+    <div class="two-col">
+      <div class="highlight-box">
+        <strong>Why Concentration Exists</strong><br/><br/>
+        Network effects drive concentration in correspondent banking: a correspondent bank is more valuable the more domestic banks it connects to in the beneficiary country. Major global banks (Citi, JPMorgan, HSBC) have built decades-long networks of local banking relationships, local-currency clearing memberships, and local-country regulatory approvals. A smaller bank entering the market cannot easily replicate this network. Furthermore, the fixed costs of SWIFT connectivity, compliance infrastructure, and liquidity management systems create barriers to entry that favour large incumbents. The result is a "hub-and-spoke" global architecture where a handful of mega-correspondents sit at the centre.
+      </div>
+      <div class="highlight-box gold">
+        <strong>Systemic Implications of Concentration</strong><br/><br/>
+        A single major correspondent bank handles payments for thousands of smaller downstream banks. If Deutsche Bank (to use a hypothetical) were to suddenly exit correspondent banking — as several banks did in high-risk corridors after 2012 — the thousands of smaller banks that relied on it for USD clearing would face immediate inability to make or receive cross-border USD payments. They would need to rapidly establish new correspondent relationships, a process that can take months due to KYC, AML, and legal agreement requirements. During this transition period, payment flows to entire country corridors could be disrupted.
+      </div>
+    </div>
+
+    <h3>BCBS Guidelines on Correspondent Banking Concentration</h3>
+    <p>The Basel Committee on Banking Supervision (BCBS) has addressed concentration risk in correspondent banking through several publications:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">📋</div><h4>Sound Practices — 2016</h4><p>BCBS published "Sound practices: implications of fintech developments for banks and bank supervisors" and related correspondent banking guidance. The guidance calls on banks to assess their concentration of correspondent banking relationships — both as a provider (single-customer concentration) and as a user (single correspondent concentration). Banks should have contingency arrangements if their primary correspondent exits.</p></div>
+      <div class="info-card"><div class="ic-icon">🔍</div><h4>FATF / BCBS Joint Guidance</h4><p>BCBS and FATF jointly published guidance on correspondent banking (2016) clarifying that correspondent banks need not apply CDD to every underlying customer of respondent banks — only to the respondent bank itself. This was designed to reduce the compliance burden that had driven de-risking. However, the guidance also emphasised that large concentrations of high-risk respondent banks at a single correspondent create systemic risk.</p></div>
+      <div class="info-card"><div class="ic-icon">💰</div><h4>Capital Requirements</h4><p>Under Basel III, concentration to single counterparties is subject to Large Exposure limits — generally, a bank's exposure to a single counterparty cannot exceed 25% of Tier 1 capital (10% for G-SIBs). However, correspondent banking relationships may not always create on-balance-sheet exposures that fall within these limits, making pure capital-based concentration limits less effective than they are for loan concentrations.</p></div>
+      <div class="info-card"><div class="ic-icon">🚪</div><h4>De-Risking Trend</h4><p>Since 2012, major correspondent banks have progressively exited high-risk corridors — withdrawing correspondent services from banks in countries with poor AML/CFT records, high sanctions risk, or inadequate regulatory frameworks. The countries affected include the Caribbean, Pacific Islands, parts of Africa and the Middle East. The World Bank estimated that over 20% of global correspondent banking relationships were terminated between 2011 and 2020. This "de-risking" has left some countries with very limited access to the global payment system, forcing them to rely on a single remaining correspondent or informal channels.</p></div>
+    </div>
+
+    <h3>Residual Risks and Policy Responses</h3>
+    <p>Policymakers have recognised the systemic implications of both concentration and de-risking. The G20 Cross-Border Payments Programme (2020–2027) specifically targets correspondent banking concentration as a key barrier to improving cross-border payments. Proposed solutions include: expanding direct membership in payment systems (reducing reliance on correspondents); multi-lateral platforms that allow smaller banks to access global corridors via shared infrastructure; and central bank digital currencies (CBDCs) that could theoretically enable direct cross-border central bank settlements, bypassing the correspondent banking layer entirely.</p>
+    <div class="highlight-box"><strong>Concentration Risk is Bidirectional:</strong> It affects both the <strong>correspondent bank</strong> (operational risk if it handles too large a share of critical flows — a failure or outage has outsized systemic impact) and the <strong>respondent bank</strong> (if its primary correspondent exits or fails, the respondent may be left without access to cross-border settlement). Both dimensions require risk management attention.</div>
   </div>
 
   <div class="module-nav">

@@ -41,17 +41,40 @@
   </div>
 
   <div class="topic-section fade-in">
-    <h2><span class="t-num">11.3</span> Lynx Liquidity Management</h2>
-    <h3>Collateral-Free Prefunding</h3>
-    <p>Lynx operates on a <strong>pure prefunding model</strong>. Participants must maintain positive ESA balances at the Bank of Canada throughout the day to fund their payment obligations. There is no intraday credit extension and no collateral pledging mechanism (unlike LVTS or some RTGS systems that offer repo facilities). The Bank of Canada does provide an <strong>Overnight Standing Facility</strong> — participants can borrow overnight at the Bank Rate — but intraday credit is not available within Lynx itself.</p>
-    <h3>Intraday Liquidity Recycling</h3>
-    <p>The Lynx architecture is designed to maximise intraday <strong>liquidity recycling</strong>: as participants receive incoming payments, their ESA balances increase, enabling them to send further payments without needing additional external funding. The LSM (Liquidity Saving Mechanism) described below is the primary tool for achieving this recycling effect efficiently.</p>
-    <h3>Bank of Canada Intraday Repo</h3>
-    <p>While Lynx itself doesn't provide intraday credit, the Bank of Canada operates an <strong>Intraday Liquidity Facility (ILF)</strong> under which direct clearers can obtain intraday liquidity by pledging eligible securities (Government of Canada bonds and bills) in a repo transaction. This ILF is separate from Lynx but provides a backstop liquidity mechanism for participants who need intraday funding.</p>
+    <h2><span class="t-num">11.3</span> Lynx Transaction Lifecycle Flow</h2>
+    <p>The following is the end-to-end flow of a <strong>pacs.009</strong> (Financial Institution Credit Transfer) payment through Lynx, from origination at the sending bank to final credit at the receiving bank. The flow illustrates how the mechanism assignment (UPM, LSM, or RCM) determines the settlement path.</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Payment Origination — pacs.009 Created</h4><p>The sending bank's payment operations system generates an ISO 20022 <strong>pacs.009</strong> (Financial Institution Credit Transfer) message. The message includes: instructing agent BIC, instructed agent BIC, amount, value date, settlement method, and all required structured remittance data. For customer-originated payments, a <strong>pacs.008</strong> may be used instead.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Priority Assignment — UPM, LSM, or RCM</h4><p>Before submission, the sending bank assigns the payment to one of three priority mechanisms: <strong>UPM (Urgent Payment Mechanism)</strong> for time-critical, immediate-gross-settlement payments; <strong>LSM (Liquidity Saving Mechanism)</strong> for standard large-value payments where bilateral/multilateral offset is desired; or <strong>RCM (Regular Credit Mechanism)</strong> for standard-priority payments processed FIFO. This assignment is embedded in the pacs.009 message header.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Submission to Lynx via Payments Canada Network</h4><p>The sending bank's system transmits the pacs.009 to <strong>Lynx</strong> over Payments Canada's secure network infrastructure. Connectivity uses SWIFTNet or a direct Payments Canada-approved connection. The message is received by the Lynx gateway for pre-processing.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Lynx Validation</h4><p>Lynx performs a suite of validations before accepting the payment: <strong>ISO 20022 schema validation</strong> (message must conform to the Lynx usage guidelines); <strong>BIC validity check</strong> (instructed agent BIC must be a Lynx direct participant); <strong>sender ESA balance check</strong> — for UPM and RCM, Lynx immediately verifies the sender's ESA has sufficient positive balance to cover the payment. For LSM, the balance check is deferred to the offset matching step. If any validation fails, Lynx immediately returns a <strong>pacs.002</strong> with status RJCT and the relevant reason code.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>UPM Path — Immediate Gross Settlement</h4><p>For payments assigned to <strong>UPM</strong>: Lynx processes immediately and individually. The ESA of the sending bank is debited in real time; the ESA of the receiving bank is credited simultaneously. Settlement is <strong>FINAL and irrevocable</strong> under the PCSA the moment the ESA entries are made. No queuing, no netting, no waiting. Lynx sends a <strong>pacs.002</strong> with status <strong>ACCP</strong> (Accepted and Completed) to the sending bank, confirming settlement.</p></div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>LSM Path — Bilateral/Multilateral Offset</h4><p>For payments assigned to <strong>LSM</strong>: the payment enters the LSM queue. The Lynx optimisation algorithm continuously scans the LSM queue for <strong>bilateral offsets</strong> (Bank A owes Bank B CAD 50M and Bank B owes Bank A CAD 45M — both can settle simultaneously with only CAD 5M net liquidity) and <strong>multilateral offset cycles</strong> (Bank A → Bank B → Bank C → Bank A). When a viable offset is identified, all matched payments settle simultaneously — ESAs are debited and credited for the net difference. This dramatically reduces gross liquidity consumption while achieving the same settlement outcome.</p></div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>Settlement Confirmation — pacs.002 Sent</h4><p>After settlement (via UPM or LSM or RCM), Lynx generates and sends a <strong>pacs.002 (Payment Status Report)</strong> to the sending bank: status <strong>ACCP</strong> (Accepted and Completed / settled) for successful settlement; status <strong>RJCT</strong> (Rejected) with an ISO 20022 reason code (e.g., AM04 — insufficient funds, RC01 — invalid BIC, DT01 — invalid value date) for failures. The pacs.002 is the definitive settlement confirmation and triggers downstream accounting entries at the sending bank.</p></div></div>
+      <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>Debit/Credit Notifications — camt.054 Sent to Both Banks</h4><p>Lynx sends <strong>camt.054 (Bank to Customer Debit/Credit Notification)</strong> messages to both the sending bank (debit notification confirming ESA was debited) and the receiving bank (credit notification confirming ESA was credited). These notifications allow both banks to update their internal nostro/vostro position records and reconcile their intraday liquidity positions in real time.</p></div></div>
+      <div class="flow-step"><div class="step-num">9</div><div class="step-body"><h4>Receiving Bank Credits Beneficiary</h4><p>Upon receipt of the camt.054 credit notification, the receiving bank's straight-through processing (STP) system identifies the underlying beneficiary from the original payment details in the pacs.009 (passed through from step 1) and credits the beneficiary's account in the bank's core banking system. For interbank payments (FI-to-FI), the counterpart bank records the settlement in its treasury/nostro systems. The payment is now fully complete from origination to final credit.</p></div></div>
+    </div>
+    <div class="highlight-box gold"><strong>Message Chain Summary:</strong> pacs.009 (origination) → pacs.002 ACCP/RJCT (Lynx settlement status) → camt.054 (debit/credit notifications to both banks). For customer payments using pacs.008, the same flow applies with pacs.008 substituted at step 1.</div>
   </div>
 
   <div class="topic-section fade-in">
-    <h2><span class="t-num">11.4</span> UPM, LSM, RCM and RTM — The Four Mechanisms</h2>
+    <h2><span class="t-num">11.4</span> Lynx Operating Hours and Schedule</h2>
+    <p>Lynx operates on a defined <strong>business day schedule</strong> aligned with Canadian financial market hours. Unusually, the Lynx business day begins the <strong>previous calendar evening</strong> — the system opens at 9:00 PM ET (Eastern Time) the night before, after the overnight maintenance window closes, and accepts payments through to close the following business day evening.</p>
+    <div class="table-wrap"><table><thead><tr><th>Lynx Business Day Event</th><th>Time (Eastern Time)</th><th>Notes</th></tr></thead><tbody>
+      <tr><td><strong>System Opens — Business Day Begins</strong></td><td>9:00 PM ET (previous calendar day)</td><td>Overnight maintenance window ends. Lynx opens for the next business day. Banks can begin submitting payments immediately.</td></tr>
+      <tr><td><strong>Payment Acceptance Window Opens</strong></td><td>9:00 PM ET</td><td>All mechanisms (UPM, LSM, RCM) accept payment submissions. LSM queue begins accumulating for offset optimisation.</td></tr>
+      <tr><td><strong>RTM Settlement Window</strong></td><td>~10:00 AM – 3:00 PM ET</td><td>Retail Payment System (ACSS) net positions typically submitted and settled via RTM during this window on business days. Exact timing varies by ACSS clearing cycle.</td></tr>
+      <tr><td><strong>Customer Payment Cutoff</strong></td><td>5:00 PM ET</td><td>Recommended cutoff for customer-initiated payments (pacs.008). Payments received after this time may not achieve same-day settlement at the receiving bank.</td></tr>
+      <tr><td><strong>System-to-System (Interbank) Cutoff</strong></td><td>6:00 PM ET</td><td>Final cutoff for all interbank payment submissions (pacs.009). No new payments accepted after this time for the current business day.</td></tr>
+      <tr><td><strong>System Closes</strong></td><td>6:30 PM ET</td><td>Final settlement and reconciliation. ESA end-of-day positions locked. End-of-day camt.053 statements generated and distributed to all participants.</td></tr>
+      <tr><td><strong>Overnight Maintenance Window</strong></td><td>6:30 PM – 9:00 PM ET</td><td>System maintenance, batch processing, reconciliation, and preparation for the next business day.</td></tr>
+    </tbody></table></div>
+    <div class="highlight-box"><strong>Key Operational Note:</strong> The Lynx business day begins at 9:00 PM ET the <em>previous evening</em> — meaning a payment submitted at 10:00 PM on a Monday evening is processed on Tuesday's Lynx business day. This early open enables banks to pre-position payments and manage overnight liquidity needs efficiently. The Bank of Canada's Intraday Liquidity Facility (ILF) repo window also aligns with these operating hours.</div>
+    <div class="highlight-box purple"><strong>Holiday Schedule:</strong> Lynx does not operate on Canadian federal public holidays. On the last business day before a holiday, Payments Canada may issue an amended schedule with earlier cutoff times to allow for holiday period liquidity management. Participants are notified in advance through Payments Canada's operational communications.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">11.5</span> UPM, LSM, RCM and RTM — The Four Mechanisms</h2>
     <p>Lynx incorporates four distinct payment processing mechanisms, each designed for different payment priorities and liquidity management strategies. Participants assign payments to mechanisms based on urgency and their desire to benefit from offsetting/netting efficiency.</p>
 
     <h3>1. UPM — Urgent Payment Mechanism</h3>
@@ -75,7 +98,87 @@
   </div>
 
   <div class="topic-section fade-in">
-    <h2><span class="t-num">11.5</span> Canadian Payments Ecosystem</h2>
+    <h2><span class="t-num">11.6</span> UPM/LSM/RCM Queue Interaction and Re-Assignment</h2>
+    <p>Understanding how payments interact between queues, and how banks can manage queue assignments, is essential for Lynx liquidity operators. The following covers re-assignment capabilities, monitoring tools, and end-of-day handling for unmatched LSM payments.</p>
+
+    <h3>Can Payments Be Re-Assigned Between Queues?</h3>
+    <p><strong>Yes</strong> — a bank can manually re-prioritise a queued payment from LSM to UPM via Lynx's <strong>U2A (User-to-Application) interface</strong> if the urgency of a payment increases after submission. Scenarios where this applies: a customer complaint about a delayed payment; a regulatory deadline requiring same-day settlement; a money market transaction where counterparty requests urgent settlement; or an unexpected intraday liquidity event requiring the receiving bank to have funds immediately.</p>
+    <div class="highlight-box gold"><strong>Important:</strong> Escalation from LSM to UPM is <em>not automatic</em> in Lynx — it requires a <strong>manual operator action</strong> by a bank's intraday liquidity management team through the Lynx U2A interface. Lynx does not have an automatic escalation rule that upgrades LSM payments based on time elapsed or other criteria. Banks must monitor their queues actively and intervene when needed.</div>
+
+    <h3>Queue Monitoring and Liquidity Dashboards</h3>
+    <p>Lynx provides participating banks with <strong>real-time liquidity dashboards</strong> through the Lynx U2A interface. These dashboards display:</p>
+    <ul>
+      <li><strong>Queue depth</strong> — the number and value of payments currently held in each of the bank's UPM, LSM, and RCM queues</li>
+      <li><strong>ESA balance</strong> — the bank's current Exchange Settlement Account balance at the Bank of Canada, updated in real time after each settlement</li>
+      <li><strong>Projected end-of-day position</strong> — an estimate of the bank's ESA balance at close, based on known inflows (expected incoming payments) and outflows (queued outgoing payments)</li>
+      <li><strong>Matched vs unmatched LSM payments</strong> — visibility into which LSM payments are awaiting an offsetting payment vs. those that are actively in matching cycles</li>
+    </ul>
+    <p>These tools allow treasury and liquidity management teams to make informed decisions about re-prioritisation, additional funding from the Bank of Canada's Intraday Liquidity Facility, or other intraday liquidity actions.</p>
+
+    <h3>Unmatched LSM Payments at End of Day</h3>
+    <p>Payments submitted to LSM that have not found an offset by the system-to-system cutoff (6:00 PM ET) are handled as follows:</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">A</div><div class="step-body"><h4>Offsetting Payment Arrives</h4><p>If an offsetting payment arrives before the cutoff, LSM matching triggers and the payment settles normally. This is the intended LSM outcome.</p></div></div>
+      <div class="flow-step"><div class="step-num">B</div><div class="step-body"><h4>Bank Manually Upgrades to UPM</h4><p>The sending bank uses the U2A interface to re-assign the unmatched LSM payment to UPM. Lynx then immediately attempts gross settlement against the bank's ESA balance. If sufficient funds exist, the payment settles immediately.</p></div></div>
+      <div class="flow-step"><div class="step-num">C</div><div class="step-body"><h4>End-of-Day Escalation to RCM / Return</h4><p>Unmatched LSM payments that remain in queue at close may be escalated to RCM for final gross settlement attempts using remaining ESA balances, or — if ESA balance is insufficient — returned to the sending bank with a pacs.002 RJCT status. The sending bank must then resubmit the payment the following business day or make alternative arrangements.</p></div></div>
+    </div>
+
+    <h3>RTM Interaction with UPM/LSM/RCM</h3>
+    <p>The <strong>RTM (Real-Time Mechanism)</strong> operates as a <strong>separate and independent settlement process</strong> within Lynx for ancillary system net position settlement. RTM does not interact with the UPM, LSM, or RCM queues used for individual payment processing. When ACSS submits a net settlement file via RTM, those net positions settle directly in bank ESAs through the RTM process — not through the individual payment queues. This clean separation ensures that retail payment batch settlement does not create queue congestion or liquidity conflicts with individual high-value payments.</p>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">11.7</span> RTM — Ancillary System Settlement Mechanics</h2>
+    <p>The RTM (Real-Time Mechanism) is the interface through which ancillary payment systems submit their net settlement positions to Lynx for settlement in Bank of Canada ESAs. The most important ancillary system using RTM is <strong>ACSS (Automated Clearing Settlement System)</strong> — Canada's retail clearing system for cheques, AFT (Automated Funds Transfers), and Interac transactions.</p>
+
+    <h3>How ACSS Submits to Lynx via RTM — Step by Step</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>ACSS Clearing Cycle Completes</h4><p>The ACSS clearing cycle processes all retail payment items — cheques, AFT credit/debit transactions, Interac e-Transfer settlements, and image-based items — submitted by direct clearers during the clearing period. ACSS has typically <strong>3 clearing cycles per business day</strong>. Each cycle closes at a defined time and triggers net position calculation.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>ACSS Calculates Multilateral Net Positions</h4><p>After each clearing cycle closes, ACSS calculates the <strong>multilateral net positions</strong> for all direct clearers — the net of all items exchanged between all pairs of participants, resulting in a single net debit or net credit position for each direct clearer in the cycle. This is the fundamental efficiency of net settlement — hundreds of thousands of individual transactions are reduced to a single net position per participant.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>ACSS Submits Net Settlement File to Lynx RTM</h4><p>ACSS (operated by Payments Canada) submits the net settlement file to Lynx through the <strong>RTM interface</strong>. The file specifies the net debit/credit obligation of each direct clearer. The file is formatted as a structured Lynx RTM settlement instruction.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>RTM Validates the Settlement File</h4><p>Lynx RTM performs validation on the submitted file: <strong>Balanced check</strong> — total debits must equal total credits (the file must be mathematically balanced); <strong>Participant eligibility</strong> — all participants listed must be active Lynx direct participants; <strong>ESA balance check</strong> — each net-debit participant must have sufficient positive balance in their ESA to cover their net debit obligation. If all validations pass, Lynx proceeds to settlement. If validation fails, the entire file is rejected and ACSS is notified.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Simultaneous Multi-Party Settlement</h4><p>If all ESAs have sufficient balances, Lynx RTM executes a <strong>simultaneous multi-party settlement</strong>: all net-debit participants' ESAs are debited and all net-credit participants' ESAs are credited in a single atomic operation. This is not a series of individual payments — it is a single balanced settlement event. The settlement is final and irrevocable under the PCSA.</p></div></div>
+      <div class="flow-step"><div class="step-num">6</div><div class="step-body"><h4>Insufficient ESA — Gridlock Resolution</h4><p>If any net-debit participant's ESA has insufficient balance, Lynx RTM holds the settlement file. The participant is notified and must fund their ESA (via the Bank of Canada's Intraday Liquidity Facility or incoming Lynx receipts) before RTM will retry. If the shortfall persists to close of business, gridlock resolution mechanisms may apply — in extreme cases, the Bank of Canada may provide emergency liquidity to prevent systemic settlement failure.</p></div></div>
+      <div class="flow-step"><div class="step-num">7</div><div class="step-body"><h4>RTM Sends Settlement Confirmation to ACSS</h4><p>After successful settlement, Lynx RTM sends a <strong>settlement confirmation message</strong> back to ACSS, confirming that the net positions have been settled in the ESAs. This confirmation is the trigger that allows ACSS to release its own settlement records.</p></div></div>
+      <div class="flow-step"><div class="step-num">8</div><div class="step-body"><h4>ACSS Releases Confirmation to All Direct Clearers</h4><p>ACSS distributes individual settlement confirmations to all direct clearers, informing them of their settled net position. Direct clearers then update their internal systems, credit or debit their indirect clearer correspondents' accounts, and release funds to end beneficiaries. The retail payment cycle is now fully settled in central bank money.</p></div></div>
+    </div>
+
+    <h3>ACSS Settlement Cycles</h3>
+    <p>ACSS typically runs <strong>3 settlement cycles per business day</strong>. The <strong>final ACSS settlement cycle</strong> occurs in the afternoon — direct clearers are required to have their net debit positions fully funded in their ESAs by a specific time (notified by Payments Canada) to ensure the final cycle settles before Lynx closes at 6:30 PM ET. Failure to fund a net debit position in the final ACSS cycle is a serious operational and regulatory event.</p>
+    <div class="highlight-box"><strong>Why RTM Matters:</strong> Every Interac e-Transfer, cheque deposit, and pre-authorised debit payment in Canada ultimately settles in central bank money (Bank of Canada ESAs) via RTM. Lynx's RTM is therefore the foundation of all retail payment finality in Canada, even for transactions that originate in consumer-facing apps and platforms.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">11.8</span> How RTR Will Interact with Lynx</h2>
+    <p>Canada's <strong>Real-Time Rail (RTR)</strong> is a next-generation instant payment system currently under development by Payments Canada. RTR is designed to provide 24/7 real-time credit transfers with immediate finality for consumers and businesses — similar to FedNow (USA), Faster Payments (UK), and TIPS (Eurozone). Understanding how RTR will integrate with Lynx is important for understanding Canada's future payment architecture.</p>
+
+    <h3>RTR Overview</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>RTR Purpose</h4><p>24/7 real-time credit transfers with immediate, irrevocable finality for end users. Target: confirmation of payment in under 60 seconds, 24 hours a day, 365 days a year.</p></div>
+      <div class="info-card"><div class="ic-icon">📋</div><h4>ISO 20022 Native</h4><p>RTR will be built natively on ISO 20022 messaging, consistent with Lynx and global instant payment best practices. This ensures interoperability with Lynx and future cross-border payment systems.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Prefunded Settlement Model</h4><p>RTR will use a prefunded settlement model — similar to the ECB's TIPS (TARGET Instant Payment Settlement). Banks will fund a dedicated RTR settlement account before being able to send RTR payments.</p></div>
+      <div class="info-card"><div class="ic-icon">🔗</div><h4>Lynx as Backbone</h4><p>Even with RTR operating 24/7, Lynx remains the ultimate settlement backbone. RTR net positions will settle via Lynx RTM — similar to how ACSS settles today.</p></div>
+    </div>
+
+    <h3>RTR Settlement Architecture</h3>
+    <div class="two-col">
+      <div>
+        <h3>Prefunded RTR Settlement Account</h3>
+        <div class="highlight-box purple"><strong>Prefunding Model:</strong> Each bank participating in RTR will be required to maintain a dedicated <strong>RTR Settlement Account</strong> prefunded with CAD balances. Every RTR payment sent will immediately debit the sender's RTR Settlement Account and credit the receiver's RTR Settlement Account. This provides instantaneous gross settlement for each RTR payment without requiring real-time access to Lynx (which has daily operating hours). The prefunded accounts act as a liquidity buffer enabling 24/7 operation.</div>
+      </div>
+      <div>
+        <h3>End-of-Day Lynx Reconciliation</h3>
+        <div class="highlight-box green"><strong>Lynx RTM Settlement:</strong> At the end of each Lynx business day (or at defined intervals), the net positions accumulated in the RTR Settlement Accounts will be settled via <strong>Lynx RTM</strong> — debiting and crediting bank ESAs at the Bank of Canada for the net RTR activity. This mirrors exactly how ACSS retail positions settle via RTM today. Lynx remains the mechanism for final settlement in central bank money.</div>
+      </div>
+    </div>
+
+    <h3>Path to RTR Launch</h3>
+    <p>RTR's target launch was originally planned for <strong>2024–2025</strong>, but the programme has faced significant delays due to: the technical complexity of implementing ISO 20022 natively across all systems; participant bank readiness and internal technology upgrade requirements; governance and rulebook development; and the broader Payments Canada modernisation programme sequencing. Payments Canada continues to work with industry stakeholders on implementation. When launched, RTR will complete Canada's modernised payment ecosystem — with Lynx at the top for high-value, ACSS (modernised) for batch retail, and RTR for instant retail payments, all interconnected through ISO 20022 and Lynx settlement.</p>
+    <div class="highlight-box"><strong>Lynx as the Enduring Settlement Foundation:</strong> A key architectural principle of Canada's payment modernisation is that <strong>Lynx remains the ultimate settlement backbone</strong> for all payment systems — including the new RTR. Just as ACSS net positions settle in Bank of Canada ESAs via Lynx RTM, RTR net positions will also flow through Lynx for final central bank money settlement. This ensures Canada's entire payment infrastructure — from instant retail to high-value interbank — ultimately settles in risk-free central bank money.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">11.9</span> Canadian Payments Ecosystem</h2>
     <p>Lynx sits at the top of Canada's payment hierarchy. Below it are several retail and mass payment systems:</p>
     <div class="cards-grid">
       <div class="info-card"><div class="ic-icon">⚡</div><h4>Interac e-Transfer</h4><p>Canada's dominant consumer real-time payment service. Uses email/mobile as proxies for account lookup. Operated by Interac Corp. ~$250 billion transferred annually. Settlement via ACSS.</p></div>
