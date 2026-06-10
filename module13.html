@@ -29,6 +29,34 @@
   </div>
 
   <div class="topic-section fade-in">
+    <h2><span class="t-num">13.1b</span> Bitcoin as a Payment System — Limitations</h2>
+    <p>Satoshi Nakamoto's 2008 whitepaper described Bitcoin as a <strong>"peer-to-peer electronic cash system"</strong> — implying a payment system free from intermediaries, accessible globally, and censorship-resistant. In practice, Bitcoin has largely failed to achieve this vision at scale. Understanding why is essential for evaluating DLT-based payment proposals.</p>
+
+    <h3>Practical Failures as a Payment System</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Scalability — ~7 TPS</h4><p>Bitcoin's base layer processes approximately <strong>7 transactions per second (TPS)</strong> — constrained by a 1 MB block size and ~10-minute block time. Compare this to <strong>Visa's 24,000+ TPS</strong> (peak capacity). Even Ethereum's base layer reaches only ~15–30 TPS. This throughput gap makes Bitcoin unusable as a global payment rail without Layer 2 solutions.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Confirmation Time — ~1 Hour for Finality</h4><p>Each Bitcoin block takes approximately <strong>10 minutes</strong> to mine. Probabilistic finality requires <strong>6 confirmations</strong> (~1 hour) for high-value transactions, as earlier blocks can theoretically be reorganised. In practice, merchants accepting Bitcoin for point-of-sale must either wait an hour or accept the risk of a zero-confirmation transaction.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Transaction Fees — Spikes to $50+</h4><p>Bitcoin transaction fees are determined by a market: users bid to have their transactions included in the next block. During periods of network congestion — notably in <strong>2017</strong> and <strong>2021</strong> — average fees spiked above <strong>$50 per transaction</strong>. This makes Bitcoin economically unviable for micropayments or everyday retail use, where the fee may exceed the transaction value.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Price Volatility — Cannot Denominate Prices</h4><p>Bitcoin's exchange rate against fiat currencies can swing <strong>50% or more within weeks</strong>. A merchant cannot price goods in BTC — by the time the invoice is paid, the real value has changed materially. Stablecoins were invented precisely to address this limitation, but they are not Bitcoin. Volatility also creates foreign exchange risk for recipients who hold BTC after receipt.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Energy Consumption — ~130 TWh Annually</h4><p>Bitcoin's Proof-of-Work consensus mechanism requires miners to expend enormous computational energy. Estimated annual consumption is approximately <strong>130 TWh</strong> — comparable to the <strong>entire electricity use of Argentina</strong>. This environmental cost is a significant barrier to institutional and governmental adoption, particularly as ESG considerations grow in importance.</p></div></div>
+    </div>
+
+    <h3>Lightning Network — Layer 2 Solution</h3>
+    <p>The <strong>Lightning Network</strong> is a Layer 2 protocol built on top of Bitcoin designed to enable fast, low-cost micropayments by moving most transactions off the main blockchain (off-chain). It addresses scalability and fee issues without changing Bitcoin's base layer.</p>
+    <div class="two-col">
+      <div>
+        <h4>Payment Channels</h4>
+        <p>Two parties open a <strong>payment channel</strong> by locking Bitcoin in a multi-signature (multi-sig) on-chain contract. Once the channel is open, the two parties can transact with each other an unlimited number of times — exchanging signed balance updates off-chain — without broadcasting each transaction to the Bitcoin network. Only the <strong>opening and closing transactions</strong> are recorded on the blockchain. This dramatically reduces on-chain load and enables near-instant, near-zero-cost transactions between the two parties.</p>
+      </div>
+      <div>
+        <h4>Routing Across the Network</h4>
+        <p>Lightning's power extends beyond direct channels: payments can be <strong>routed through a network of payment channels</strong>. If Alice has a channel with Bob, and Bob has a channel with Carol, Alice can pay Carol by routing through Bob — using Hash Time-Locked Contracts (HTLCs) to ensure the payment is atomic (either fully succeeds or fully refunds). This enables a web of connected channels to serve as a payment network.</p>
+      </div>
+    </div>
+    <div class="highlight-box gold"><strong>Lightning Network Limitations:</strong> Requires both parties to have online nodes to receive payments (no offline receipt). Channel liquidity must be actively managed — a channel cannot route more than its locked balance. Routing large payments can fail if no path with sufficient liquidity exists. Lightning is limited to Bitcoin and cannot natively bridge to other blockchains or fiat currencies. Despite these constraints, it is the most developed Layer 2 for BTC payments, with millions of active channels.</div>
+  </div>
+
+  <div class="topic-section fade-in">
     <h2><span class="t-num">13.2</span> Distributed Ledger Technology (DLT)</h2>
     <p>A <strong>Distributed Ledger Technology (DLT)</strong> is a database that is shared, replicated, and synchronised across multiple nodes (computers) in a network without a central administrator. Unlike a traditional centralised database (run by a single bank or operator), a DLT's records are maintained by a network of participants, each holding a copy of the complete ledger.</p>
     <div class="two-col">
@@ -73,6 +101,30 @@
   </div>
 
   <div class="topic-section fade-in">
+    <h2><span class="t-num">13.3b</span> Tokenised Deposits vs CBDC</h2>
+    <p>A critical distinction for practitioners: not all "digital money on a blockchain" is CBDC. <strong>Tokenised deposits</strong> are commercial bank liabilities represented as tokens on a DLT — they carry the same credit risk as a bank deposit. <strong>CBDCs</strong> are central bank liabilities — risk-free in the sense that the central bank cannot default in its own currency. This difference has profound implications for systemic risk and financial stability.</p>
+
+    <h3>Comparison Table</h3>
+    <div class="table-wrap"><table><thead><tr><th>Feature</th><th>Tokenised Deposit</th><th>Wholesale CBDC</th><th>Retail CBDC</th></tr></thead><tbody>
+      <tr><td><strong>Issuer</strong></td><td>Commercial Bank</td><td>Central Bank</td><td>Central Bank</td></tr>
+      <tr><td><strong>Liability</strong></td><td>Bank liability</td><td>Central bank liability</td><td>Central bank liability</td></tr>
+      <tr><td><strong>Risk</strong></td><td>Subject to bank default</td><td>Risk-free (CB)</td><td>Risk-free (CB)</td></tr>
+      <tr><td><strong>Example</strong></td><td>JPM Coin, HSBC Orion</td><td>Project Jura wCBDC</td><td>e-CNY, Digital Euro</td></tr>
+      <tr><td><strong>Interoperability</strong></td><td>Bank-specific</td><td>Cross-bank (if common platform)</td><td>Universal</td></tr>
+      <tr><td><strong>DLT basis</strong></td><td>Permissioned (Quorum/Corda)</td><td>Varies</td><td>Varies</td></tr>
+    </tbody></table></div>
+
+    <h3>JPM Coin — Case Study</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>What is JPM Coin?</h4><p>Launched in 2019, JPM Coin is a <strong>tokenised deposit</strong> running on J.P. Morgan's proprietary permissioned blockchain platform <strong>Onyx</strong>, built on Quorum (an enterprise Ethereum fork). Each JPM Coin represents a claim of one US dollar held at JP Morgan Bank — it is not a cryptocurrency and it is not a CBDC.</p></div>
+      <div class="info-card"><div class="ic-icon">🔄</div><h4>Use Cases</h4><p>JPM Coin is used for: <strong>intraday USD transfers</strong> between institutional clients of JP Morgan; <strong>cross-border payments</strong> settling on the Onyx platform; and <strong>24/7 settlement</strong>, giving clients access to dollar liquidity outside Fedwire's business hours (08:30–18:30 ET). This addresses the operational window gap in US dollar settlement.</p></div>
+      <div class="info-card"><div class="ic-icon">⚠️</div><h4>NOT a CBDC</h4><p>JPM Coin is a <strong>commercial bank liability</strong> — it represents a deposit claim on JP Morgan, not on the Federal Reserve. If JP Morgan were to fail, JPM Coin holders would be unsecured creditors. CBDC holders, by contrast, hold claims directly on the central bank. This distinction matters for systemic risk analysis and regulatory treatment.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>HSBC Orion</h4><p>HSBC's <strong>Orion platform</strong> is a comparable initiative — a tokenised deposit and digital asset issuance platform used for tokenised bond issuance and settlement. Like JPM Coin, it operates on a permissioned DLT and represents a commercial bank liability, not central bank money.</p></div>
+    </div>
+    <div class="highlight-box purple"><strong>Key Insight for Practitioners:</strong> The emergence of tokenised deposits by major commercial banks represents a pragmatic, near-term path to blockchain-based settlement — without waiting for central bank CBDC launches. However, they fragment liquidity across bank-specific platforms and do not eliminate the credit risk of commercial bank money. The long-term vision of the BIS and central banks is for wCBDC to provide a risk-free "settlement asset" at the core of tokenised financial markets.</div>
+  </div>
+
+  <div class="topic-section fade-in">
     <h2><span class="t-num">13.4</span> Smart Contracts</h2>
     <p>A <strong>smart contract</strong> is a self-executing programme stored on a blockchain that automatically enforces and executes the terms of an agreement when pre-defined conditions are met — without the need for intermediaries. The concept was first described by Nick Szabo in 1994 and practically realised with Ethereum's launch in 2015. Smart contracts are written in programming languages like <strong>Solidity</strong> (Ethereum) or <strong>Kotlin/Java</strong> (Corda) and run on the blockchain's virtual machine.</p>
     <div class="cards-grid">
@@ -88,6 +140,52 @@
       <li><strong>Legal Enforceability:</strong> Smart contract code execution and legal contract obligations may not align. Most jurisdictions are still developing frameworks for smart contract legal recognition.</li>
       <li><strong>Scalability:</strong> Complex smart contracts consume significant "gas" (computational cost) on public blockchains, making them expensive for high-frequency use cases.</li>
     </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.4b</span> Smart Contracts — Legal Framework</h2>
+    <p>The legal status of smart contracts is one of the most important unresolved questions in financial law. While code can automatically execute a payment, whether that execution constitutes — or replaces — a legally binding contract under common law or civil law systems requires careful analysis.</p>
+
+    <h3>UK Law Commission — Digital Assets 2023</h3>
+    <p>The <strong>UK Law Commission's 2023 report on Digital Assets</strong> provided a landmark analysis. Its key finding: smart contracts <strong>can</strong> form legally binding contracts under English law, provided they meet the standard requirements for contract formation:</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🤝</div><h4>Offer &amp; Acceptance</h4><p>The interaction between parties deploying and invoking a smart contract can constitute offer and acceptance — but only if there is demonstrable mutual assent. Code execution alone may not establish this if the parties did not intend to create legal relations.</p></div>
+      <div class="info-card"><div class="ic-icon">💰</div><h4>Consideration</h4><p>The exchange of tokens or digital assets can constitute consideration, satisfying this contract formation requirement. However, purely automated value transfers without clear party intent may raise questions about whether consideration flows in a legally meaningful sense.</p></div>
+      <div class="info-card"><div class="ic-icon">🧠</div><h4>Intention to Create Legal Relations</h4><p>This is the most contested element. Deploying a smart contract on a public blockchain may not, by itself, demonstrate the parties intended to create legally enforceable obligations — particularly where the parties are pseudonymous.</p></div>
+      <div class="info-card"><div class="ic-icon">⚙️</div><h4>New Category of Property</h4><p>The Law Commission also recommended recognising digital assets as a <strong>third category of personal property</strong> under English law (beyond "things in possession" and "things in action") — significant for establishing rights in crypto-assets and tokenised securities.</p></div>
+    </div>
+
+    <h3>Key Legal Uncertainties</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Jurisdiction</h4><p>A smart contract deployed on a public, global blockchain has no domicile. Which country's courts have jurisdiction? Which country's law governs the contract? The answers are unclear, particularly for disputes between parties in different jurisdictions interacting with the same contract. Traditional conflict-of-laws rules were not designed for stateless, borderless code.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Immutability vs Contract Amendment</h4><p>Contract law generally permits parties to mutually agree to amend or terminate an agreement. Blockchain immutability means a deployed smart contract cannot be modified — the only recourse is deploying a new contract (if the original allows upgrade logic) or migrating state. This tension between legal flexibility and technical permanence has no clean resolution.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Mistake and Frustration</h4><p>Common law allows a contract to be unwound if it was entered under a fundamental mistake, or if subsequent events make performance impossible (frustration). A blockchain does not recognise these doctrines — if a smart contract executes erroneously, the transaction is permanent. This creates a gap between legal remedies and technical reality.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Consumer Protection</h4><p>Automated, irreversible execution may prevent consumers from exercising statutory rights — such as the right to cancel, chargeback, or seek redress. Consumer protection law typically requires the ability to reverse transactions or pursue the contracting party; this is fundamentally at odds with blockchain finality.</p></div></div>
+    </div>
+
+    <h3>ISDA Common Domain Model (CDM)</h3>
+    <p>The <strong>International Swaps and Derivatives Association (ISDA)</strong> has developed the <strong>Common Domain Model (CDM)</strong> — an initiative to standardise how derivatives contracts are represented in machine-readable, executable code, enabling smart contract execution of over-the-counter (OTC) derivatives.</p>
+    <div class="two-col">
+      <div>
+        <h4>What CDM Does</h4>
+        <ul>
+          <li>Defines a <strong>common digital representation</strong> of trade events: new trade, amendment, termination, novation, reset, and settlement</li>
+          <li>Provides a <strong>standardised data model</strong> — the same fields, same logic, same terminology across all market participants</li>
+          <li>Published as open-source code (Rosetta DSL / Java/Python) so any firm can implement it</li>
+          <li>Endorsed and maintained by ISDA, ICMA, ISLA, and the CDM Steering Working Group</li>
+        </ul>
+      </div>
+      <div>
+        <h4>CDM in Smart Contracts</h4>
+        <ul>
+          <li>Smart contracts using CDM can <strong>auto-calculate and execute margin calls</strong>, periodic payments (fixed/floating coupons), and final settlements without manual intervention</li>
+          <li>Reduces <strong>operational risk</strong> from manual processing of complex derivatives — a major source of trade failures and reconciliation breaks</li>
+          <li>Enables <strong>atomic DvP settlement</strong> of derivatives: cash payment and securities delivery triggered simultaneously by the same smart contract</li>
+          <li>Being used in Project Guardian (MAS) and other tokenised derivatives pilots</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box green"><strong>CDM Significance:</strong> The derivatives market processes hundreds of trillions in notional value annually, largely through manual and semi-manual processes. If CDM enables widespread smart contract automation of OTC derivatives lifecycle events, the reduction in operational cost, settlement failures, and counterparty risk could be one of the largest efficiency gains in financial market history.</div>
   </div>
 
   <div class="topic-section fade-in">
@@ -156,6 +254,119 @@
       <li><strong>Cybersecurity:</strong> A central bank CBDC platform is a high-value target — a breach could undermine monetary sovereignty</li>
       <li><strong>Monetary Policy Implications:</strong> Interest-bearing CBDC competes with bank deposits, affecting monetary transmission mechanisms</li>
     </ul>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.7b</span> FATF Travel Rule for Crypto</h2>
+    <p>The <strong>FATF (Financial Action Task Force) Travel Rule</strong> — originally Recommendation 16 for wire transfers — was extended to virtual assets in 2019. It is now one of the most operationally challenging compliance requirements facing the crypto industry, because crypto's pseudonymous architecture was not designed to carry the counterparty information that the Travel Rule demands.</p>
+
+    <h3>Core Requirements</h3>
+    <div class="highlight-box">
+      <strong>FATF Recommendation 16 — Crypto Application:</strong> Virtual Asset Service Providers (VASPs) — including crypto exchanges, custodial wallet providers, and digital asset brokers — must collect and transmit originator and beneficiary information for transfers above <strong>USD/EUR 1,000</strong> (the "de minimis" threshold used by most jurisdictions).
+    </div>
+    <h3>Required Data Elements</h3>
+    <div class="table-wrap"><table><thead><tr><th>Party</th><th>Required Information</th></tr></thead><tbody>
+      <tr><td><strong>Originator</strong></td><td>Full legal name; account number or wallet address; physical address, national identity number, customer identification number, or date and place of birth</td></tr>
+      <tr><td><strong>Beneficiary</strong></td><td>Full legal name; wallet address or account number at the receiving VASP</td></tr>
+    </tbody></table></div>
+    <div class="two-col">
+      <div>
+        <h4>Scope</h4>
+        <ul>
+          <li>Applies to transfers <strong>between VASPs</strong> (exchange-to-exchange, custodial wallet-to-custodial wallet)</li>
+          <li>Does <strong>NOT apply</strong> to non-custodial (self-hosted) wallet transfers — where there is no intermediary VASP to transmit the information</li>
+          <li>The "sunrise problem": compliance is only meaningful if both the sending and receiving VASP have implemented Travel Rule solutions — partial adoption creates gaps</li>
+        </ul>
+      </div>
+      <div>
+        <h4>TRISA Protocol</h4>
+        <p><strong>TRISA (Travel Rule Information Sharing Architecture)</strong> is an open-source protocol developed specifically for VASP-to-VASP Travel Rule compliance. It provides a secure, peer-to-peer messaging framework for exchanging originator and beneficiary data before a blockchain transaction is broadcast. TRISA uses PKI (public key infrastructure) for VASP identity verification and end-to-end encryption for data privacy. Adopted by major crypto exchanges globally.</p>
+      </div>
+    </div>
+
+    <h3>Regulatory Landscape</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🇪🇺</div><h4>EU — MiCA &amp; TFR</h4><p>The EU's <strong>Transfer of Funds Regulation (TFR)</strong>, effective 2024, mandates Travel Rule compliance for <strong>all crypto transfers above €0</strong> — eliminating the de minimis threshold entirely. This is the strictest implementation globally, applying to even small transfers between VASPs within the EU.</p></div>
+      <div class="info-card"><div class="ic-icon">🇺🇸</div><h4>US — FinCEN</h4><p>US FinCEN has proposed extending the Travel Rule to crypto transfers. Under existing Bank Secrecy Act rules, the Travel Rule already applies to crypto MSBs (Money Services Businesses). FinCEN has proposed lowering the threshold and extending requirements to non-custodial wallet transfers — though finalisation remains pending.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>VASP Identification Problem</h4><p>A fundamental challenge: unlike SWIFT, where a <strong>BIC (Bank Identifier Code)</strong> uniquely identifies any bank globally, there is no universal identifier for VASPs. A receiving wallet address does not tell the sending VASP which VASP (if any) is the custodian. Interoperability between different Travel Rule solutions (TRISA, OpenVASP, Sygna, VerifyVASP) is still developing.</p></div>
+      <div class="info-card"><div class="ic-icon">🔒</div><h4>Non-Custodial Wallets</h4><p>When a user transfers crypto from a VASP to their own non-custodial (self-hosted) wallet, the Travel Rule cannot be enforced — there is no counterparty VASP to receive the data. Regulators are debating how to handle this gap; some jurisdictions require VASPs to verify the ownership of the unhosted wallet before allowing the transfer.</p></div>
+    </div>
+    <div class="highlight-box gold"><strong>Systemic Significance:</strong> The Travel Rule for crypto is the AML framework's attempt to extend the "follow the money" principle — which works well in traditional banking via correspondent relationships — to a borderless, pseudonymous asset class. The technical and governance challenges of doing so at global scale remain substantial. The FATF's June 2023 review found that most jurisdictions have still not fully implemented the crypto Travel Rule.</div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.7c</span> mBridge Ledger — Technical Detail</h2>
+    <p>mBridge is the most advanced multi-CBDC cross-border payment project globally. Understanding its technical architecture is essential for practitioners working in cross-border payments, central bank digital currency policy, or blockchain infrastructure.</p>
+
+    <h3>Technical Architecture</h3>
+    <div class="two-col">
+      <div>
+        <h4>mBridge Ledger — Custom DLT</h4>
+        <p>The <strong>mBridge Ledger</strong> is a <strong>purpose-built distributed ledger</strong> — it is NOT based on Ethereum, Hyperledger Fabric, R3 Corda, or any commercial DLT platform. It was custom-designed by the <strong>BIS Innovation Hub</strong> in collaboration with the PBOC (China), HKMA (Hong Kong), Bank of Thailand, and the Central Bank of the UAE (CBUAE). This bespoke approach was chosen to give participating central banks maximum control over the architecture, governance, and performance parameters.</p>
+        <ul>
+          <li><strong>Consensus mechanism:</strong> PBFT-like (Practical Byzantine Fault Tolerance) consensus — each participating central bank runs a validator node; transactions are confirmed when a supermajority of nodes agree</li>
+          <li><strong>Permissioned:</strong> Only participating central banks (and authorised commercial banks) can join the network</li>
+          <li><strong>Smart contract layer:</strong> Automates PvP FX settlement and liquidity management across currencies</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Participants and Timeline</h4>
+        <div class="highlight-box purple">
+          <strong>Founding participants:</strong> PBOC (China), HKMA (Hong Kong), Bank of Thailand, CBUAE (UAE), BIS Innovation Hub<br/><br/>
+          <strong>2022 pilot:</strong> $22 million in real cross-border trade finance transactions completed between commercial banks in the four jurisdictions — the first multi-CBDC platform to complete real-value transactions<br/><br/>
+          <strong>2024:</strong> <strong>Saudi Arabia joined as a full participant</strong> (Saudi Central Bank / SAMA), adding a fifth major currency to the platform<br/><br/>
+          <strong>June 2024:</strong> mBridge declared <strong>Minimum Viable Product (MVP) ready</strong> — meaning the platform can process real commercial transactions, not just pilots. The MVP milestone is significant: it marks the transition from proof-of-concept to operational infrastructure.
+        </div>
+      </div>
+    </div>
+
+    <h3>Geopolitical Dimension</h3>
+    <div class="highlight-box gold"><strong>Outside Western Financial Infrastructure:</strong> mBridge is entirely built, governed, and operated by its member central banks — with no involvement from SWIFT, the Federal Reserve, ECB, or Western financial institutions. For participating countries (China, UAE, Thailand, Saudi Arabia, Hong Kong), mBridge provides an alternative cross-border settlement infrastructure that is outside the reach of Western sanctions or correspondent banking restrictions. This geopolitical dimension has attracted significant attention from policymakers in Western governments, who view mBridge as potentially enabling sanctions evasion. The BIS has emphasised that mBridge is designed for legitimate trade finance, not sanctions circumvention — but the architecture makes enforcement of Western sanctions technically impossible on the platform.</div>
+
+    <h3>mBridge vs Correspondent Banking — Comparison</h3>
+    <div class="table-wrap"><table><thead><tr><th>Feature</th><th>Correspondent Banking (SWIFT)</th><th>mBridge</th></tr></thead><tbody>
+      <tr><td><strong>Settlement time</strong></td><td>1–5 business days</td><td>Seconds</td></tr>
+      <tr><td><strong>Cost</strong></td><td>$25–$35 per transaction + FX spread</td><td>Near-zero (direct)</td></tr>
+      <tr><td><strong>Pre-funded accounts</strong></td><td>Required (nostro/vostro)</td><td>Not required</td></tr>
+      <tr><td><strong>Settlement risk</strong></td><td>Herstatt risk on FX legs</td><td>Atomic PvP — none</td></tr>
+      <tr><td><strong>Operating hours</strong></td><td>Business hours only</td><td>24/7</td></tr>
+      <tr><td><strong>Governance</strong></td><td>SWIFT (cooperative, Belgium)</td><td>Participating central banks</td></tr>
+      <tr><td><strong>Sanctions reach</strong></td><td>Subject to US/EU jurisdiction</td><td>Outside Western jurisdiction</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">13.7d</span> SWIFT and Blockchain Interoperability — Chainlink CCIP</h2>
+    <p>Rather than being displaced by tokenised asset platforms, SWIFT has adopted a strategy of <strong>interoperability</strong> — positioning itself as the universal messaging layer that connects disparate blockchain networks, just as it connects disparate banking systems today. The partnership with Chainlink on CCIP is the most concrete demonstration of this strategy.</p>
+
+    <h3>Chainlink CCIP — What It Is</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Chainlink CCIP (Cross-Chain Interoperability Protocol)</strong> is a messaging and token transfer standard that enables data and assets to move between different, incompatible blockchain networks. In the fragmented blockchain landscape — where Ethereum, Avalanche, Polygon, Solana, and dozens of other chains each operate independently — CCIP provides a common translation and routing layer.</p>
+        <p>CCIP uses Chainlink's decentralised oracle network as the off-chain computation and attestation layer, providing cryptographic guarantees that a message received on one chain faithfully represents what was sent from another chain.</p>
+      </div>
+      <div>
+        <h4>The Core Problem CCIP Solves</h4>
+        <div class="highlight-box purple">A tokenised bond on Ethereum cannot natively interact with a tokenised deposit on Avalanche. A smart contract on Polygon cannot atomically settle against a wCBDC on a permissioned fabric chain. Without an interoperability layer, each blockchain is an island — defeating the purpose of a unified tokenised financial ecosystem. CCIP provides the bridges between these islands.</div>
+      </div>
+    </div>
+
+    <h3>SWIFT-Chainlink Pilot (2023)</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>SWIFT Message Sent</h4><p>A financial institution sends a standard <strong>SWIFT MT/MX payment message</strong> through the existing SWIFT network — exactly as it would for any cross-border payment today. No change to the sending institution's existing systems or processes.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>CCIP Translation Layer</h4><p>The SWIFT message is received by a CCIP-enabled gateway. <strong>Chainlink CCIP translates</strong> the SWIFT message into on-chain instructions, identifying the target blockchain (Ethereum, Avalanche, or Polygon in the pilot), the token type, the recipient address, and the amount.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>On-Chain Execution</h4><p>CCIP executes the corresponding <strong>on-chain token transfer</strong> on the target blockchain. The receiving institution's tokenised asset is credited without the sending bank needing to know which blockchain the asset lives on, or having any direct blockchain integration.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Confirmation Back to SWIFT</h4><p>Confirmation of the on-chain execution is relayed back through SWIFT, completing the end-to-end audit trail. From the sending institution's perspective, the transaction looks like a conventional SWIFT payment — but the settlement occurred on-chain.</p></div></div>
+    </div>
+
+    <h3>Strategic Significance</h3>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Lowering Barriers to DLT Adoption</h4><p>Banks with existing SWIFT integration do not need to build new blockchain interfaces for each tokenised asset platform. SWIFT + CCIP acts as a universal adapter — dramatically reducing the cost and complexity of connecting to the tokenised asset ecosystem.</p></div>
+      <div class="info-card"><div class="ic-icon">🔀</div><h4>SWIFT as Orchestration Layer</h4><p>SWIFT's vision is to be the <strong>messaging and orchestration layer</strong> for tokenised assets — not replaced by blockchain, but evolved to sit above it. This mirrors how SWIFT already sits above individual RTGS systems — it does not hold funds, it coordinates their movement.</p></div>
+      <div class="info-card"><div class="ic-icon">⚡</div><h4>Multi-Chain Reach</h4><p>A single SWIFT connection, combined with CCIP, could give a bank access to tokenised assets on any CCIP-connected blockchain — without maintaining separate integrations. In the pilot, SWIFT demonstrated connectivity to Ethereum, Avalanche, and Polygon from a single SWIFT API call.</p></div>
+      <div class="info-card"><div class="ic-icon">📈</div><h4>Tokenised Asset Market Growth</h4><p>The global tokenised asset market is projected to reach $10–16 trillion by 2030 (BCG/ADDX estimate). As bonds, equities, funds, and real estate are tokenised on multiple chains, the need for interoperability infrastructure becomes critical — and SWIFT's 11,000+ institution network gives it a structural advantage as the orchestration layer.</p></div>
+    </div>
+    <div class="highlight-box"><strong>Interoperability Architecture — The Bigger Picture:</strong> The SWIFT-CCIP pilot is one piece of a broader interoperability puzzle. Other components include: BIS's <strong>Nexus</strong> model (connecting instant payment systems), the <strong>Agora project</strong> (BIS + 7 central banks testing tokenised deposits and wCBDC on a unified ledger), and individual bank initiatives. The challenge is not building any one bridge — it is building governance frameworks that make multiple bridges work together in a standardised, legally recognised way across jurisdictions.</div>
   </div>
 
   <div class="module-nav">

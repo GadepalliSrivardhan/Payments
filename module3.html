@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="styles.css"/></head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">03</div><div class="module-tag">Module 3</div><h1>CLS Bank Operations — Continuous Linked Settlement</h1><p>How CLS Bank eliminates foreign exchange settlement risk, the history of Herstatt Risk, and the mechanics of CLS transaction processing.</p><div class="module-tags"><span>CLS Bank</span><span>Herstatt Risk</span><span>PvP Settlement</span><span>FX Settlement</span><span>Multi-currency</span></div></div></div>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">03</div><div class="module-tag">Module 3</div><h1>CLS Bank Operations — Continuous Linked Settlement</h1><p>How CLS Bank eliminates foreign exchange settlement risk, the history of Herstatt Risk, and the complete mechanics of CLS transaction processing, default management, and messaging.</p><div class="module-tags"><span>CLS Bank</span><span>Herstatt Risk</span><span>PvP Settlement</span><span>FX Settlement</span><span>Multi-currency</span><span>Default Management</span></div></div></div>
 <section class="section"><div class="container">
 
   <div class="topic-section fade-in">
@@ -13,11 +13,18 @@
     <p>On <strong>26 June 1974</strong>, German banking regulators closed <strong>Bankhaus Herstatt</strong>, a mid-sized German bank based in Cologne, after discovering it had accumulated enormous speculative FX losses. The timing of the closure was critical and became a defining moment in payment system history.</p>
     <p>German banks had already irrevocably paid Deutsche Marks (DEM) to Herstatt during Frankfurt banking hours. However, the closure happened <strong>after Frankfurt closed but before New York opened</strong>. The US counterparties — Chase Manhattan and others — were expecting to receive their USD legs of the FX trades. When Herstatt's New York correspondent, Chase Manhattan, was instructed to suspend payments, those counterparties lost their USD legs entirely. They had delivered DEM but received no USD in return.</p>
     <div class="highlight-box gold"><strong>The Core Problem:</strong> In an FX trade, two currencies settle in two different countries, in two different time zones, at two different times. This creates a window of exposure where one party has irrevocably paid but has not yet received. This is called <strong>principal risk</strong> — the entire value of the trade is at risk, not just the profit.</div>
-    <p>The Herstatt failure caused widespread disruption in the interbank market and led directly to the creation of the Basel Committee on Banking Supervision. It also galvanised the industry to find a permanent solution to FX settlement risk — a problem that remained unaddressed for nearly three more decades, until CLS Bank was established in 2002.</p>
+
+    <h3>Principal Risk vs Replacement Cost Risk</h3>
+    <div class="two-col">
+      <div class="highlight-box"><strong>Principal Risk</strong><br/><br/>The risk of losing the FULL VALUE of the transaction — the entire amount of currency delivered. In the Herstatt case, US counterparties lost 100% of the USD they were owed. This is the risk that CLS was specifically created to eliminate through PvP settlement.</div>
+      <div class="highlight-box purple"><strong>Replacement Cost Risk</strong><br/><br/>The risk of losing only the profit/gain — the cost to replace the trade at current market prices if the counterparty defaults before settlement date. This is the much smaller pre-settlement exposure that remains even with CLS (since it arises before settlement, not during it).</div>
+    </div>
+
+    <p>The Herstatt failure caused widespread disruption in the interbank market, triggered a global liquidity crisis in the USD clearing system, and led directly to the creation of the Basel Committee on Banking Supervision. It also galvanised the industry to find a permanent solution to FX settlement risk — a problem that remained unaddressed for nearly three more decades, until CLS Bank was established in 2002.</p>
     <div class="table-wrap"><table><thead><tr><th>Time Zone</th><th>Event</th><th>Risk</th></tr></thead><tbody>
       <tr><td>Frankfurt morning</td><td>German counterparties pay DEM to Herstatt</td><td>DEM irrevocably delivered</td></tr>
-      <tr><td>Afternoon Frankfurt / Pre-open New York</td><td>Herstatt closed by BaFin</td><td>USD payments suspended</td></tr>
-      <tr><td>New York opens</td><td>USD payments never made</td><td>Counterparties lose entire principal</td></tr>
+      <tr><td>Afternoon Frankfurt / Pre-open New York</td><td>Herstatt closed by German regulators</td><td>USD payments suspended</td></tr>
+      <tr><td>New York opens</td><td>USD payments never made by Chase Manhattan</td><td>Counterparties lose entire principal</td></tr>
     </tbody></table></div>
   </div>
 
@@ -31,6 +38,12 @@
       <div class="info-card"><div class="ic-icon">📊</div><h4>Daily Volume</h4><p>Over $6 trillion settled daily across FX spot, forwards, swaps, options, and non-deliverable forwards (NDFs).</p></div>
       <div class="info-card"><div class="ic-icon">🔒</div><h4>Risk Elimination</h4><p>Eliminates principal risk through Payment vs Payment (PvP). Neither leg settles unless both legs settle simultaneously.</p></div>
     </div>
+
+    <h3>Settlement Members vs Third-Party Participants</h3>
+    <div class="two-col">
+      <div class="highlight-box"><strong>Settlement Members (~75)</strong><br/><br/>Major global banks (JP Morgan, Citibank, Deutsche Bank, HSBC, BNP Paribas, etc.) that connect directly to CLS Bank. Settlement members hold accounts at CLS in all 18 currencies, submit payment instructions directly to CLS via SWIFT, fund their own net short positions each day, and are responsible for their clients' (third-party participants') obligations to CLS.</div>
+      <div class="highlight-box purple"><strong>Third-Party Participants (25,000+)</strong><br/><br/>Corporates, hedge funds, asset managers, and smaller banks that access CLS indirectly via a settlement member. The settlement member acts as their agent — submitting their trades to CLS, funding their pay-in obligations, and receiving their pay-outs. Third-party participants never interact directly with CLS.</div>
+    </div>
   </div>
 
   <div class="topic-section fade-in">
@@ -39,9 +52,9 @@
     <h3>The CLS Settlement Process — Step by Step</h3>
     <div class="flow-steps">
       <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Trade Matching</h4><p>Two settlement members (or their clients) execute an FX trade. Both parties submit the trade details to CLS (via SWIFT) independently. CLS matches the two submissions — confirming the amount, currency pair, settlement date, and counterparties match.</p></div></div>
-      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Position Calculation (00:00–06:30 CET)</h4><p>CLS calculates each member's net funding obligation for the day in each currency. Due to multilateral netting across all matched trades, the net amounts are a small fraction of the gross. Funding efficiency typically reduces gross flows by 96%+.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Position Calculation (00:00–06:30 CET)</h4><p>CLS calculates each member's net funding obligation for the day in each currency. Due to multilateral netting across all matched trades, the net amounts are a small fraction of the gross. Funding efficiency typically reduces gross flows by <strong>96%+</strong> — $6T gross settles with only ~$200–300B in net funding.</p></div></div>
       <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Pay-In Window (07:00–12:00 CET)</h4><p>Members must fund their net short positions by paying into CLS's accounts at the respective central banks. Pay-in schedules are staggered across currencies. If a member fails to fund, CLS can reschedule or exclude their trades.</p></div></div>
-      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Settlement (Continuous)</h4><p>As funding arrives, CLS settles trades on a PvP basis — simultaneously crediting the buyer and debiting the seller in both currencies at the same moment. No party can receive without simultaneously delivering.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Settlement (Continuous)</h4><p>As funding arrives, CLS settles trades on a PvP basis — simultaneously crediting the buyer and debiting the seller in both currencies at the same moment. No party can receive without simultaneously delivering. The <strong>ratchet approach</strong> ensures pay-ins always exceed pay-outs throughout the day.</p></div></div>
       <div class="flow-step"><div class="step-num">5</div><div class="step-body"><h4>Pay-Out (After Settlement)</h4><p>After all trades are settled, CLS pays out net long positions back to members. The day ends with CLS holding zero balances — all positions flatten out.</p></div></div>
     </div>
     <div class="highlight-box green"><strong>Key Insight:</strong> At no point does CLS extend credit. Members must fund their short positions before CLS releases any pay-outs. This "ratchet" approach — where pay-ins exceed pay-outs throughout the day — ensures CLS always has sufficient funds to complete settlement.</div>
@@ -52,13 +65,35 @@
     <h3>Eligible Products</h3>
     <p>CLS settles: <strong>FX Spot</strong> (T+2), <strong>FX Forwards</strong> (forward value date), <strong>FX Swaps</strong> (near and far legs), <strong>FX Options</strong> (premium and exercise), and <strong>Non-Deliverable Forwards (NDFs)</strong> for certain currency pairs where delivery of the restricted currency is not possible. NDFs are settled in a deliverable currency (typically USD).</p>
     <h3>SWIFT Messaging in CLS</h3>
-    <p>CLS members submit payment instructions to CLS using SWIFT messages. The primary message type used is <strong>MT 304</strong> (Advice/Instruction of a Third Party Deal) for FX confirmation. Settlement instructions flow via SWIFT FIN. In the ISO 20022 migration, CLS has adopted fxtr (FX Trade) message types.</p>
+    <p>CLS members submit payment instructions to CLS using SWIFT messages. The primary message type used is <strong>MT 304</strong> (Advice/Instruction of a Third Party Deal) for FX confirmation. Settlement instructions flow via SWIFT FIN. In the ISO 20022 migration, CLS has adopted fxtr (FX Trade) message types — <strong>fxtr.014</strong> (FX Trade Confirmation) and <strong>fxtr.016</strong> (FX Trade Status). Each member connects to CLS via their SWIFT BIC. CLS Bank holds a corresponding account at each of the 18 central banks, creating the infrastructure for simultaneous multi-currency settlement.</p>
     <h3>Benefits of CLS</h3>
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">✅</div><h4>Eliminates Principal Risk</h4><p>PvP means neither party can lose the full principal of an FX trade. The maximum exposure is eliminated.</p></div>
-      <div class="info-card"><div class="ic-icon">💧</div><h4>Liquidity Efficiency</h4><p>Multilateral netting reduces gross settlement flows by ~96%. $6T gross settles with only ~$200-300B in net funding.</p></div>
+      <div class="info-card"><div class="ic-icon">✅</div><h4>Eliminates Principal Risk</h4><p>PvP means neither party can lose the full principal of an FX trade. The maximum exposure is eliminated entirely — only replacement cost risk remains.</p></div>
+      <div class="info-card"><div class="ic-icon">💧</div><h4>Liquidity Efficiency</h4><p>Multilateral netting reduces gross settlement flows by ~96%. $6T gross settles with only ~$200–300B in net funding — freeing enormous bank liquidity.</p></div>
       <div class="info-card"><div class="ic-icon">🌐</div><h4>Central Bank Money</h4><p>Settlement occurs in central bank money at each respective central bank — the ultimate risk-free settlement asset.</p></div>
       <div class="info-card"><div class="ic-icon">📋</div><h4>Regulatory Capital Relief</h4><p>CLS-settled trades attract lower regulatory capital requirements under Basel III due to reduced settlement risk.</p></div>
+    </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">3.5</span> CLS Default Management Waterfall</h2>
+    <p>In the event that a CLS settlement member fails to meet its pay-in obligation, CLS has a structured default management framework to protect remaining participants and ensure the settlement day completes.</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Trade Rescheduling</h4><p>CLS's first response to a funding failure is to <strong>reschedule</strong> the failing member's trades — removing them from the current settlement cycle and resetting them for settlement the following day, or excluding them entirely. This protects the rest of the system without triggering the capital waterfall in most cases.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Defaulter's Prefunded Balances</h4><p>The defaulting member's existing balances held at CLS across all 18 currencies are consumed first. CLS applies these to cover any shortfall from trades that cannot be rescheduled.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>CLS's Own Capital</h4><p>CLS Bank maintains its own capital reserves available to absorb losses exceeding the defaulter's available balances. CLS is specifically capitalised to withstand the default of its largest settlement member.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Loss Sharing Among Surviving Members</h4><p>Remaining losses are allocated pro-rata among the surviving settlement members per the pre-agreed loss-sharing arrangement in the CLS rulebook. Each member knows their maximum potential loss-sharing exposure before joining CLS.</p></div></div>
+    </div>
+  </div>
+
+  <div class="topic-section fade-in">
+    <h2><span class="t-num">3.6</span> Residual FX Risk Outside CLS</h2>
+    <p>Despite CLS's success, a significant portion of global FX activity still settles outside CLS, leaving residual settlement risk in the market.</p>
+    <div class="cards-grid">
+      <div class="info-card"><div class="ic-icon">🌍</div><h4>Non-CLS Currencies</h4><p>Only 18 currencies are eligible. Major emerging market currencies — Brazilian Real (BRL), Indian Rupee (INR), Russian Ruble (RUB), Turkish Lira (TRY) — are not eligible. FX trades in these currencies must settle bilaterally with full Herstatt risk.</p></div>
+      <div class="info-card"><div class="ic-icon">🏢</div><h4>Non-CLS Participants</h4><p>Many regional banks, corporates, and non-bank financial institutions trade FX but settle bilaterally outside CLS, not being settlement members or third-party participants.</p></div>
+      <div class="info-card"><div class="ic-icon">📄</div><h4>NDF Residual Risk</h4><p>NDFs are settled in USD via CLS — the payment obligation is covered. However, the underlying currency exposure is not eliminated; only the USD payment settlement risk is addressed.</p></div>
+      <div class="info-card"><div class="ic-icon">📉</div><h4>BIS Estimates</h4><p>BIS research estimates ~1/3 of daily FX turnover (~$2–2.5 trillion) still settles outside CLS, remaining exposed to Herstatt risk. Expanding CLS coverage is a BIS FSB priority.</p></div>
     </div>
   </div>
 

@@ -5,92 +5,112 @@
 <link rel="stylesheet" href="styles.css"/></head>
 <body>
 <nav class="navbar" id="navbar"><div class="nav-inner"><a href="index.html" class="nav-logo"><span class="logo-icon">⬡</span>PaymentsAcademy</a><button class="hamburger" id="hamburger">&#9776;</button><ul class="nav-links" id="nav-links"><li><a href="index.html">Home</a></li><li><a href="modules.html" class="active">Modules</a></li></ul></div></nav>
-<div class="module-hero"><div class="module-hero-inner"><div class="module-num">12</div><div class="module-tag">Module 12</div><h1>China FCDPS, CIPS &amp; HKMA CHATS</h1><p>China's domestic and cross-border payment infrastructure — CNAPS, CDFCPS for foreign currency interbank payments, CIPS for RMB internationalisation, and Hong Kong's CHATS multi-currency RTGS system.</p><div class="module-tags"><span>CIPS</span><span>CDFCPS</span><span>CNAPS</span><span>CHATS</span><span>RMB</span><span>HKMA</span><span>PBOC</span><span>Cross-Border</span><span>HVPS+</span></div></div></div>
+<div class="module-hero"><div class="module-hero-inner"><div class="module-num">12</div><div class="module-tag">Module 12</div><h1>China FCDPS, CIPS &amp; HKMA CHATS</h1><p>China's domestic and cross-border payment infrastructure — CNAPS/HVPS, BEPS, CDFCPS for foreign currency settlement, CIPS for RMB internationalisation, and Hong Kong's unique multi-currency CHATS RTGS system.</p><div class="module-tags"><span>CIPS</span><span>CDFCPS</span><span>CNAPS</span><span>HVPS</span><span>BEPS</span><span>CHATS</span><span>RMB</span><span>HKMA</span><span>PBOC</span></div></div></div>
 <section class="section"><div class="container">
 
   <div class="topic-section fade-in">
-    <h2><span class="t-num">12.1</span> China Payments Overview</h2>
-    <p>China operates one of the world's most sophisticated and highest-volume payment ecosystems. The <strong>People's Bank of China (PBOC)</strong> is the central bank and primary regulator, overseeing both domestic payment systems and the cross-border RMB infrastructure. China's payment systems are structured in layers:</p>
+    <h2><span class="t-num">12.1</span> China Domestic Payment Infrastructure — CNAPS, HVPS, BEPS</h2>
+    <p>China operates one of the world's largest and most sophisticated payment ecosystems. The <strong>People's Bank of China (PBOC)</strong> is the central bank and primary regulator, overseeing both domestic payment systems and cross-border RMB infrastructure. The core domestic interbank infrastructure is <strong>CNAPS (China National Advanced Payment System)</strong>.</p>
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">🏛️</div><h4>PBOC — Regulator</h4><p>People's Bank of China oversees all payment systems, issues Payment Business Licences, and operates CNAPS. Sets rules for domestic and cross-border RMB payment systems.</p></div>
-      <div class="info-card"><div class="ic-icon">🔗</div><h4>CNAPS</h4><p>China National Advanced Payment System — the overarching infrastructure comprising HVPS (high-value) and BEPS (batch/retail). Operated by PBOC/CNAPS operations centre.</p></div>
-      <div class="info-card"><div class="ic-icon">💳</div><h4>UnionPay</h4><p>China's domestic card network — mandatory for all bank cards issued in China. Also has international reach. Operated by China UnionPay, a state-backed banking association.</p></div>
-      <div class="info-card"><div class="ic-icon">📱</div><h4>Alipay &amp; WeChat Pay</h4><p>Dominant consumer payment platforms. Regulated since 2016 under PBOC's non-bank payment supervision. Required to hold all client funds in PBOC's Centralised Depository.</p></div>
+      <div class="info-card"><div class="ic-icon">🏛️</div><h4>HVPS — High Value Payment System</h4><p>China's RTGS for large-value and urgent CNY payments. Settles transactions individually and immediately in PBOC reserve accounts. ~1,500 direct participants. Operates 8:30 AM–5:00 PM Beijing time.</p></div>
+      <div class="info-card"><div class="ic-icon">📦</div><h4>BEPS — Bulk Electronic Payment System</h4><p>China's ACH equivalent for retail batch payments. Processes payroll, supplier payments, consumer debits. Three sessions per day. T+0 same-day settlement for most transactions. Covers hundreds of millions of daily transactions.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>IBPS — Internet Banking Payment System</h4><p>Online banking payment infrastructure. Enables real-time retail transfers through internet/mobile banking channels. Widely used by consumers and small businesses for daily payments.</p></div>
+      <div class="info-card"><div class="ic-icon">📱</div><h4>Alipay &amp; WeChat Pay</h4><p>Dominant consumer payment platforms regulated by PBOC. Required to hold all client funds in PBOC's Centralised Depository (since 2017). Processed billions of transactions daily at peak.</p></div>
     </div>
-    <h3>CNAPS Architecture</h3>
-    <p><strong>CNAPS (China National Advanced Payment System)</strong> is the umbrella infrastructure for China's interbank payments. It has two main components: <strong>HVPS (High Value Payment System)</strong> — the RTGS for large-value and urgent CNY payments, processing all transactions individually and immediately; and <strong>BEPS (Bulk Electronic Payment System)</strong> — China's ACH equivalent, processing retail batch payments in scheduled cycles. CNAPS is operated by the PBOC and settles in PBOC reserve accounts. Major Chinese banks are direct participants; smaller banks access via their correspondent banks.</p>
+
+    <h3>HVPS Transaction Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h4>Payment Submission</h4><p>Sending bank submits payment instruction to HVPS via direct PBOC connection (proprietary protocol or CNAPS messaging). Message includes payer/payee details, amount, value date, and purpose code.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h4>Validation</h4><p>HVPS validates: sender authentication, message format compliance, available balance in sending bank's PBOC reserve account, and purpose code validity. Sanctions screening is also applied for applicable transaction types.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-body"><h4>Real-Time Settlement</h4><p>HVPS simultaneously debits the sending bank's PBOC reserve account and credits the receiving bank's PBOC reserve account. Settlement is final and irrevocable — RTGS in central bank money.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h4>Notification and Crediting</h4><p>Both banks receive real-time settlement notifications from HVPS. The receiving bank credits the beneficiary customer's account immediately upon receiving the HVPS credit notification.</p></div></div>
+    </div>
+
+    <h3>Alipay and WeChat Pay — Regulatory Framework</h3>
+    <p>Alipay (Ant Group) and WeChat Pay (Tencent) transformed China's consumer payments but their rapid growth prompted significant regulatory attention from the PBOC.</p>
+    <div class="table-wrap"><table><thead><tr><th>Requirement</th><th>Details</th></tr></thead><tbody>
+      <tr><td><strong>Payment Business Licence</strong></td><td>Mandatory since PBOC's 2010 Payment Services Institutions regulations. All non-bank payment providers must be licensed.</td></tr>
+      <tr><td><strong>Client Fund Segregation</strong></td><td>Since 2017: 100% of client funds must be held in a dedicated PBOC Centralised Depository account — cannot be used for investment or lending. Ended practice of earning interest on float.</td></tr>
+      <tr><td><strong>AML/KYC</strong></td><td>Must implement customer due diligence, transaction monitoring, and report large/suspicious transactions to PBOC's anti-money laundering systems.</td></tr>
+      <tr><td><strong>2021 Regulatory Action</strong></td><td>PBOC and SAMR imposed antitrust fines on Ant Group (Alipay). Ant Group was required to apply for a financial holding company licence, separating its lending and insurance businesses from core payments. Restructuring ongoing.</td></tr>
+    </tbody></table></div>
   </div>
 
   <div class="topic-section fade-in">
     <h2><span class="t-num">12.2</span> CDFCPS — China Domestic Foreign Currency Payment System</h2>
-    <p>The <strong>CDFCPS (China Domestic Foreign Currency Payment System)</strong> — also referred to as <strong>FCDPS</strong> — is operated by the PBOC and enables interbank settlement of foreign currency transactions within China. Before CDFCPS, banks in China had to route domestic foreign currency interbank transfers through overseas correspondent banks, creating inefficiency and delay.</p>
-    <h3>Currencies Supported</h3>
-    <p>CDFCPS supports major foreign currencies used in China's international trade and finance, including:</p>
-    <ul>
-      <li><strong>USD</strong> (US Dollar) — the dominant currency in CDFCPS by volume</li>
-      <li><strong>EUR</strong> (Euro)</li>
-      <li><strong>HKD</strong> (Hong Kong Dollar)</li>
-      <li><strong>JPY</strong> (Japanese Yen)</li>
-      <li><strong>GBP</strong> (British Pound)</li>
-      <li><strong>AUD, CAD, SGD</strong> and other currencies with sufficient transaction volume</li>
-    </ul>
+    <p>The <strong>CDFCPS (China Domestic Foreign Currency Payment System)</strong> — also referred to as FCDPS — is operated by the PBOC and enables interbank settlement of foreign currency transactions <em>within</em> China. Before CDFCPS, banks in China had to route domestic foreign currency interbank transfers through overseas correspondent banks, creating inefficiency, delay, and unnecessary offshore exposure.</p>
     <h3>How CDFCPS Works</h3>
-    <p>CDFCPS connects domestic Chinese banks and enables them to transfer foreign currency funds between their foreign currency reserve accounts held at the PBOC or at designated settlement banks. Settlement is in central bank money (PBOC accounts) in the respective foreign currency. This provides domestic China with an efficient, on-shore settlement mechanism for foreign currency interbank transactions, reducing the need for offshore correspondent arrangements for purely domestic foreign currency transfers.</p>
-    <div class="highlight-box gold"><strong>Significance:</strong> CDFCPS is critical for China's FX trading market — when Chinese banks trade USD/CNY or EUR/CNY with each other, CDFCPS handles the foreign currency leg of the settlement, while HVPS handles the CNY leg. This enables domestic PvP settlement for FX transactions within China.</div>
+    <p>CDFCPS connects domestic Chinese banks and enables them to transfer foreign currency funds between their foreign currency reserve accounts at the PBOC or at designated settlement banks. Settlement is in central bank money in the respective foreign currency. Supported currencies include: <strong>USD, EUR, HKD, JPY, GBP, AUD, CAD, SGD</strong> and others with sufficient domestic transaction volume.</p>
+    <div class="highlight-box gold"><strong>PvP Significance:</strong> CDFCPS is critical for China's FX trading market. When Chinese banks trade USD/CNY or EUR/CNY with each other domestically, CDFCPS handles the foreign currency leg of settlement while HVPS handles the CNY leg. This enables a form of domestic PvP settlement for FX within China — eliminating settlement risk for domestic interbank FX transactions without needing CLS Bank.</div>
   </div>
 
   <div class="topic-section fade-in">
     <h2><span class="t-num">12.3</span> CIPS — Cross-Border Interbank Payment System</h2>
-    <p><strong>CIPS (Cross-Border Interbank Payment System)</strong> is a renminbi (RMB/CNY) cross-border payment and clearing system established by the PBOC, with processing operations run by CIPS Co. Ltd (a state-backed company). CIPS launched its Phase 1 in <strong>October 2015</strong> and Phase 2 (with real-time RTGS capability) in <strong>May 2018</strong>. CIPS is a cornerstone of China's strategy to internationalise the RMB and reduce dependence on SWIFT and US dollar correspondent banking for RMB transactions.</p>
+    <p><strong>CIPS</strong> launched Phase 1 in <strong>October 2015</strong> and Phase 2 (with real-time RTGS) in <strong>May 2018</strong>. Operated by CIPS Co. Ltd (a state-backed company jointly owned by major Chinese banks and PBOC), CIPS is a cornerstone of China's strategy to internationalise the RMB and reduce dependence on US dollar correspondent banking for RMB transactions.</p>
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">🌐</div><h4>Scope</h4><p>Cross-border RMB transactions — trade finance, FDI settlements, securities investment, interbank transfers. Used across 100+ countries and regions.</p></div>
-      <div class="info-card"><div class="ic-icon">🏦</div><h4>Participants</h4><p>Direct Participants (~70–80 banks) hold CIPS accounts and connect directly. Indirect Participants (~1,200+) access CIPS through a direct participant relationship.</p></div>
-      <div class="info-card"><div class="ic-icon">💱</div><h4>Annual Volume</h4><p>Over CNY 100 trillion (~$14 trillion) in annual transaction value as of recent years, growing rapidly with RMB internationalisation.</p></div>
-      <div class="info-card"><div class="ic-icon">📡</div><h4>Messaging</h4><p>CIPS uses both SWIFT messaging (SWIFTNet FIN and now ISO 20022) and the CIPS proprietary messaging standard — giving participants flexibility.</p></div>
+      <div class="info-card"><div class="ic-icon">🌐</div><h4>Scope &amp; Volume</h4><p>Cross-border RMB payments across 100+ countries. Over CNY 100 trillion (~$14 trillion) annual value. Processes trade finance, FDI settlements, securities investment, and interbank transfers.</p></div>
+      <div class="info-card"><div class="ic-icon">🏦</div><h4>Participants</h4><p>~70–80 Direct Participants (hold CIPS accounts, connect directly). ~1,300+ Indirect Participants across 100+ countries (access via a direct participant). Growing rapidly with RMB internationalisation.</p></div>
+      <div class="info-card"><div class="ic-icon">⏰</div><h4>Operating Hours</h4><p>5:00 AM – 11:00 PM Beijing time (extended to overlap European business hours). Longer than most RTGS systems — designed for global RMB settlement reach.</p></div>
+      <div class="info-card"><div class="ic-icon">📡</div><h4>Messaging</h4><p>Both SWIFT messaging (ISO 20022) AND CIPS proprietary messaging standard. Gives participants flexibility — CIPS can operate entirely outside SWIFT network when using its own messaging.</p></div>
     </div>
-    <h3>CIPS Operating Model</h3>
-    <p>CIPS operates on a <strong>hybrid settlement model</strong>: it provides real-time gross settlement (RTGS) for high-value, time-critical transactions during business hours, and end-of-day net settlement for lower-value transactions. CIPS operating window spans approximately <strong>5:00 AM to 11:00 PM Beijing Time (CST)</strong> — an extended window designed to overlap with major financial market time zones in Asia, Europe, and the US.</p>
+
+    <h3>CIPS Participant Requirements</h3>
+    <div class="two-col">
+      <div class="highlight-box"><strong>Direct Participants</strong><br/><br/>Must be financial institutions incorporated in China or overseas branches/subsidiaries with PBOC approval. Must hold a dedicated CIPS settlement account at a designated CIPS agent bank. Require direct technical connection to the CIPS system. Must comply with Chinese AML/KYC and SAFE (State Administration of Foreign Exchange) reporting requirements. Direct participants are responsible for settling their own and their indirect participants' obligations.</div>
+      <div class="highlight-box purple"><strong>Indirect Participants</strong><br/><br/>Access CIPS through a direct participant acting as their settlement agent. Include overseas banks, fund managers, and other financial institutions globally that need to process RMB payments. Submit instructions to their direct participant, which routes them through CIPS. Do not need a direct CIPS connection or account. Liability for settlement rests with the direct participant.</div>
+    </div>
+
     <h3>CIPS vs SWIFT</h3>
     <div class="table-wrap"><table><thead><tr><th>Attribute</th><th>CIPS</th><th>SWIFT</th></tr></thead><tbody>
-      <tr><td><strong>Function</strong></td><td>Payment clearing AND settlement for RMB</td><td>Messaging only (no settlement)</td></tr>
+      <tr><td><strong>Function</strong></td><td>Payment clearing AND settlement for RMB</td><td>Messaging only — no settlement function</td></tr>
       <tr><td><strong>Currency</strong></td><td>RMB (CNY) only</td><td>All currencies</td></tr>
-      <tr><td><strong>Geographic scope</strong></td><td>Cross-border RMB transactions globally</td><td>200+ countries, all major currencies</td></tr>
-      <tr><td><strong>Operator</strong></td><td>CIPS Co. Ltd (PBOC-backed)</td><td>SWIFT cooperative (Belgium)</td></tr>
-      <tr><td><strong>Messaging format</strong></td><td>CIPS proprietary + SWIFT ISO 20022</td><td>MT (legacy) + ISO 20022</td></tr>
-      <tr><td><strong>Settlement</strong></td><td>Direct settlement in CIPS accounts</td><td>N/A — relies on correspondent banks</td></tr>
+      <tr><td><strong>Operator</strong></td><td>CIPS Co. Ltd (Chinese state-backed)</td><td>SWIFT cooperative (Belgium)</td></tr>
+      <tr><td><strong>Messaging format</strong></td><td>CIPS proprietary + ISO 20022 via SWIFT</td><td>MT (legacy) + ISO 20022 (CBPR+)</td></tr>
+      <tr><td><strong>Settlement</strong></td><td>Direct — in CIPS accounts at PBOC</td><td>N/A — relies on correspondent banks</td></tr>
+      <tr><td><strong>Sanctions risk</strong></td><td>Outside Western sanctions architecture</td><td>Subject to US/EU pressure (Russia disconnected 2022)</td></tr>
+      <tr><td><strong>Founded</strong></td><td>2015</td><td>1973</td></tr>
     </tbody></table></div>
-    <div class="highlight-box purple"><strong>Strategic Context:</strong> CIPS is often described as China's alternative to SWIFT for RMB transactions. In practice, CIPS and SWIFT are complementary — most CIPS transactions still use SWIFT messaging. CIPS provides the clearing and settlement infrastructure; SWIFT provides the messaging network. However, CIPS also has its own proprietary messaging standard that allows RMB transactions to be processed entirely outside the SWIFT network.</div>
+
+    <h3>RMB Internationalisation Strategy and CIPS</h3>
+    <p>CIPS is a key instrument of China's RMB internationalisation policy (人民币国际化):</p>
+    <ul>
+      <li><strong>Belt and Road Initiative (BRI):</strong> China's global infrastructure investment programme across 150+ countries. BRI projects are increasingly denominated in RMB; CIPS facilitates RMB settlement for BRI transactions, reducing dollar dependency.</li>
+      <li><strong>Offshore RMB Centres:</strong> Hong Kong (largest), Singapore, London, Frankfurt, Dubai — all connected to CIPS. These centres enable non-Chinese entities to hold and transact in CNH (offshore RMB).</li>
+      <li><strong>e-CNY + CIPS:</strong> China plans to integrate its CBDC (e-CNY/Digital Yuan) with CIPS for cross-border wholesale digital currency payments — creating a new channel for international RMB transactions that operates entirely within Chinese-controlled infrastructure.</li>
+    </ul>
   </div>
 
   <div class="topic-section fade-in">
     <h2><span class="t-num">12.4</span> CHATS — Clearing House Automated Transfer System (Hong Kong)</h2>
-    <p><strong>CHATS (Clearing House Automated Transfer System)</strong> is Hong Kong's real-time gross settlement system, operated by <strong>HKICL (Hong Kong Interbank Clearing Limited)</strong> under the oversight of the <strong>HKMA (Hong Kong Monetary Authority)</strong>. CHATS is unique globally in operating <strong>four parallel RTGS systems</strong> — one for each major currency transacted in Hong Kong — within a single integrated platform.</p>
-    <h3>Four RTGS Systems in CHATS</h3>
+    <p><strong>CHATS</strong> is operated by <strong>HKICL (Hong Kong Interbank Clearing Limited)</strong> under HKMA oversight. CHATS is globally unique in operating <strong>four parallel RTGS systems</strong> — HKD, USD, EUR, and RMB — within a single integrated platform. This makes Hong Kong the only financial centre where a bank can settle four major currencies through a single local infrastructure without relying on foreign correspondents for each.</p>
+
     <div class="cards-grid">
-      <div class="info-card"><div class="ic-icon">🇭🇰</div><h4>HKD RTGS</h4><p>Settlement in Hong Kong Dollars. Settled in HKMA's clearing accounts. Handles domestic HKD interbank payments and equity market settlement (DvP with HKEX).</p></div>
-      <div class="info-card"><div class="ic-icon">🇺🇸</div><h4>USD RTGS</h4><p>USD real-time gross settlement in Hong Kong. Settlement through HSBC Hong Kong as the settlement institution (not Federal Reserve). Unique globally — offshore USD RTGS in central bank equivalent money.</p></div>
-      <div class="info-card"><div class="ic-icon">🇪🇺</div><h4>EUR RTGS</h4><p>Euro RTGS in Hong Kong. Settlement through Deutsche Bank AG (Hong Kong) as settlement institution. Enables euro payments to be settled locally in HK without routing via TARGET2.</p></div>
-      <div class="info-card"><div class="ic-icon">🇨🇳</div><h4>RMB RTGS</h4><p>Renminbi RTGS — Hong Kong is the world's largest offshore RMB settlement centre. Settlement through the Bank of China (HK) as the RMB settlement bank appointed by the PBOC. Connected to CIPS.</p></div>
+      <div class="info-card"><div class="ic-icon">🇭🇰</div><h4>HKD RTGS</h4><p>Settlement in Hong Kong Dollars. Settled in HKMA clearing accounts (central bank money). Handles domestic HKD interbank payments and DvP for HK equities via the CHATS-HKEX interface.</p></div>
+      <div class="info-card"><div class="ic-icon">🇺🇸</div><h4>USD RTGS</h4><p>USD real-time gross settlement in Hong Kong. Settlement through HSBC Hong Kong as settlement institution. Unique globally — offshore USD RTGS operating in Asia time zone without Federal Reserve involvement.</p></div>
+      <div class="info-card"><div class="ic-icon">🇪🇺</div><h4>EUR RTGS</h4><p>Euro RTGS in Hong Kong. Settlement through Deutsche Bank AG Hong Kong as settlement institution. Enables euro payments to settle locally in HK hours without routing via TARGET2/T2 in Europe.</p></div>
+      <div class="info-card"><div class="ic-icon">🇨🇳</div><h4>RMB RTGS</h4><p>Hong Kong is the world's largest offshore RMB settlement centre. Settlement through Bank of China (HK) as PBOC-appointed settlement bank. Directly linked to CIPS for mainland China payments.</p></div>
     </div>
-    <h3>CHATS Architecture and Operating Hours</h3>
-    <p>CHATS provides a unified technical platform (operated by HKICL) with separate liquidity pools for each currency. Banks in Hong Kong can participate in one or more of the four RTGS systems depending on their business needs. The systems operate during defined windows that align with the major financial centres trading hours for each currency. CHATS connects to SWIFT for cross-border messaging, and the RMB RTGS maintains direct linkage with CIPS for mainland China payments.</p>
+
+    <h3>CHATS-HKEX DvP Interface</h3>
+    <p>The HKD RTGS connects to <strong>Hong Kong Exchanges and Clearing (HKEX)</strong> for Delivery versus Payment settlement of Hong Kong equities. When securities are transferred on CCASS (HKEX's Central Clearing and Settlement System), the corresponding HKD payment is simultaneously triggered through CHATS. Neither the securities delivery nor the cash payment can occur independently — eliminating settlement risk for HK equity transactions.</p>
+
     <div class="table-wrap"><table><thead><tr><th>RTGS</th><th>Settlement Bank</th><th>Operating Hours (HKT)</th><th>Key Use</th></tr></thead><tbody>
-      <tr><td><strong>HKD</strong></td><td>HKMA</td><td>8:30 AM – 5:30 PM</td><td>Domestic HKD, HK equities DvP</td></tr>
+      <tr><td><strong>HKD</strong></td><td>HKMA</td><td>8:30 AM – 5:30 PM</td><td>Domestic HKD interbank, HKEX DvP settlement</td></tr>
       <tr><td><strong>USD</strong></td><td>HSBC (Hong Kong)</td><td>8:30 AM – 6:30 PM</td><td>Offshore USD clearing in Asia time zone</td></tr>
-      <tr><td><strong>EUR</strong></td><td>Deutsche Bank (HK)</td><td>8:30 AM – 6:30 PM</td><td>Euro settlement in Asian hours</td></tr>
+      <tr><td><strong>EUR</strong></td><td>Deutsche Bank (HK)</td><td>8:30 AM – 6:30 PM</td><td>Euro settlement during Asian business hours</td></tr>
       <tr><td><strong>RMB</strong></td><td>Bank of China (HK)</td><td>8:30 AM – 11:30 PM</td><td>Offshore RMB settlement, CIPS linkage</td></tr>
     </tbody></table></div>
+    <div class="highlight-box green"><strong>Hong Kong as a Global Gateway:</strong> CHATS's multi-currency capability makes Hong Kong unique in global payment infrastructure. A bank in Hong Kong can settle USD, EUR, RMB, and HKD all within a single local system — eliminating the need for foreign correspondent banks for those currencies. Particularly valuable for trade finance and FX settlement in the Asia-Pacific time zone.</div>
   </div>
 
   <div class="topic-section fade-in">
     <h2><span class="t-num">12.5</span> HVPS+ and ISO 20022 in China and Hong Kong</h2>
     <h3>HVPS+ Usage Guidelines</h3>
-    <p><strong>HVPS+ (High Value Payments Plus)</strong> is the ISO 20022 usage guideline set developed by the Payment Market Practice Group (PMPG) and adopted by many RTGS systems globally when migrating to ISO 20022. HVPS+ defines the specific subset of ISO 20022 fields, business rules, and message usage conventions applicable to high-value payment systems (RTGS). Both China's HVPS and Hong Kong's CHATS have considered HVPS+ in their ISO 20022 migration strategies.</p>
+    <p><strong>HVPS+ (High Value Payments Plus)</strong> is the ISO 20022 usage guideline developed by the Payment Market Practice Group (PMPG) for RTGS systems globally. It defines the specific subset of ISO 20022 fields, validation rules, and usage conventions applicable to large-value payment systems. Both China's HVPS and Hong Kong's CHATS have incorporated HVPS+ in their ISO 20022 migration strategies.</p>
     <h3>China's ISO 20022 Journey</h3>
-    <p>China has been an early and active adopter of ISO 20022. <strong>CIPS Phase 2</strong> (2018) introduced ISO 20022 messaging support alongside the proprietary CIPS format. CNAPS/HVPS is undergoing ISO 20022 migration — the PBOC has published ISO 20022 migration roadmaps for both HVPS and BEPS. China's implementation follows HVPS+ guidelines adapted for Chinese market requirements, with additional fields for Chinese regulatory reporting (e.g., SAFE reporting for cross-border flows).</p>
+    <p>China has been an early adopter of ISO 20022. <strong>CIPS Phase 2</strong> (2018) introduced ISO 20022 messaging support. CNAPS/HVPS is migrating — the PBOC has published roadmaps for both HVPS and BEPS. China's implementation follows HVPS+ guidelines adapted for local requirements, including additional fields for SAFE (State Administration of Foreign Exchange) regulatory reporting on cross-border flows.</p>
     <h3>Hong Kong's ISO 20022 Adoption</h3>
-    <p>The HKMA has mandated ISO 20022 adoption for CHATS. The <strong>HKD RTGS</strong> completed ISO 20022 migration in recent years. The <strong>RMB RTGS</strong> uses ISO 20022 natively due to its CIPS integration. USD and EUR RTGS systems are following the global migration timeline. Hong Kong's adoption aligns with HVPS+ guidelines and SWIFT CBPR+ for cross-border messages, ensuring seamless interoperability with other major financial centres.</p>
-    <div class="highlight-box"><strong>Hong Kong as a Global Gateway:</strong> CHATS's multi-currency RTGS capability makes Hong Kong a unique node in global payment infrastructure. A bank in Hong Kong can settle USD, EUR, RMB, and HKD transactions all within a single local system — eliminating the need for foreign correspondents for those currencies. This is particularly valuable for trade finance and FX settlement in the Asia-Pacific time zone.</div>
+    <p>The HKMA mandated ISO 20022 for CHATS. The HKD RTGS completed ISO 20022 migration and the RMB RTGS uses ISO 20022 natively through CIPS. USD and EUR RTGS systems are following the global migration timeline. Hong Kong's adoption aligns with HVPS+ and SWIFT CBPR+ for cross-border messages, ensuring full interoperability with T2 (Europe), Fedwire (US), and other major systems.</p>
   </div>
 
   <div class="module-nav">
